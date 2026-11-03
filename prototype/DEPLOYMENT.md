@@ -1,13 +1,13 @@
 # FlowAssist — Vercel deployment handover
 
-**Updated: 3 November 2026. Status: deployment copy verified; synchronization prepared; public demo verified; automatic sync activation pending.**
+**Updated: 3 November 2026. Status: deployment copy verified; synchronization prepared; public demo verified; automatic synchronization and public v0.4 verified.**
 
 ## Repository and deployment ownership
 
 - **Source of truth:** [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), branch `main`.
 - **Vercel source copy:** [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), branch `main`, owned by Lenny’s GitHub account.
 - **Verified on 3 November:** the deployment copy’s initial commit `e9cd7ea` contains the same tracked files as primary commit `c10cc20` (interface v0.3). The repositories have separate histories; synchronization therefore creates ordinary snapshot commits instead of force-pushing primary history.
-- **Vercel status:** existing project `deploy-project-product-management`, owner Team Montagne; production deployment `dpl_BAsGPzfr7U3MKJpN75L4dH9W62NM` is Ready. [Public demo](https://deploy-project-product-management.vercel.app) responded with anonymous HTTP 200 on 3 November 2026. HTML, JavaScript and CSS match the v0.3 source files byte for byte.
+- **Vercel status:** existing project `deploy-project-product-management`, owner Team Montagne; production deployment `dpl_4isLr4HL3Y1s1a3DgVSzm6rgf61g` is Ready. [Public demo](https://deploy-project-product-management.vercel.app) responded with anonymous HTTP 200 on 3 November 2026. All five v0.4 runtime assets match local files byte for byte; `python scripts/verify_production.py` repeats these anonymous checks.
 - **Synchronization evidence:** local fallback successfully copied primary `a1359fe` into deployment snapshot `cd4ecbc`, preserving initial history and excluding workflow definitions. This does not establish a successful GitHub Actions run.
 
 Keep making product changes in the primary repository. The deployment copy is a publication target; do not develop there independently.
@@ -20,7 +20,9 @@ The workflow copies committed files and deletions into the deployment repository
 
 **Guide français pas à pas : [activer le secret Actions](../docs/ACTIVER_SYNC_GITHUB.md).**
 
-**One-time activation:** the owner or an authorized collaborator of the primary repository must add an Actions repository secret named `DEPLOY_REPO_TOKEN` at [primary repository secrets](https://github.com/BenjaminAHS/project-product-management/settings/secrets/actions). Use a fine-grained token from `lsantus-mines`, limited to `deploy-project-product-management`, with **Contents: Read and write**. Enter the token in GitHub’s secret form, not source files or chat. Until this secret is configured, the workflow explicitly fails with a setup message; automatic synchronization is not yet verified. GitHub’s default workflow token does not provide this cross-repository write access. See [GitHub token guidance](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token).
+**Verified status:** [push-triggered workflow run](https://github.com/BenjaminAHS/project-product-management/actions/runs/41667205280) succeeded for primary `e33deb3`. The secret is now effective. The following instructions remain for renewal or reconfiguration.
+
+**One-time activation:** the owner or an authorized collaborator of the primary repository must add an Actions repository secret named `DEPLOY_REPO_TOKEN` at [primary repository secrets](https://github.com/BenjaminAHS/project-product-management/settings/secrets/actions). Use a fine-grained token from `lsantus-mines`, limited to `deploy-project-product-management`, with **Contents: Read and write**. Enter the token in GitHub’s secret form, not source files or chat. If this secret is absent or expires, the workflow explicitly fails with a setup message. GitHub’s default workflow token does not provide this cross-repository write access. See [GitHub token guidance](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token).
 
 After activation, push to primary `main` (or rerun the workflow), confirm the Actions run succeeds, and check the new snapshot commit on deployment `main`. Vercel should be connected to that repository and branch; verify its deployment separately.
 
@@ -66,11 +68,11 @@ After deployment succeeds:
 |---|---|
 | Source | Shared repository above; Vercel configuration tracked |
 | Deployment repository | `lsantus-mines/deploy-project-product-management`, branch `main`; copy contents verified |
-| Automatic sync | Workflow/script prepared; `DEPLOY_REPO_TOKEN` setup and first successful workflow run unverified |
+| Automatic sync | Verified successful push-triggered run for primary `e33deb3`; linked above |
 | Vercel project owner | Team Montagne; CLI authenticated as `lsantus-mines` |
-| Successful deployment and deployed commit | Ready: `dpl_BAsGPzfr7U3MKJpN75L4dH9W62NM`; exact deployed Git SHA not exposed in inspected metadata; three app assets match v0.3 |
+| Successful deployment and deployed commit | Ready: `dpl_4isLr4HL3Y1s1a3DgVSzm6rgf61g`; exact deployed Git SHA not exposed in inspected metadata; all five v0.4 app assets match source `e33deb3` |
 | Production URL | https://deploy-project-product-management.vercel.app |
-| Anonymous access and browser checks | Anonymous HTTP 200 and all three asset bytes verified; rendered UI/mobile/clipboard checks unperformed |
+| Anonymous access and browser checks | Anonymous HTTP 200 and all five v0.4 asset bytes verified; rendered UI/mobile/clipboard checks unperformed |
 
 ## Local checks and demo scope
 

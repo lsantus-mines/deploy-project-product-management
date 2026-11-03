@@ -2,7 +2,7 @@
 
 À transmettre à Benjamin et Lenny. Le code de synchronisation est prêt et poussé dans le dépôt principal ; ce guide explique l’autorisation à configurer une seule fois.
 
-**L’app est déjà en ligne : [ouvrir FlowAssist](https://deploy-project-product-management.vercel.app).** Le secret ci-dessous sert à publier automatiquement les prochaines modifications de toute l’équipe. Une première synchronisation locale a réussi ; la synchronisation automatique GitHub Actions reste à activer.
+**L’app est déjà en ligne : [ouvrir FlowAssist](https://deploy-project-product-management.vercel.app).** Le secret ci-dessous sert à publier automatiquement les prochaines modifications de toute l’équipe. La synchronisation automatique est maintenant **vérifiée** : [exécution réussie sur un push du dépôt principal](https://github.com/BenjaminAHS/project-product-management/actions/runs/41667205280). Ce guide reste utile pour reproduire la configuration ou renouveler le jeton.
 
 Le circuit est : **push sur le dépôt d’équipe → GitHub Actions → copie dans le dépôt de Lenny → déploiement Vercel**.
 

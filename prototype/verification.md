@@ -13,3 +13,6 @@ The UI harness provides a minimal DOM initialized from the HTML. It executes `da
 The earlier v0.3 publication returned anonymous HTTP 200 with matching HTML/JS/CSS under Team Montagne. The v0.4 release uses the same public URL; the release handover records its current production verification separately. [Public application](https://deploy-project-product-management.vercel.app).
 
 No test result establishes live backend isolation, regulatory compliance, model-grounding accuracy, user desirability, QA ≥92%, a paired AHT saving or the 41.2% hurdle. The local journal is editable browser data. The model-based evaluator and agent-level A/B from P2 remain target integrations/evaluation work.
+
+## Verified v0.4 release
+Production deployment `dpl_4isLr4HL3Y1s1a3DgVSzm6rgf61g` is Ready. On 3 November 2026, anonymous HTTP checks confirmed byte-identical `index.html`, `styles.css`, `data.js`, `engine.js` and `app.js` against source `e33deb3`. Run `python scripts/verify_production.py` to repeat. The [primary-push synchronization workflow](https://github.com/BenjaminAHS/project-product-management/actions/runs/41667205280) completed successfully for that source commit. Browser rendering, real external integrations and model quality remain outside this verification.
