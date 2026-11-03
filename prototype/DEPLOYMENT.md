@@ -1,13 +1,14 @@
 # FlowAssist — Vercel deployment handover
 
-**Updated: 3 November 2026. Status: deployment copy verified; synchronization prepared; production URL unconfirmed.**
+**Updated: 3 November 2026. Status: deployment copy verified; synchronization prepared; public demo verified; automatic sync activation pending.**
 
 ## Repository and deployment ownership
 
 - **Source of truth:** [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), branch `main`.
 - **Vercel source copy:** [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), branch `main`, owned by Lenny’s GitHub account.
 - **Verified on 3 November:** the deployment copy’s initial commit `e9cd7ea` contains the same tracked files as primary commit `c10cc20` (interface v0.3). The repositories have separate histories; synchronization therefore creates ordinary snapshot commits instead of force-pushing primary history.
-- **Vercel status:** account OAuth completed through the official shared MCP endpoint. The connected project, deployment result and production URL are still unverified in this session.
+- **Vercel status:** existing project `deploy-project-product-management`, owner Team Montagne; production deployment `dpl_BAsGPzfr7U3MKJpN75L4dH9W62NM` is Ready. [Public demo](https://deploy-project-product-management.vercel.app) responded with anonymous HTTP 200 on 3 November 2026. HTML, JavaScript and CSS match the v0.3 source files byte for byte.
+- **Synchronization evidence:** local fallback successfully copied primary `a1359fe` into deployment snapshot `cd4ecbc`, preserving initial history and excluding workflow definitions. This does not establish a successful GitHub Actions run.
 
 Keep making product changes in the primary repository. The deployment copy is a publication target; do not develop there independently.
 
@@ -66,10 +67,10 @@ After deployment succeeds:
 | Source | Shared repository above; Vercel configuration tracked |
 | Deployment repository | `lsantus-mines/deploy-project-product-management`, branch `main`; copy contents verified |
 | Automatic sync | Workflow/script prepared; `DEPLOY_REPO_TOKEN` setup and first successful workflow run unverified |
-| Vercel project owner | Not confirmed |
-| Successful deployment and deployed commit | Not confirmed |
-| Production URL | Not available yet |
-| Anonymous access and browser checks | Not performed |
+| Vercel project owner | Team Montagne; CLI authenticated as `lsantus-mines` |
+| Successful deployment and deployed commit | Ready: `dpl_BAsGPzfr7U3MKJpN75L4dH9W62NM`; exact deployed Git SHA not exposed in inspected metadata; three app assets match v0.3 |
+| Production URL | https://deploy-project-product-management.vercel.app |
+| Anonymous access and browser checks | Anonymous HTTP 200 and all three asset bytes verified; rendered UI/mobile/clipboard checks unperformed |
 
 ## Local checks and demo scope
 

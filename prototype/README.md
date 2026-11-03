@@ -1,6 +1,6 @@
 # FlowAssist · S3 workspace v0.3
 
-Open `index.html` in a browser, keeping `app.js` and `styles.css` beside it. No dependency installation, external fonts, API keys or account is needed. Launch instructions, design prompt and scope: [prototype record](../03_prototype_link.md).
+[Open the public demo](https://deploy-project-product-management.vercel.app) or open `index.html` in a browser, keeping `app.js` and `styles.css` beside it. No dependency installation, external fonts, API keys or account is needed. Launch instructions, design prompt and scope: [prototype record](../03_prototype_link.md).
 
 The interface provides a searchable, filterable inbox; merchant request and source-backed payment summary; source inspection and review progress; editable cited suggestion; reply editor with character count and copy action; and timestamped specialist handover. Blocked tickets open the handover panel directly. All four tickets and payment records are synthetic; there is no live LLM, Zendesk or bank connection.
 
@@ -12,4 +12,4 @@ Keyboard: `/` focuses search; `J` / `K` select the next/previous visible ticket 
 
 Checks: run `python scripts/verify_s3.py` on macOS. See [verification report](verification.md), [changelog](CHANGELOG.md) and [acceptance scenarios](../03_user_research.md). Browser rendering, keyboard behavior in an actual browser and mobile appearance remain unverified in this environment.
 
-Vercel: [root configuration](../vercel.json) copies `index.html`, `app.js` and `styles.css` into `dist/`, serving at `/`. Vercel’s source copy is `lsantus-mines/deploy-project-product-management`; product development stays in `BenjaminAHS/project-product-management`. The primary-push sync workflow requires its destination-write secret before automated runs can succeed. See [deployment guide](DEPLOYMENT.md); no production URL is confirmed.
+Vercel: [root configuration](../vercel.json) copies `index.html`, `app.js` and `styles.css` into `dist/`, serving at `/`. Vercel’s source copy is `lsantus-mines/deploy-project-product-management`; product development stays in `BenjaminAHS/project-product-management`. The primary-push sync workflow requires its destination-write secret before automated runs can succeed. See [deployment guide](DEPLOYMENT.md); the production URL is verified above (anonymous HTTP 200 and matching HTML/JS/CSS).

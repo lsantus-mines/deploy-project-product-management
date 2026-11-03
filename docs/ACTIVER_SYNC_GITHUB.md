@@ -1,6 +1,8 @@
 # Activer la synchronisation GitHub vers Vercel
 
-À transmettre à Benjamin et Lenny. Le code de synchronisation est prêt ; ce guide explique l’autorisation à configurer une seule fois.
+À transmettre à Benjamin et Lenny. Le code de synchronisation est prêt et poussé dans le dépôt principal ; ce guide explique l’autorisation à configurer une seule fois.
+
+**L’app est déjà en ligne : [ouvrir FlowAssist](https://deploy-project-product-management.vercel.app).** Le secret ci-dessous sert à publier automatiquement les prochaines modifications de toute l’équipe. Une première synchronisation locale a réussi ; la synchronisation automatique GitHub Actions reste à activer.
 
 Le circuit est : **push sur le dépôt d’équipe → GitHub Actions → copie dans le dépôt de Lenny → déploiement Vercel**.
 
