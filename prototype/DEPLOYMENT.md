@@ -1,12 +1,36 @@
 # FlowAssist — Vercel deployment handover
 
-**Updated: 3 November 2026. Status: configuration ready; publication pending.**
+**Updated: 3 November 2026. Status: deployment copy verified; synchronization prepared; production URL unconfirmed.**
 
 ## Repository and deployment ownership
 
-The shared source repository is [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management). Lenny is a contributor, not the repository owner. The owner is arranging to make it public; no visibility change is asserted as completed in this record. The Vercel project owner and production domain are not yet confirmed.
+- **Source of truth:** [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), branch `main`.
+- **Vercel source copy:** [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), branch `main`, owned by Lenny’s GitHub account.
+- **Verified on 3 November:** the deployment copy’s initial commit `e9cd7ea` contains the same tracked files as primary commit `c10cc20` (interface v0.3). The repositories have separate histories; synchronization therefore creates ordinary snapshot commits instead of force-pushing primary history.
+- **Vercel status:** account OAuth completed through the official shared MCP endpoint. The connected project, deployment result and production URL are still unverified in this session.
 
-The preferred route is to deploy the shared repository using a Vercel account/team with access to it. If the repository cannot be selected from a contributor’s account, the owner can perform the import or configure the required GitHub access. Once the repository is public, a team member can alternatively deploy a fork/copy on their own account; that creates a separate source to maintain and is not automatically synchronized with the shared repository.
+Keep making product changes in the primary repository. The deployment copy is a publication target; do not develop there independently.
+
+## Automatic synchronization after primary pushes
+
+The [GitHub workflow](../.github/workflows/sync-deploy.yml) triggers on every push to primary `main`, and can be rerun manually from Actions. Runs are serialized and read the latest primary `main` at execution time so the deployment copy converges on the current source. It runs only in the primary repository, not on forks/copies.
+
+The workflow copies committed files and deletions into the deployment repository and makes a normal commit/push. It preserves the destination history and destination-owned `.github/workflows/` files. Workflow definitions are excluded from cross-repository copying, so the destination credential requires only Contents write permission. The sync fails on an unexpected repository, dirty checkout, unsafe path/symlink or concurrent remote update; it never force-pushes. Secrets and local `.git` metadata are never copied. A no-change run creates no commit.
+
+**Guide français pas à pas : [activer le secret Actions](../docs/ACTIVER_SYNC_GITHUB.md).**
+
+**One-time activation:** the owner or an authorized collaborator of the primary repository must add an Actions repository secret named `DEPLOY_REPO_TOKEN` at [primary repository secrets](https://github.com/BenjaminAHS/project-product-management/settings/secrets/actions). Use a fine-grained token from `lsantus-mines`, limited to `deploy-project-product-management`, with **Contents: Read and write**. Enter the token in GitHub’s secret form, not source files or chat. Until this secret is configured, the workflow explicitly fails with a setup message; automatic synchronization is not yet verified. GitHub’s default workflow token does not provide this cross-repository write access. See [GitHub token guidance](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token).
+
+After activation, push to primary `main` (or rerun the workflow), confirm the Actions run succeeds, and check the new snapshot commit on deployment `main`. Vercel should be connected to that repository and branch; verify its deployment separately.
+
+**Local fallback, also used by agents after a primary push:**
+
+```sh
+python scripts/sync_deploy.py --dry-run
+python scripts/sync_deploy.py
+```
+
+These commands use the existing Git credential helper, clone the deployment repository into a temporary directory, and synchronize the current committed `HEAD`. Uncommitted source edits are excluded. Publish primary `main` first. Local fallback does not replace the workflow for pushes by teammates.
 
 ## Deployment settings
 
@@ -40,7 +64,8 @@ After deployment succeeds:
 | Release evidence | Current status |
 |---|---|
 | Source | Shared repository above; Vercel configuration tracked |
-| Repository made public | Awaiting owner action / confirmation |
+| Deployment repository | `lsantus-mines/deploy-project-product-management`, branch `main`; copy contents verified |
+| Automatic sync | Workflow/script prepared; `DEPLOY_REPO_TOKEN` setup and first successful workflow run unverified |
 | Vercel project owner | Not confirmed |
 | Successful deployment and deployed commit | Not confirmed |
 | Production URL | Not available yet |

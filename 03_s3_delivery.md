@@ -25,7 +25,7 @@ The S3 surface supports tracing, ambiguous candidates, a compliance route and ac
 
 ## Public demo handover
 
-The shared repository belongs to BenjaminAHS; its owner is arranging public visibility. Vercel configuration is tracked, but no successful deployment, project owner, production URL or anonymous browser check is confirmed. See [deployment handover](prototype/DEPLOYMENT.md). Publication will expose the existing static S3 interface; it does not establish the S4 pipeline or the performance criterion. Update the README and prototype record together once the production URL is verified.
+The primary repository belongs to BenjaminAHS; the verified v0.3 deployment copy belongs to lsantus-mines. Primary-push synchronization is prepared; its Actions secret and first successful automated run are unverified. Vercel configuration is tracked, but no successful deployment, project owner, production URL or anonymous browser check is confirmed. See [deployment handover](prototype/DEPLOYMENT.md). Publication will expose the existing static S3 interface; it does not establish the S4 pipeline or the performance criterion. Update the README and prototype record together once the production URL is verified.
 
 ## Working ownership and schedule
 The following is a proposed division of work, not a record of completed work or signed approvals.

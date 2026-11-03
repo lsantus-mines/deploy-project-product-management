@@ -59,11 +59,11 @@ Start with [the brief v2](03_product_brief.md), [design details](03_design_detai
 
 ## Public hosting on Vercel
 
-**Status — 3 November 2026:** deployment configuration is ready and pushed to GitHub; no public application URL has been confirmed. The shared repository belongs to **BenjaminAHS**. Lenny contributes as a team member. The owner is arranging to make the repository public; that visibility change has not been verified here. Making the source public does not itself publish the application.
+**Primary source:** [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), `main`. **Deployment copy:** [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), `main`. The copy was verified to contain all v0.3 files; its separate history is preserved. Product changes belong in the primary repository.
 
-The [deployment guide](prototype/DEPLOYMENT.md) describes the owner/team workflow and the alternative of deploying a copy from a team member’s account. The existing [vercel.json](vercel.json) runs from the repository root, skips dependency installation and copies only the prototype HTML, stylesheet and JavaScript into `dist/`. The published application will open at `/`, without environment variables or an application login.
+Every primary `main` push triggers [the sync workflow](.github/workflows/sync-deploy.yml), which copies the latest committed source into deployment `main` without force-pushing or replacing destination workflows. **Activation requires the primary repository secret `DEPLOY_REPO_TOKEN`; a successful automated run is not confirmed yet.** Setup, permissions and the local fallback are documented in [the deployment guide](prototype/DEPLOYMENT.md). **Guide en français à transmettre à Benjamin : [activer le secret Actions](docs/ACTIVER_SYNC_GITHUB.md).** Agents must also synchronize after their primary pushes, following [repository instructions](AGENTS.md).
 
-To preview immediately, open [prototype/index.html](prototype/index.html) locally. The public Vercel link will be added here and to [the prototype record](03_prototype_link.md) after a successful deployment and a check without a signed-in session.
+Vercel must build from the deployment copy. [vercel.json](vercel.json) copies only the prototype HTML, stylesheet and JavaScript into `dist/`, serving the app at `/` without environment variables. Vercel account OAuth succeeded; the production project and public URL are not yet verified. Add the URL here and to [the prototype record](03_prototype_link.md) after checking access without a signed-in session. For immediate use, open [prototype/index.html](prototype/index.html) locally.
 
 ## Rules
 - Commit with your own Git account: the individual question at the oral is about a commit you signed.

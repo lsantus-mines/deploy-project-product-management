@@ -12,4 +12,4 @@ Keyboard: `/` focuses search; `J` / `K` select the next/previous visible ticket 
 
 Checks: run `python scripts/verify_s3.py` on macOS. See [verification report](verification.md), [changelog](CHANGELOG.md) and [acceptance scenarios](../03_user_research.md). Browser rendering, keyboard behavior in an actual browser and mobile appearance remain unverified in this environment.
 
-Vercel: [root configuration](../vercel.json) copies `index.html`, `app.js` and `styles.css` into `dist/`, serving at `/`. Publication is pending while BenjaminAHS, owner of the shared repository, arranges access. See [deployment guide](DEPLOYMENT.md); no production URL is confirmed.
+Vercel: [root configuration](../vercel.json) copies `index.html`, `app.js` and `styles.css` into `dist/`, serving at `/`. Vercel’s source copy is `lsantus-mines/deploy-project-product-management`; product development stays in `BenjaminAHS/project-product-management`. The primary-push sync workflow requires its destination-write secret before automated runs can succeed. See [deployment guide](DEPLOYMENT.md); no production URL is confirmed.
