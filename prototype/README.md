@@ -1,15 +1,32 @@
-# FlowAssist · S3 workspace v0.3
+# FlowAssist · Payment operations workspace v0.4
 
-[Open the public demo](https://deploy-project-product-management.vercel.app) or open `index.html` in a browser, keeping `app.js` and `styles.css` beside it. No dependency installation, external fonts, API keys or account is needed. Launch instructions, design prompt and scope: [prototype record](../03_prototype_link.md).
+[Public demo](https://deploy-project-product-management.vercel.app). Open `index.html` locally as an alternative, keeping `styles.css`, `data.js`, `engine.js` and `app.js` beside it. The browser runtime has no dependencies, external assets, API credentials or build framework.
 
-The interface provides a searchable, filterable inbox; merchant request and source-backed payment summary; source inspection and review progress; editable cited suggestion; reply editor with character count and copy action; and timestamped specialist handover. Blocked tickets open the handover panel directly. All four tickets and payment records are synthetic; there is no live LLM, Zendesk or bank connection.
+## The full workflow
 
-Drafts, manual edits, handover notes and manual mode are retained **per ticket in tab memory**. Switching tickets resets source inspection/approval and displays only that ticket’s own text. Reloading or Reset demo clears all work. A source or approval from another ticket can never authorize insertion. Resuming assisted mode requires source inspection again. Inserting over an existing different reply requires an explicit replacement choice. Editing handover notes/reason invalidates the old preview.
+Create a synthetic support request, inspect its assigned account and previous tickets, match a payment against scoped ledger/clearing fixtures, review a source-backed response, and explicitly record a human reply or specialist handover. Track open, awaiting-reference, escalated and resolved cases; reopen a case when information arrives. [Full P2 coverage and limitations](../docs/PRODUCT_COVERAGE.md).
 
-“Use draft” fills the local editor. “Copy reply” copies only the editor contents; if clipboard access fails, the editor selects the text for manual copying. “Prepare handover” displays a local preview. Nothing sends a message, modifies a transaction or contacts a queue.
+Ten starting cases cover tracing, ambiguous references, compliance, denied references, failed USD transfers, returned payments, gross/fee/net reconciliation, stale snapshots, disputes and conflicting records. New cases can use the same fixture references, with a maximum of 30 cases. A merchant-confirmed reference can resolve an ambiguity; an amount alone never authorizes a match.
 
-Keyboard: `/` focuses search; `J` / `K` select the next/previous visible ticket outside form fields; `Alt+Enter` uses an already reviewed draft; `Escape` closes help or leaves search. The keyboard help button lists these shortcuts. Small screens follow message → investigation → summary → reply in the same DOM order used by keyboard navigation.
+The account pane shows KYC/PSD2 flags and relevant prior tickets. Sensitive intents, unknown languages, mismatches, stale/malformed/conflicting sources and unsupported monetary inputs suppress drafting. Supported tracing replies are generated in EN/FR/DE from verified fields; rules check the generated text before display. There is no live LLM or model-grounding score. Free wording changes require human factual review; detected critical monetary/citation/promise errors cannot be recorded as an approved reply.
 
-Checks: run `python scripts/verify_s3.py` on macOS. See [verification report](verification.md), [changelog](CHANGELOG.md) and [acceptance scenarios](../03_user_research.md). Browser rendering, keyboard behavior in an actual browser and mobile appearance remain unverified in this environment.
+## Working safely and efficiently
 
-Vercel: [root configuration](../vercel.json) copies `index.html`, `app.js` and `styles.css` into `dist/`, serving at `/`. Vercel’s source copy is `lsantus-mines/deploy-project-product-management`; product development stays in `BenjaminAHS/project-product-management`. The primary-push sync workflow requires its destination-write secret before automated runs can succeed. See [deployment guide](DEPLOYMENT.md); the production URL is verified above (anonymous HTTP 200 and matching HTML/JS/CSS).
+Inspect every source, approve the suggestion, insert into the editor, then explicitly review the final response. Edits invalidate approval. Replacing different editor text requires confirmation. Manual mode and its resumption preserve the same review boundaries. Preparing handover requires a reason and includes only authorized source IDs/times; notes/reason edits invalidate the preview.
+
+Copying, recording a reply, marking a case resolved or recording a handover stay local. No action sends customer messages, changes funds or contacts a real queue. The session dashboard reports actual local actions and visible-tab time, with pause for interruptions; it does not claim causal time savings, QA performance or the 41.2% business threshold.
+
+Drafts, notes, outcomes, custom cases and activity are saved in **sessionStorage for this tab** and survive reload. Source inspection and approval never survive a ticket selection/reload. Reset demo clears the saved workspace. Known credential/IBAN patterns are redacted before storage; only synthetic data should be entered. Browser storage is not a secure payment datastore or immutable audit log. Storage failures fall back to memory.
+
+Keyboard: `/` search; `J`/`K` next/previous visible ticket outside form fields; `Alt+Enter` insert an already reviewed draft; `Escape` close help/intake. The small-screen reading order follows the same DOM order. Activity, session metrics and exportable receipts are available from the navigation rail or mobile view buttons.
+
+## Code and checks
+
+- `data.js`: public synthetic accounts, transactions, historical context and policy fixtures.
+- `engine.js`: pure extraction, scope/match/freshness/policy checks, grounded templates, edited-draft screening and handover packets.
+- `app.js`: workflow, scoped ticket buffers, session storage, review state, audit/timing and exports.
+- `styles.css`: responsive visual system; no remote fonts or component libraries.
+
+Run `python scripts/verify_s3.py` (Python + Node.js) for artifact checks and **30 domain/interaction scenarios**. No npm installation is required. [Verification report](verification.md) states what remains unverified, including real browser rendering and live integrations.
+
+Vercel builds from the repository root using [vercel.json](../vercel.json), copying the five runtime assets into `dist/`. Changes go to the primary repository and then [the deployment copy](DEPLOYMENT.md). [Changelog](CHANGELOG.md).

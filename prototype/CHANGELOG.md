@@ -1,5 +1,16 @@
 # FlowAssist interface changelog
 
+## v0.4 · 3 November 2026
+
+- Replaced hardcoded replies with a separate synthetic data module and pure matching/drafting/checking engine.
+- Added ten starting scenarios, ticket creation (up to 30), scoped account/history/PSD2/KYC context and policy references.
+- Added merchant-confirmed reference clarification, waiting/reopen states, priorities, final human reply review/closure and recorded specialist handovers.
+- Check amounts in integer minor units, unique references, scope, freshness, source schema, conflicts, status and citations. Sensitive, stale, unsupported and unsafe cases suppress generation. Gross payment and net credit are described separately.
+- Added activity trail, JSON receipts/audit export, CSV timing export and session overview with manually pausable visible-tab timings. Completion, hidden tabs and other views stop time accumulation.
+- Added per-tab sessionStorage persistence with schema checks, known secret-pattern redaction and memory fallback. Approval/inspection never restore from storage.
+- Updated Vercel packaging for five runtime assets. Added 30 domain and interaction test scenarios using Node’s built-in runner.
+- No live payment API, message sending, financial action, model evaluator or production security is implied. Browser-rendering checks remain outstanding.
+
 ## v0.3 · 3 November 2026
 
 - Rebuilt the workspace with a compact brand rail, ticket inbox, clearer request hierarchy and a dedicated investigation panel. Added a local stylesheet without external fonts or UI dependencies.

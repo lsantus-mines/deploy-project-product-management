@@ -82,6 +82,11 @@ Decisions D01–D05 are team desk analysis, not participant evidence; see `03_us
 ### S3 interface v0.3 — local draft isolation
 The demo now keeps text buffers per synthetic ticket in tab memory; no browser storage or backend persistence is used. Revisiting restores only that ticket’s text, with source inspection and approval reset. Manual mode remains paused until explicitly resumed with a fresh review. Existing different editor text requires replacement confirmation; handover previews are invalidated when their inputs change. These are local interaction controls, not live tenant-security evidence. Public hosting remains a static demo of synthetic records.
 
+### Application v0.4 — local workflow and persistence
+This extension supersedes the v0.3 “no browser storage” description for the current demo only. Sanitized synthetic case text, outcomes, activity and visible-tab timings are held in per-tab sessionStorage, with schema checks and memory fallback when storage is unavailable. Reset clears the workspace. Known credential/IBAN patterns are redacted; this is not a general anonymization guarantee, and real customer data is excluded. No approval or source inspection is restored. The local journal is editable browser state, not an immutable production audit.
+
+The engine filters public fixtures by assigned merchant, requires a unique reference, checks amount/currency/source schema/freshness/status, and evaluates generated templates before exposure. Its gate is deterministic, not a model score. Compliance/dispute/fund-action requests route to specialists; no legal deadline or diagnosis is generated. The recorded human reply/handovers are local demonstrations, with no external message or financial write. Production authentication, row-level access control, lawful real-data processing, live connectors and model evaluation remain requirements. [P2 coverage](docs/PRODUCT_COVERAGE.md).
+
 ## Session 4 — human-in-the-loop points and the override switch (to come)
 *L2 approval interfaces, diff tracking, grounding threshold circuit breaker, and one-click agent override switches.*
 

@@ -13,7 +13,7 @@
 | One-sentence criterion: metric, flip threshold, guardrail, dataset, date | Brief §7, same sentence in design §7 | Complete target; not a measured result |
 | Brief v1 → v2 and one-page Lean Canvas | Archived v1; current brief; AI Lean Canvas | Complete desk-based revision |
 | Three 20-minute conversations with past-behavior evidence | User needs / design record | Not fulfilled: no conversations conducted |
-| Clickable surface with link and prompt | Prototype instructions and local HTML/CSS/JS v0.3 | Complete local surface; Vercel demo public and HTTP/asset verified; actual one-hour build duration unmeasured |
+| Clickable surface with link and prompt | Prototype instructions and local HTML/CSS/JS v0.4 | Complete local surface; Vercel demo public and HTTP/asset verified; actual one-hour build duration unmeasured |
 | Two users try one task thinking aloud | T01/T02 acceptance scenarios; state checks | Not fulfilled: technical checks do not replace participants |
 | What users changed / could not decide | Brief §§9–10; D01–D05 design register | Responsibilities complete; changes are designer-led, not user evidence |
 | Spec skeleton | spec.md v1 | Complete S4 contract |
@@ -42,4 +42,7 @@ The following is a proposed division of work, not a record of completed work or 
 The assignment DOCX states 8 November 2026; the earlier template states Friday 6 November. Use 6 November as the packaging target. Future S4–S8 documents remain outside this S3 revision.
 
 ## Reproducible checks
-`python scripts/verify_s3.py` on macOS checks 20 unique complete cases, seven proposed eligible cases, policy IDs, document links, HTML IDs, the identical brief/annex criterion and 44 prototype state assertions. See [verification report](prototype/verification.md). Browser rendering, screenshots, keyboard navigation, live authorization and model metrics have not been verified.
+`python scripts/verify_s3.py` (Python + Node.js) checks 20 unique complete cases, seven proposed eligible cases, policy IDs, document links, HTML IDs, the identical brief/annex criterion and 30 domain/interaction scenarios. See [verification report](prototype/verification.md). Browser rendering, screenshots, keyboard navigation, live authorization and model metrics have not been verified.
+
+## Extended application v0.4
+The local demo now executes intake → account/history pre-reading → scoped matching → source-based drafting/checking → human final review → recorded reply or specialist handover → lifecycle/audit/timing. Ten fixtures and custom synthetic cases are supported. [Coverage and remaining production integrations](docs/PRODUCT_COVERAGE.md). Deterministic checks are implemented; the model evaluator, live systems, shared authentication and protected persistence are not. S3 research/label/economic requirements remain unchanged.

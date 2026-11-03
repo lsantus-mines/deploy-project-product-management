@@ -1,18 +1,15 @@
-# S3 v0.3 verification · 3 November 2026
-
-Run from the repository root on macOS:
+# FlowAssist v0.4 verification · 3 November 2026
 
 ```sh
 python scripts/verify_s3.py
 ```
 
-The dependency-free checker uses the system JavaScriptCore engine and a minimal DOM initialized from HTML attributes. It verifies the 20 CSV fixtures and seven proposed eligible labels, design-review register, policy references, document links, HTML/JavaScript IDs, stylesheet inclusion, Vercel asset configuration and shared brief/annex criterion.
+Requires Python and Node.js, without third-party test packages. Artifact checks retain the S3 CSV/label-review/policy/link/criterion checks, verify HTML IDs and the five-asset Vercel configuration, then run `node --test scripts/test_app.cjs`.
 
-**44 passing interaction assertions** cover both-source inspection, approval, edit invalidation, manual fallback/resume, ticket switching, per-ticket/per-merchant text isolation, restored text without restored approval, replacement confirmation/cancellation, ambiguity, required handover reason/note, timestamped authorized sources, compliance routing, denied data, note/reason preview invalidation, reset, search/filter/empty states and keyboard dispatch outside text fields. Untrusted notes are inserted as text rather than HTML.
+**30 passing scenarios** test the actual domain engine and UI handlers. Domain checks cover all ten routes; merchant isolation; reference-only matching; currency/precision/freshness/schema/conflict rejection; net/gross reconciliation; regulatory/fund-action/injection/secret routes; EN/FR/DE generation; generated/edited draft evaluation; and safe handover. Interaction checks cover every-source review, editor replacement, ticket/merchant buffer isolation, manual fallback/resumption, final human approval, closure/reopening, awaiting-reference resolution, specialist transfer, new cases, search/filter/keyboard dispatch, session restoration, corrupted storage, sanitized persistence, scoped exports and stopped/paused handling timers.
 
-Additional packaging checks passed: HTML tags are correctly nested; the deployment output contains byte-identical copies of `index.html`, `app.js` and `styles.css`. No runtime dependencies or external asset requests are introduced.
+The UI harness provides a minimal DOM initialized from the HTML. It executes `data.js`, `engine.js` and `app.js` in a Node VM. It does not render CSS, run a real clipboard/download, or prove real focus/accessibility/mobile behavior. Separate HTML-nesting and build-asset checks have passed. Browser rendering and screenshots remain unverified because the browser execution tool is unavailable in this session.
 
-These checks do not render the page or use a real clipboard. Clipboard behavior has a manual-selection fallback but has not been verified in a browser. Responsive layout, focus visibility, keyboard navigation, actual clipboard permission behavior and screenshot capture remain unverified because the browser execution tool is unavailable in this session. No backend security, model performance, user validation or productivity result is implied.
+The earlier v0.3 publication returned anonymous HTTP 200 with matching HTML/JS/CSS under Team Montagne. The v0.4 release uses the same public URL; the release handover records its current production verification separately. [Public application](https://deploy-project-product-management.vercel.app).
 
-## Public deployment verification
-On 3 November 2026, the [production URL](https://deploy-project-product-management.vercel.app) returned HTTP 200 without credentials or a redirect to login. Downloaded `index.html`, `app.js` and `styles.css` are byte-identical to the v0.3 local files. Vercel reports production deployment `dpl_BAsGPzfr7U3MKJpN75L4dH9W62NM` as Ready under Team Montagne. This is HTTP/asset verification, not rendered browser or participant testing.
+No test result establishes live backend isolation, regulatory compliance, model-grounding accuracy, user desirability, QA ≥92%, a paired AHT saving or the 41.2% hurdle. The local journal is editable browser data. The model-based evaluator and agent-level A/B from P2 remain target integrations/evaluation work.

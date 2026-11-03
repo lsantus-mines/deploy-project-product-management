@@ -42,12 +42,12 @@ Import the selected repository in Vercel. Keep these settings:
 | Root Directory | Repository root (`.`), not `prototype/` |
 | Framework Preset | Other (`framework: null`) |
 | Install Command | Empty; no dependencies |
-| Build Command | `mkdir -p dist && cp prototype/index.html prototype/app.js prototype/styles.css dist/` |
+| Build Command | `mkdir -p dist && cp prototype/index.html prototype/app.js prototype/data.js prototype/engine.js prototype/styles.css dist/` |
 | Output Directory | `dist` |
 | Environment variables | None |
 | Entry route | `/` |
 
-The tracked [vercel.json](../vercel.json) contains these build settings. The deployment output contains only `index.html`, `app.js` and `styles.css`; course files, research notes, evaluation data and the Paylio starter are not copied into the website. Local `.vercel/` metadata and `dist/` are ignored by Git.
+The tracked [vercel.json](../vercel.json) contains these build settings. The deployment output contains only `index.html`, `styles.css`, `data.js`, `engine.js` and `app.js`; course files, research notes, evaluation data and the Paylio starter are not copied into the website. Local `.vercel/` metadata and `dist/` are ignored by Git.
 
 Repository visibility and website access are separate. Use the production domain for sharing and verify that production Deployment Protection permits visitors without a Vercel login. Do not assume that a preview URL is publicly accessible.
 
@@ -74,8 +74,8 @@ After deployment succeeds:
 
 ## Local checks and demo scope
 
-Run `python scripts/verify_s3.py` from the repository root on macOS. The latest completed run passed the structural checks and 44 scripted interaction assertions. See [verification limits](verification.md).
+Run `python scripts/verify_s3.py` from the repository root with Python and Node.js. The current run passes the artifact checks and 30 domain/interaction scenarios. See [verification limits](verification.md).
 
-Hosting changes access to the same S3 demo; it adds no live model, bank connector, Zendesk integration, persistent storage, customer sending or fund action. All four demonstration tickets remain synthetic. For immediate local use, open `prototype/index.html`, or run `python -m http.server 8000 --bind 127.0.0.1` at the repository root and visit `http://127.0.0.1:8000/prototype/`.
+Hosting changes access to the same S3 demo; it adds no live model, bank connector, Zendesk integration, shared backend storage, customer sending or fund action. The v0.4 adds per-tab sessionStorage for synthetic cases, local analysis, lifecycle and audit/timing. All ten starting cases remain synthetic. For immediate local use, open `prototype/index.html`, or run `python -m http.server 8000 --bind 127.0.0.1` at the repository root and visit `http://127.0.0.1:8000/prototype/`.
 
 Configuration reference: [official Vercel documentation](https://vercel.com/docs/project-configuration/vercel-json).
