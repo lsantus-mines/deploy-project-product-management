@@ -4,7 +4,7 @@ PDF révisés le 6 novembre 2026. Antoine : **@antorabo75** ; Colin : **@csib-wq
 
 - Assignment 1 : synthèse du problème, diagnostic, hypothèses, baseline et six réponses de gouvernance.
 - Assignment 2 : mémo d’une page, modèle, registre complet Low/Base/High, sept coûts, sensibilité, build/buy, prix et risques.
-- Assignment 3 : brief v2, Lean Canvas et brief v1 d’une page chacun ; annexes condensées avec processus, RICE, audit, recherche, prompt, spec et les 20 cas complets.
+- Assignment 3 : PDF de 7 pages ; brief v2, Lean Canvas et brief v1 d’une page chacun, annexes condensées et index des 20 cas. Les cas complets restent dans le CSV exigé, fourni dans l’archive source.
 
 Les consignes nécessitant des actions humaines restent explicitement non attestées : entretiens, essais utilisateurs, labels humains et contributions Git personnelles. Les limites du modèle financier original restent signalées. Les PDF ne prétendent pas à une conformité totale quand les preuves manquent.
 

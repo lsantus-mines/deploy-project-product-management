@@ -165,66 +165,8 @@ Sources/Assignment_2_sources.zip retains the editable workbook, original memo an
 ''')
 export(2,'Assignment_2_Sizing_Investment_Memo.pdf',memo+'<div class="flow">'+annex+'</div>')
 
-# S3 keeps single-page v2, canvas, v1; concise annexes contain all required details.
-a3=onepage('03_product_brief.md','Product brief · v2').replace('</h1>','</h1>'+identity,1)
-a3+=onepage('03_ai_lean_canvas.md','AI Lean Canvas · v2')
-a3+=onepage('research/brief_v1.md','Product brief · archived v1')
-design=read('03_design_details.md')
-design=design.split('## 1.')[1].split('## 6.')[0]
-# Drop duplicated introductory paragraph, keep full process/RICE/model tables.
-design='## 2.'+design.split('## 2.',1)[1]
-a3+='<div class="flow">'+section('Process, features and component model',md(design))
-research=re.sub(r'^# .*\n','',read('03_user_research.md'),flags=re.M)
-a3+=section('Design loop, prototype and acceptance tasks',md(research)+md('''## Prototype and original prompt
-**Public link:** https://deploy-project-product-management.vercel.app. Last source-recorded HTTP verification: 3 November; no new availability or rendering claim. Local `prototype/index.html` needs no installation or API key. Runtime is deterministic with synthetic fixtures, not connected to Zendesk, banks or a model.
-
-**Tool / time box:** Codex-assisted HTML/CSS/JS. Initial build duration was not instrumented; under-one-hour compliance is unproven. Later versions add local workflow features, not completed participant tests.
-''')+md(read('03_prototype_link.md').split('## The prompt used')[1].split('## Test walkthrough')[0]))
-a3+=section('Spec skeleton and measurement plan',md('''## User, trigger and scope
-Karim receives an assigned merchant ticket. Confirm identity and intent; retrieve authorised read-only ledger/clearing evidence; confirm a unique transaction; draft only eligible tracing; inspect all sources; human reviews/edits/sends. Always allow manual handling or safe specialist handover. Disputes, KYC/AML, refunds and autonomous sending remain out of scope.
-
-## Input / output contract
-Input: ticket ID/text/language, authenticated merchant and assigned specialist, source IDs/timestamps, transaction reference, amount in integer minor units, currency and policy version. Extracted entities are untrusted hints; no model SQL. Output: `draft_ready | context_only | human_only`, cited draft or null, authorised evidence, block reason and specialist route. No customer-send or financial-write tool exists.
-
-## Deterministic gates and state
-Verify assigned-agent access and tenant before retrieval. Unique reference, currency, amount/gross-net reconciliation and source identity must agree; amount alone never authorises. Missing/stale/contradictory evidence, malformed output, timeout or sensitive intent suppresses drafts. Provisional freshness ≤5 min, retrieval ≤2s and total pipeline ≤10s require validation. A model score cannot override rules.
-
-`loading → draft_ready | context_only | human_only`. Insertion requires all sources inspected and explicit approval. Edits invalidate approval; ticket changes reset inspection/review. Manual mode disables insertion; resuming requires fresh review. Handover preserves authorised IDs, timestamps, reason and notes; compliance goes to Tier-2 compliance, tracing to Tier-2 payments. Session restoration never restores approvals. Local receipts and audit are editable browser state, not authenticated production records.
-
-## Edge cases and fallback
-No/multiple match → request unique reference; foreign/forged tenant → empty context and block; unexplained currency/gross-net mismatch → context only; stale/conflicting feed or timeout → suppress; unsupported language, dispute, fraud or KYC → person; injection cannot change scope; credentials/IBAN are redacted, failed redaction routes manually. Never turn “sent to bank” into “beneficiary credited” or invent an ETA, deadline, refund or hold-release advice.
-
-## Done criterion and denominator
-Use the one-sentence success criterion in brief v2: frozen 200 synthetic tracing cases, eligibility labelled before execution, ≥41.2% total active-time saving including review and fallback; QA ≥92%, unsafe-draft flag precision ≥98%, zero critical exposures. Saving = `1 − sum(assisted active time) / sum(manual active time)` over all pre-labelled eligible cases; failures stay in the denominator. Randomise/counterbalance paired timing; report raw intervals, agent count and uncertainty. Do not replace measured manual time by the 18-minute assumption.
-
-Two independent graders check tenant/transaction, money/status/time, citations, safe action and wording. QA rubric: factual accuracy 40, source coverage 25, policy safety 25, clarity 10; critical failure overrides score. Grounding precision = unsafe flags confirmed unsafe / all unsafe flags; also report recall and false-safe count. No flags means undefined precision. Disagreement remains fail/pending adjudication.
-
-## Seed origin and freeze
-The 20 inputs and initial labels are AI-generated and not human-approved. Two real reviewers must independently check every label/reference and reconcile before freezing a commit and policy version. Keep development/demo cases separate from held-out evaluation, deduplicate by scenario family. Expand to 50 for A4, then 200 tracing cases. The seed does not prove performance or represent the production mix. Seven cases are proposed timing-eligible; thirteen exercise blocking/handover.
-'''))
-# Retain full audit and retention/trust tables without repeating old sessions or implementation changelog.
-gov_short='## Six-question'+g3.split('### Six-question',1)[1]
-gov_short=gov_short.split('### S3 v2 design decisions')[0]
-a3+=section('Data audit and governance',md(gov_short))
-a3+=section('Evaluation policy and all 20 cases',md(re.sub(r'^# .*\n','',read('evals/reference_policy.md'),flags=re.M))+md('''## Input-generation recipe and review status
-Generate fictional merchant tickets plus self-contained ledger/clearing snapshots under FLOW-POL-1. Cover easy/hard/adversarial/out-of-scope cases; EN/FR/DE and unsupported PT, EUR/SEPA and USD/SWIFT, SMB/Enterprise. Never import actual customer records. Original CSV, generation notes, policy and blank human-review register are in the source archive. The records below preserve every original field, including origin; labels are proposed, not human-approved.
-'''))
-for row in csv.DictReader((REPO/'evals/eval_set_v0.csv').open()):
- values=list(row.items());ident=next(iter(row.values()))
- a3+='<article class="evalcase"><h2>'+html.escape(ident)+' · '+html.escape(row.get('segment',''))+'</h2>'
- for k,v in values:
-  if k=='id':continue
-  a3+='<p><b>'+html.escape(k.replace('_',' '))+':</b> '+html.escape(v)+'</p>'
- a3+='</article>'
-a3+=section('Submission checklist and unresolved requirements',md('''**Deadline:** 8 November 2026 per supplied DOCX; PDF edition 6 November. Same P2 team/agent and S2 flip point. The one-page v2, canvas and archived v1 precede process, RICE, model, data audit, research record, prototype prompt, spec and 20 complete cases.
-
-**Unfulfilled human requirements:** three real 20-minute past-behaviour conversations; two users attempting a task aloud; evidence-based changes to v2; manual labelling; and every member's own authored commit. No interview, approval or contribution is invented. Current D01–D05 are desk decisions; T01/T02 are acceptance tasks, not completed participant usability tests. Under-one-hour initial prototype construction is not demonstrated.
-
-Users may inform workflow and wording, but CFO/Product owns the 41.2% hurdle, independent timing/graders establish performance, Engineering evaluates model choices, DPO/Legal approves processing/retention and CCO/Ops approves scope. A tracing-only success does not validate S2's dispute/compliance or strategic value.
-
-**Original formats:** Sources/Assignment_3_sources.zip retains all required Markdown, original v1, CSV, policy, blank human review register and clickable prototype. The PDF condenses their presentation; it does not replace the repository or establish full assignment compliance. Live identity, bank/Zendesk access, model-based evaluation, causal time savings and production readiness are not demonstrated.
-'''))+'</div>'
-export(3,'Assignment_3_MVP_Brief_and_Design_Loop.pdf',a3)
+# S3: concise summary; required original-format files stay in the archive.
+exec(compile(Path(__file__).with_name('assignment3_content.py').read_text(), 'assignment3_content.py', 'exec'))
 (OUT/'Sources'/'validation.json').write_text(json.dumps(checks,indent=2))
 (OUT/'README.md').write_text('''# Assignments — FlowAssist · version synthétique
 
@@ -232,7 +174,7 @@ PDF révisés le 6 novembre 2026. Antoine : **@antorabo75** ; Colin : **@csib-wq
 
 - Assignment 1 : synthèse du problème, diagnostic, hypothèses, baseline et six réponses de gouvernance.
 - Assignment 2 : mémo d’une page, modèle, registre complet Low/Base/High, sept coûts, sensibilité, build/buy, prix et risques.
-- Assignment 3 : brief v2, Lean Canvas et brief v1 d’une page chacun ; annexes condensées avec processus, RICE, audit, recherche, prompt, spec et les 20 cas complets.
+- Assignment 3 : PDF de 7 pages ; brief v2, Lean Canvas et brief v1 d’une page chacun, annexes condensées et index des 20 cas. Les cas complets restent dans le CSV exigé, fourni dans l’archive source.
 
 Les consignes nécessitant des actions humaines restent explicitement non attestées : entretiens, essais utilisateurs, labels humains et contributions Git personnelles. Les limites du modèle financier original restent signalées. Les PDF ne prétendent pas à une conformité totale quand les preuves manquent.
 

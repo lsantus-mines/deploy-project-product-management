@@ -49,7 +49,7 @@ Concise PDF editions, with required details and source archives:
 
 - [Assignment 1 — Team, agent and problem](Assignments/Assignment_1_Team_Agent_Problem.pdf) · 4 pages.
 - [Assignment 2 — Sizing and investment memo](Assignments/Assignment_2_Sizing_Investment_Memo.pdf) · 6 pages; one-page memo followed by the model annex.
-- [Assignment 3 — MVP brief and design loop](Assignments/Assignment_3_MVP_Brief_and_Design_Loop.pdf) · 19 pages; one-page briefs/canvas and all 20 evaluation cases.
+- [Assignment 3 — MVP brief and design loop](Assignments/Assignment_3_MVP_Brief_and_Design_Loop.pdf) · 7 pages; one-page briefs/canvas, concise annexes and a 20-case index; complete cases in the source CSV.
 
 [Package notes and original-format archives](Assignments/README.md). Outstanding participant research, human label review and individual Git contributions are explicitly identified; PDF packaging does not establish their completion. Team handles: Antoine **@antorabo75**, Colin **@csib-wq**.
 

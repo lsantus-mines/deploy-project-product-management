@@ -131,7 +131,7 @@
   },
   "3": {
     "file": "Assignment_3_MVP_Brief_and_Design_Loop.pdf",
-    "pages": 19,
+    "pages": 7,
     "headings": [
       [
         1,
@@ -227,183 +227,43 @@
       ],
       [
         4,
-        "Process, features and component model"
+        "Process and component model"
       ],
       [
         4,
-        "2. Process \u2014 as-is \u2192 to-be"
+        "Smallest model rung, by component"
       ],
       [
-        4,
+        5,
+        "Prioritisation and data governance"
+      ],
+      [
+        5,
         "3. Features \u2014 RICE and MoSCoW"
       ],
       [
         5,
-        "4. Data"
-      ],
-      [
-        5,
-        "5. Model \u2014 smallest rung per component"
+        "Six-question data audit \u2014 S3 provisional answers"
       ],
       [
         6,
-        "Design loop, prototype and acceptance tasks"
+        "Design loop, prototype and spec skeleton"
       ],
       [
         6,
-        "1. Target users and concrete work situations"
+        "Research and v1 \u2192 v2"
       ],
       [
         6,
-        "2. Design findings and decisions"
+        "Clickable prototype / prompt"
       ],
       [
         6,
-        "3. v1 \u2192 v2 decision log"
+        "Spec skeleton"
       ],
       [
         7,
-        "4. Two reproducible task scenarios"
-      ],
-      [
-        7,
-        "5. What the users changed / could not decide"
-      ],
-      [
-        7,
-        "6. Decision"
-      ],
-      [
-        7,
-        "Prototype and original prompt"
-      ],
-      [
-        8,
-        "Spec skeleton and measurement plan"
-      ],
-      [
-        8,
-        "User, trigger and scope"
-      ],
-      [
-        8,
-        "Input / output contract"
-      ],
-      [
-        8,
-        "Deterministic gates and state"
-      ],
-      [
-        8,
-        "Edge cases and fallback"
-      ],
-      [
-        8,
-        "Done criterion and denominator"
-      ],
-      [
-        8,
-        "Seed origin and freeze"
-      ],
-      [
-        9,
-        "Data audit and governance"
-      ],
-      [
-        9,
-        "Six-question data audit"
-      ],
-      [
-        11,
-        "Evaluation policy and all 20 cases"
-      ],
-      [
-        12,
-        "Input-generation recipe and review status"
-      ],
-      [
-        12,
-        "F01 \u00b7 en | SMB | EU | SEPA EUR | routine"
-      ],
-      [
-        12,
-        "F02 \u00b7 fr | Enterprise | EU | SEPA EUR | routine"
-      ],
-      [
-        13,
-        "F03 \u00b7 de | Enterprise | EU | SWIFT USD | routine"
-      ],
-      [
-        13,
-        "F04 \u00b7 en | SMB | EU | SEPA EUR | routine"
-      ],
-      [
-        13,
-        "F05 \u00b7 fr | SMB | EU | SEPA EUR | urgent"
-      ],
-      [
-        14,
-        "F06 \u00b7 de | SMB | EU | SEPA EUR | routine"
-      ],
-      [
-        14,
-        "F07 \u00b7 en | Enterprise | EU | SEPA EUR | critical"
-      ],
-      [
-        14,
-        "F08 \u00b7 en | SMB | EU | SWIFT USD | critical"
-      ],
-      [
-        15,
-        "F09 \u00b7 fr | Enterprise | EU | SEPA EUR | urgent"
-      ],
-      [
-        15,
-        "F10 \u00b7 en | Enterprise | EU | SEPA EUR | critical"
-      ],
-      [
-        15,
-        "F11 \u00b7 en | SMB | EU | SWIFT USD | urgent"
-      ],
-      [
-        16,
-        "F12 \u00b7 pt | SMB | EU | SEPA EUR | routine"
-      ],
-      [
-        16,
-        "F13 \u00b7 en | Enterprise | EU | SWIFT USD | urgent"
-      ],
-      [
-        16,
-        "F14 \u00b7 fr | SMB | EU | SEPA EUR | routine"
-      ],
-      [
-        17,
-        "F15 \u00b7 en | Enterprise | EU | card EUR | urgent"
-      ],
-      [
-        17,
-        "F16 \u00b7 de | Enterprise | EU | SEPA EUR | critical"
-      ],
-      [
-        17,
-        "F17 \u00b7 fr | SMB | EU | SEPA EUR | urgent"
-      ],
-      [
-        18,
-        "F18 \u00b7 en | SMB | EU | SEPA EUR | critical"
-      ],
-      [
-        18,
-        "F19 \u00b7 de | SMB | EU | SEPA EUR | critical"
-      ],
-      [
-        18,
-        "F20 \u00b7 en | Enterprise | EU | SEPA EUR | urgent"
-      ],
-      [
-        18,
-        "Submission checklist and unresolved requirements"
+        "20-case evaluation set and delivery"
       ]
     ],
     "overflow": []
