@@ -1,0 +1,264 @@
+<html><head><meta charset="utf-8"><style>
+@font-face{font-family:Body;src:url("file:///System/Library/Fonts/Supplemental/Arial.ttf")}
+@font-face{font-family:Body;src:url("file:///System/Library/Fonts/Supplemental/Arial Bold.ttf");font-weight:700}
+@page{size:A4;margin:17mm 16mm 17mm;@top-left{content:"FLOWASSIST / PAYFLOW B2B";font:8pt Body;color:#557079}@top-right{content:string(assignment);font:8pt Body;color:#557079}@bottom-left{content:"MSA-DAT07-04 · Team project · 6 November 2026";font:7.5pt Body;color:#657480}@bottom-right{content:counter(page);font:8pt Body;color:#657480}}
+*{box-sizing:border-box}body{font:10pt/1.4 Body, sans-serif;color:#233344}h1{font-size:24pt;line-height:1.12;color:#123646;margin:0 0 5mm}h2{font-size:14pt;line-height:1.2;color:#146e76;margin:6mm 0 2.5mm;break-after:avoid}h3{font-size:11pt;color:#123646;margin:4mm 0 2mm;break-after:avoid}p{margin:0 0 2.8mm}ul,ol{padding-left:5mm;margin:2mm 0 3mm}li{margin-bottom:1mm}table{border-collapse:collapse;width:100%;font-size:8.1pt;line-height:1.3;margin:3mm 0 4mm;table-layout:fixed}thead{display:table-header-group}th{background:#153e4c;color:white;font-weight:700}th,td{padding:2mm 2.1mm;border-bottom:.5pt solid #d9e3e7;text-align:left;vertical-align:top;overflow-wrap:anywhere}tbody tr:nth-child(even){background:#f0f5f6}tr{break-inside:avoid}a{color:#08747c;text-decoration:none;overflow-wrap:anywhere}blockquote{margin:3mm 0;padding:3mm 4mm;background:#edf5f5;border-left:3pt solid #16848a}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f4f6;padding:3mm;font-size:7.4pt}code{font-size:.9em;overflow-wrap:anywhere}section{break-before:page}.kicker{font-size:9pt;font-weight:700;letter-spacing:1.5pt;color:#13828a;margin-bottom:4mm;string-set:assignment content()}.meta{font-size:8pt;color:#657480;margin-bottom:5mm}.note{padding:3mm 4mm;background:#fff5e5;border-left:3pt solid #d5a147;font-size:9pt;margin:4mm 0}.compact{font-size:8.6pt;line-height:1.28}.compact h1{font-size:19pt}.compact h2{font-size:10pt;margin:2.7mm 0 1.3mm}.compact p{margin-bottom:1.8mm}.compact table{font-size:7.4pt;margin:1.8mm 0}.compact td,.compact th{padding:1.5mm}.compact ul,.compact ol{margin:1mm 0 2mm}.compact li{margin-bottom:.4mm}.wide table{font-size:7.2pt}.wide td,.wide th{padding:1.5mm}.case{break-before:page}.case h2{font-size:17pt}.case dt{font-weight:bold;color:#146e76;margin-top:4mm}.case dd{margin:1mm 0 2mm;font-size:9.2pt;overflow-wrap:anywhere}.small{font-size:8pt;color:#657480}.brief{font-size:8pt;line-height:1.22}.brief h1{font-size:18pt}.brief h2{font-size:9pt;margin:2.1mm 0 1mm}.brief p{margin-bottom:1.4mm}.brief blockquote{padding:2mm 3mm;margin:2mm 0}.brief .kicker{margin-bottom:2mm}.hero{font-size:12pt;color:#146e76}.toc li{margin:3mm 0}
+
+.dense{font-size:9pt;line-height:1.3}.dense h1{font-size:20pt}.dense h2{font-size:11pt;margin:3mm 0 1.5mm}.dense h3{font-size:10pt;margin:2mm 0 1mm}.dense p{margin-bottom:2mm}.dense table{font-size:7.7pt;margin:2mm 0 3mm}.dense td,.dense th{padding:1.5mm}.flow section{break-before:auto}.flow{break-before:page}.flow h1{break-before:auto;font-size:19pt}.flow h2{font-size:11pt}.flow{font-size:9pt;line-height:1.3}.flow table{font-size:7.5pt}.flow td,.flow th{padding:1.4mm}.flow .note{font-size:8pt}.brief th:first-child{width:27%}.brief th:nth-child(2){width:57%}.brief th:nth-child(3){width:16%}.evalcase{break-inside:avoid;border-top:1pt solid #16848a;padding:2mm 0;margin:1mm 0 3mm;font-size:8.1pt;line-height:1.3}.evalcase h2{margin:0 0 1.5mm;font-size:10pt}.evalcase p{margin-bottom:1mm}.identity{font-size:7.8pt;color:#526b77;margin:2mm 0 3mm}
+</style></head><body><div class="dense"><div class="kicker">ASSIGNMENT 1</div><h1>Your team, your agent,<br>your problem</h1><p class="hero">FlowAssist — Agent-assist copilot for B2B payments</p><p class="meta">Data & AI Product: From Diagnosis to Delivery · Albert School / Mines Paris-PSL<br>Lenny Santus · Anthony Rascle · Antoine Rabeau · Benjamin Caujolle · Colin Sibieude<br>PDF edition · 6 November 2026 · Coursework in English, following the supplied briefs.</p><p class="identity">Team GitHub: @lsantus-mines · @antotototototo18 · Antoine @antorabo75 · @BenjaminAHS · Colin @csib-wq</p><h2>Team and agent</h2>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>GitHub</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lenny Santus</td>
+<td>@lsantus-mines</td>
+</tr>
+<tr>
+<td>Anthony Rascle</td>
+<td>@antotototototo18</td>
+</tr>
+<tr>
+<td>Antoine Rabeau</td>
+<td>@antorabo75</td>
+</tr>
+<tr>
+<td>Benjamin Caujolle</td>
+<td>@BenjaminAHS</td>
+</tr>
+<tr>
+<td>Colin Sibieude</td>
+<td>@csib-wq</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Company / proposal:</strong> PayFlow B2B, European B2B payments fintech; P2 adapted as FlowAssist. Course scenario: 800 merchants, 12,000 tickets/month, 40% of handling time spent investigating. Other operating figures below are planning assumptions, not verified company observations.</p>
+<p><strong>Job:</strong> When a merchant opens a payment support ticket, FlowAssist retrieves authorised transaction evidence and produces a cited draft in the Zendesk sidebar for a human specialist to review, edit and send.</p>
+<p><strong>Authority:</strong> L1 entity suggestions → L3 tenant-scoped read-only retrieval, human confirms match → L2 drafting/checks → person-only sending; L4 bounded audit metadata. The backend establishes identity; model confidence cannot authorise access.</p>
+<p><strong>Never:</strong> send to a merchant, move/refund/release funds, write the ledger, or disclose a transaction without verified tenant and transaction identity. Ambiguity, stale data or unsupported intent suppress drafting and return to a person.</p>
+<h2>Problem in one sentence</h2>
+<p>Tier-1 payment specialists spend an assumed 7.2 of 18 minutes per ticket investigating disconnected records, equivalent to €414,720/year in investigation labour; today they search manually and draft from memory. Success targets a 30% AHT reduction to 12.6 minutes, QA ≥92% and zero critical data exposures.</p>
+<h2>Assumption register</h2>
+<table>
+<thead>
+<tr>
+<th>Figure</th>
+<th>Source type / validation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>800 merchants; 12,000 tickets/month; 40% investigation</td>
+<td>P2 educational scenario, not actual CRM/ticket logs</td>
+</tr>
+<tr>
+<td>144,000 tickets/year</td>
+<td>Derived: 12,000 × 12</td>
+</tr>
+<tr>
+<td>18-minute AHT; 4.5-hour first response; 18 agents</td>
+<td>Guesses; validate with Ops logs and paired timing</td>
+</tr>
+<tr>
+<td>7.2 investigation minutes</td>
+<td>Derived: 18 × 40%</td>
+</tr>
+<tr>
+<td>€24/hour; €10/ticket</td>
+<td>Planning analogies; wage/cost allocation unverified; do not treat them as identical bases</td>
+</tr>
+<tr>
+<td>€414,720 investigation value</td>
+<td>144,000 × 7.2 / 60 × €24; capacity estimate</td>
+</tr>
+<tr>
+<td>30% saving, QA ≥92%, zero exposure</td>
+<td>Product decisions/targets, not measured results</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Persona:</strong> Karim, Tier-1 specialist, needs to explain a payment without confusing merchant identity, clearing status or bank credit. Ops owns quality, CFO owns investment, DPO/CCO owns data/compliance review. The task is frequent, bounded and reversible before sending.</p></div><section class="dense"><h1>02 · Diagnosis and AI choice</h1><h2>Journey and the two pain steps</h2>
+<table>
+<thead>
+<tr>
+<th>Human activity today</th>
+<th style="text-align: right;">Minutes (guess)</th>
+<th>Planned assistance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read ticket</td>
+<td style="text-align: right;">1.5</td>
+<td>L1 entity suggestions</td>
+</tr>
+<tr>
+<td>Search ledgers / clearing — pain</td>
+<td style="text-align: right;">5.7</td>
+<td>L3 scoped candidates, person confirms</td>
+</tr>
+<tr>
+<td>Draft and attach sources — pain</td>
+<td style="text-align: right;">4.8</td>
+<td>L2 cited draft</td>
+</tr>
+<tr>
+<td>Check policy / status</td>
+<td style="text-align: right;">2.5</td>
+<td>Rules block; L2 review</td>
+</tr>
+<tr>
+<td>Review, edit, send</td>
+<td style="text-align: right;">2.0</td>
+<td>Person only</td>
+</tr>
+<tr>
+<td>Categorise and log</td>
+<td style="text-align: right;">1.5</td>
+<td>L1 route; L4 audit metadata</td>
+</tr>
+<tr>
+<td>Total</td>
+<td style="text-align: right;">18.0</td>
+<td>Assumed baseline; not measured</td>
+</tr>
+</tbody>
+</table>
+<h2>Problem tree and five Whys</h2>
+<p><strong>Symptom:</strong> merchants wait for payment explanations; specialists switch repeatedly between tools. <strong>Problem:</strong> evidence gathering and reply composition are fragmented.
+1. Why slow replies? Specialists investigate before drafting.
+2. Why lengthy investigation? Ledger, clearing, dispute and compliance records sit in separate interfaces.
+3. Why separate interfaces? Independent services lack a unified support view.
+4. Why not one exact lookup? Incoming language often has partial references, dates and gross/net amounts.
+5. Why retain a person? Ambiguous identity, status and intent create costly disclosure and financial mistakes.</p>
+<p><strong>Root cause and fix:</strong> fragmented evidence and unstructured requests. First add deterministic read-only joins, source visibility and clear escalation. Use extraction and grounded drafting only where rules/templates are insufficient; improve the workflow and documentation alongside the AI.</p>
+<h2>Is AI the right tool?</h2>
+<table>
+<thead>
+<tr>
+<th>Required question</th>
+<th>Decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Does a rule solve 80%?</td>
+<td>Not established. Benchmark exact references, rules and templates first; the earlier 15% claim is unverified.</td>
+</tr>
+<tr>
+<td>Prediction/generation or organisation?</td>
+<td>Entity extraction and cited wording may need a pretrained model. Permission, money and escalation policy are deterministic/organisational.</td>
+</tr>
+<tr>
+<td>Do we have the data?</td>
+<td>Only synthetic fixtures. Future read-only ledger, clearing and policy access needs owner and DPO approval; no 144k real-ticket corpus supplied.</td>
+</tr>
+<tr>
+<td>What does an error cost?</td>
+<td>S2 judgement: €15 tracing, €90 disputes, €150 compliance; catastrophic disclosure tail remains unpriced. PayFlow owns organisational liability.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Chosen level:</strong> bounded GenAI copilot. Rules remain mandatory; classical classification alone cannot compose a cited multi-source explanation. A standalone pretrained model lacks current ledger facts. Autonomous customer action is unjustified; compare hybrid drafting with rules/templates in S4.</p>
+<h2>Four selection questions</h2>
+<p><strong>Frequency:</strong> course scenario 12,000/month. <strong>Bounded:</strong> read-only account, ledger, clearing and compliance tools; draft, context-only or specialist route. <strong>Measurable:</strong> timing, factual QA, grounding and critical failures per ticket. <strong>Recoverable:</strong> suppress or correct before sending; human review reduces risk but does not guarantee detection.</p></section><section class="dense"><h1>03 · Hypotheses and baseline</h1><h2>Working backwards — fictional launch release</h2>
+<p><strong>PARIS — 18 November 2026 (fictional launch exercise).</strong> PayFlow announces FlowAssist for payment support specialists: a verified payment timeline and cited reply inside Zendesk, targeting an AHT reduction from 18 to 12.6 minutes while the specialist retains control. “I can see the evidence before I answer,” says a fictional merchant representative. This quotation and the claimed future improvement are invented solely for the required press-release format, not interview evidence or achieved performance.</p>
+<h2>Three hypotheses that must be true</h2>
+<table>
+<thead>
+<tr>
+<th>Hypothesis (guess)</th>
+<th>Test and session</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≥75% of tracing tickets contain enough evidence for a unique match with ≥99% matching recall</td>
+<td>S4: 200 independently labelled cases; compare extraction + deterministic lookup with rules alone; count ambiguous and missed matches.</td>
+</tr>
+<tr>
+<td>Grounding checker flags unsafe drafts with ≥98% precision</td>
+<td>S5: independently grade safe/unsafe draft pairs, including adversarial mismatches; also report unsafe recall and false-safe count.</td>
+</tr>
+<tr>
+<td>≥30% overall AHT saving without QA falling below 92% or 7-day reopen exceeding 5%</td>
+<td>S6: planned agent-level randomised trial, 9 assisted / 9 control specialists, four weeks; log active review and fallback time. Staffing, thresholds and duration are planning decisions.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Economic test connecting S2/S3:</strong> ≥41.2% paired active-time saving on pre-labelled eligible tracing cases; this is different from 30% across the full support mix. A tracing-only pass does not validate dispute/compliance value or production readiness.</p>
+<h2>Do nothing over 12 months</h2>
+<table>
+<thead>
+<tr>
+<th>Assumption</th>
+<th>Consequence / source type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4% natural efficiency gain through macros and documentation</td>
+<td>€57,600/year = 144k × €10 × 4%; planning analogy, not verified trend</td>
+</tr>
+<tr>
+<td>Merchant/ticket growth +25%</td>
+<td>1,000 merchants and 15,000 tickets/month; scenario guess</td>
+</tr>
+<tr>
+<td>Four additional hires at €55k loaded cost</td>
+<td>€220k/year staffing scenario; do not add again to S2 benefits</td>
+</tr>
+<tr>
+<td>€35k baseline SLA penalties; +40% absent intervention</td>
+<td>€49k/year scenario; contracts and attribution unverified</td>
+</tr>
+</tbody>
+</table>
+<p>The baseline is not zero. S2 compares FlowAssist with this €57,600 efficiency value and the named €125,000/year Merchant Self-Serve Dispute &amp; Reconciliation Portal. Avoid counting growth, hiring avoidance and time savings as independent benefits without evidence.</p>
+<h2>P2 adaptation and scope</h2>
+<p>FlowAssist keeps P2's support investigation job. Initial MVP handles payment tracing; disputes, fraud and compliance route to specialists. No custom-idea pitch is required when using P2; the optional original pitch remains in the source archive.</p></section><section class="dense"><h1>04 · Governance and submission</h1><h2>Six provisional governance answers</h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Specific answer and check owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EU AI Act tier</td>
+<td>Internal tracing support; no credit/eligibility decision. Classification and applicable transparency duties require Legal review of actual intended use. Label drafts as AI-assisted.</td>
+</tr>
+<tr>
+<td>Whose data / legal basis?</td>
+<td>Merchant contacts and transaction data, currently synthetic only. DPO must assess purpose, data-subject relationship, contractual necessity or legitimate interests as applicable; no blanket B2B contract approval.</td>
+</tr>
+<tr>
+<td>Accountability / human</td>
+<td>Head of Payment Ops owns answer quality; human specialist reviews/sends; Engineering enforces access and gates. Organisation remains accountable.</td>
+</tr>
+<tr>
+<td>What must it never do?</td>
+<td>No customer sending, ledger/fund writes or unverified tenant/transaction disclosures. Model score never overrides a block.</td>
+</tr>
+<tr>
+<td>Explainable to whom?</td>
+<td>Specialist: facts, IDs, source timestamps and block reasons. Merchant: clear verified status. Authorised auditor: minimised versioned approval/gate metadata.</td>
+</tr>
+<tr>
+<td>People it cannot serve?</td>
+<td>Ambiguous/stale/missing evidence → context-only/manual handling. Dispute, KYC/fraud and unsupported language → named specialist, preserving authorised context.</td>
+</tr>
+</tbody>
+</table>
+<h2>Cost-of-error ownership</h2>
+<p>Routine rework is priced in S2, but wrong tracing matches can also expose financial data. Dispute misinformation and compliance disclosures create legal/reputational harm beyond operational expected losses. <strong>CCO/DPO</strong> assess data/legal incidents; <strong>Ops</strong> owns quality and specialist routing; <strong>Engineering</strong> owns deterministic authorization and draft shutdown. A second LLM is not a security guarantee.</p>
+<h2>Current control requirements</h2>
+<p>Tenant authorization must precede retrieval. Use parameterised read-only queries, exact transaction checks, redaction, source timestamps and human approval. Wrong-transaction disclosure, tenant exposure or attempted financial/customer action immediately disables drafting; Ops stops, Engineering enforces, DPO/CCO assesses the incident. Live access, provider terms, hosting, no-training/retention and legal classification remain to approve. No compliance certification is claimed.</p>
+<h2>Submission and evidence boundary</h2>
+<p>All numerical operating inputs above are course facts, derived values, decisions, analogies or guesses as marked; no actual PayFlow exports, time study, interviews or signed production terms are available. These statements supersede unsupported historical “measured” claims in the archived source files.</p>
+<p>The companion archive preserves README.md, 01_problem_statement.md, governance.md and the optional 00_pitch.md. The assignment requires at least two members to commit with their own accounts; PDF generation cannot supply or certify those contributions. Team alignment with Agentic Workflows must be confirmed by the team; the README currently records “no” for all five members.</p></section></body></html>

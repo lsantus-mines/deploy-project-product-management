@@ -8,9 +8,9 @@
 |---|---|---|
 | Lenny Santus | @lsantus-mines | no |
 | Anthony Rascle | @antotototototo18 | no |
-| Antoine Rabeau | @arabeau | no |
+| Antoine Rabeau | @antorabo75 | no |
 | Benjamin Caujolle | @BenjaminAHS | no |
-| Colin Sibieude | @csibieude | no |
+| Colin Sibieude | @csib-wq | no |
 
 ## Our agent
 - **Starting point:** Proposal P2 — Agent-assist copilot for a fintech (B2B payments).
@@ -42,6 +42,16 @@ One numbered file per session. Every member authors commits in at least four of 
 | `08_launch_memo.md` | S8 | upcoming | Final launch memo, go/no-go criteria, executive readout |
 | `product_brief.md` | final | upcoming | Consolidated deliverable for final oral defence |
 | `/prototype`, `/evals` | S3 → S4 | S3 surface/seed ready; pipeline pending | Deterministic local workflow now; live connectors and model evaluation remain S4 work |
+
+## Assignment PDFs
+
+Concise PDF editions, with required details and source archives:
+
+- [Assignment 1 — Team, agent and problem](Assignments/Assignment_1_Team_Agent_Problem.pdf) · 4 pages.
+- [Assignment 2 — Sizing and investment memo](Assignments/Assignment_2_Sizing_Investment_Memo.pdf) · 6 pages; one-page memo followed by the model annex.
+- [Assignment 3 — MVP brief and design loop](Assignments/Assignment_3_MVP_Brief_and_Design_Loop.pdf) · 19 pages; one-page briefs/canvas and all 20 evaluation cases.
+
+[Package notes and original-format archives](Assignments/README.md). Outstanding participant research, human label review and individual Git contributions are explicitly identified; PDF packaging does not establish their completion. Team handles: Antoine **@antorabo75**, Colin **@csib-wq**.
 
 ## Assignment 3 — delivery v2 · 3 November 2026
 

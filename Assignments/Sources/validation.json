@@ -1,0 +1,411 @@
+{
+  "1": {
+    "file": "Assignment_1_Team_Agent_Problem.pdf",
+    "pages": 4,
+    "headings": [
+      [
+        1,
+        "Your team, your agent,your problem"
+      ],
+      [
+        1,
+        "Team and agent"
+      ],
+      [
+        1,
+        "Problem in one sentence"
+      ],
+      [
+        1,
+        "Assumption register"
+      ],
+      [
+        2,
+        "02 \u00b7 Diagnosis and AI choice"
+      ],
+      [
+        2,
+        "Journey and the two pain steps"
+      ],
+      [
+        2,
+        "Problem tree and five Whys"
+      ],
+      [
+        2,
+        "Is AI the right tool?"
+      ],
+      [
+        2,
+        "Four selection questions"
+      ],
+      [
+        3,
+        "03 \u00b7 Hypotheses and baseline"
+      ],
+      [
+        3,
+        "Working backwards \u2014 fictional launch release"
+      ],
+      [
+        3,
+        "Three hypotheses that must be true"
+      ],
+      [
+        3,
+        "Do nothing over 12 months"
+      ],
+      [
+        3,
+        "P2 adaptation and scope"
+      ],
+      [
+        4,
+        "04 \u00b7 Governance and submission"
+      ],
+      [
+        4,
+        "Six provisional governance answers"
+      ],
+      [
+        4,
+        "Cost-of-error ownership"
+      ],
+      [
+        4,
+        "Current control requirements"
+      ],
+      [
+        4,
+        "Submission and evidence boundary"
+      ]
+    ],
+    "overflow": []
+  },
+  "2": {
+    "file": "Assignment_2_Sizing_Investment_Memo.pdf",
+    "pages": 6,
+    "headings": [
+      [
+        1,
+        "Investment memo"
+      ],
+      [
+        2,
+        "Model and assumption register"
+      ],
+      [
+        2,
+        "02 \u00b7 Scenario economics"
+      ],
+      [
+        2,
+        "03 \u00b7 Seven cost lines and sensitivity"
+      ],
+      [
+        3,
+        "Inputs \u2014 Volume and human cost"
+      ],
+      [
+        3,
+        "Inputs \u2014 Categories, eligibility, success and errors"
+      ],
+      [
+        4,
+        "Inputs \u2014 Adoption and variable AI cost"
+      ],
+      [
+        4,
+        "Inputs \u2014 Fixed costs, comparisons and probabilities"
+      ],
+      [
+        5,
+        "05 \u00b7 Build, buy or orchestrate"
+      ],
+      [
+        6,
+        "06 \u00b7 Price check \u2014 6 November 2026"
+      ]
+    ],
+    "overflow": []
+  },
+  "3": {
+    "file": "Assignment_3_MVP_Brief_and_Design_Loop.pdf",
+    "pages": 19,
+    "headings": [
+      [
+        1,
+        "Product brief \u00b7 v2"
+      ],
+      [
+        1,
+        "1. Problem, user, do-nothing"
+      ],
+      [
+        1,
+        "2. The process \u2014 as-is and to-be"
+      ],
+      [
+        1,
+        "3. Features \u2014 RICE and MoSCoW"
+      ],
+      [
+        1,
+        "4. Data"
+      ],
+      [
+        1,
+        "5. Model \u2014 one rung per part"
+      ],
+      [
+        1,
+        "6. Where it lives"
+      ],
+      [
+        1,
+        "7. Success criterion"
+      ],
+      [
+        1,
+        "8. Risks and rollback trigger"
+      ],
+      [
+        1,
+        "9. What the users changed"
+      ],
+      [
+        1,
+        "10. What users could not decide"
+      ],
+      [
+        2,
+        "AI Lean Canvas \u00b7 v2"
+      ],
+      [
+        3,
+        "Product brief \u00b7 archived v1"
+      ],
+      [
+        3,
+        "1. Problem, user, do-nothing"
+      ],
+      [
+        3,
+        "2. The process \u2014 as-is and to-be"
+      ],
+      [
+        3,
+        "3. Features \u2014 RICE and MoSCoW"
+      ],
+      [
+        3,
+        "4. Data"
+      ],
+      [
+        3,
+        "5. Model \u2014 one rung per part"
+      ],
+      [
+        3,
+        "6. Where it lives"
+      ],
+      [
+        3,
+        "7. Success criterion"
+      ],
+      [
+        3,
+        "8. Risks and rollback trigger"
+      ],
+      [
+        3,
+        "9. What the users changed"
+      ],
+      [
+        3,
+        "10. What users could not decide"
+      ],
+      [
+        4,
+        "Process, features and component model"
+      ],
+      [
+        4,
+        "2. Process \u2014 as-is \u2192 to-be"
+      ],
+      [
+        4,
+        "3. Features \u2014 RICE and MoSCoW"
+      ],
+      [
+        5,
+        "4. Data"
+      ],
+      [
+        5,
+        "5. Model \u2014 smallest rung per component"
+      ],
+      [
+        6,
+        "Design loop, prototype and acceptance tasks"
+      ],
+      [
+        6,
+        "1. Target users and concrete work situations"
+      ],
+      [
+        6,
+        "2. Design findings and decisions"
+      ],
+      [
+        6,
+        "3. v1 \u2192 v2 decision log"
+      ],
+      [
+        7,
+        "4. Two reproducible task scenarios"
+      ],
+      [
+        7,
+        "5. What the users changed / could not decide"
+      ],
+      [
+        7,
+        "6. Decision"
+      ],
+      [
+        7,
+        "Prototype and original prompt"
+      ],
+      [
+        8,
+        "Spec skeleton and measurement plan"
+      ],
+      [
+        8,
+        "User, trigger and scope"
+      ],
+      [
+        8,
+        "Input / output contract"
+      ],
+      [
+        8,
+        "Deterministic gates and state"
+      ],
+      [
+        8,
+        "Edge cases and fallback"
+      ],
+      [
+        8,
+        "Done criterion and denominator"
+      ],
+      [
+        8,
+        "Seed origin and freeze"
+      ],
+      [
+        9,
+        "Data audit and governance"
+      ],
+      [
+        9,
+        "Six-question data audit"
+      ],
+      [
+        11,
+        "Evaluation policy and all 20 cases"
+      ],
+      [
+        12,
+        "Input-generation recipe and review status"
+      ],
+      [
+        12,
+        "F01 \u00b7 en | SMB | EU | SEPA EUR | routine"
+      ],
+      [
+        12,
+        "F02 \u00b7 fr | Enterprise | EU | SEPA EUR | routine"
+      ],
+      [
+        13,
+        "F03 \u00b7 de | Enterprise | EU | SWIFT USD | routine"
+      ],
+      [
+        13,
+        "F04 \u00b7 en | SMB | EU | SEPA EUR | routine"
+      ],
+      [
+        13,
+        "F05 \u00b7 fr | SMB | EU | SEPA EUR | urgent"
+      ],
+      [
+        14,
+        "F06 \u00b7 de | SMB | EU | SEPA EUR | routine"
+      ],
+      [
+        14,
+        "F07 \u00b7 en | Enterprise | EU | SEPA EUR | critical"
+      ],
+      [
+        14,
+        "F08 \u00b7 en | SMB | EU | SWIFT USD | critical"
+      ],
+      [
+        15,
+        "F09 \u00b7 fr | Enterprise | EU | SEPA EUR | urgent"
+      ],
+      [
+        15,
+        "F10 \u00b7 en | Enterprise | EU | SEPA EUR | critical"
+      ],
+      [
+        15,
+        "F11 \u00b7 en | SMB | EU | SWIFT USD | urgent"
+      ],
+      [
+        16,
+        "F12 \u00b7 pt | SMB | EU | SEPA EUR | routine"
+      ],
+      [
+        16,
+        "F13 \u00b7 en | Enterprise | EU | SWIFT USD | urgent"
+      ],
+      [
+        16,
+        "F14 \u00b7 fr | SMB | EU | SEPA EUR | routine"
+      ],
+      [
+        17,
+        "F15 \u00b7 en | Enterprise | EU | card EUR | urgent"
+      ],
+      [
+        17,
+        "F16 \u00b7 de | Enterprise | EU | SEPA EUR | critical"
+      ],
+      [
+        17,
+        "F17 \u00b7 fr | SMB | EU | SEPA EUR | urgent"
+      ],
+      [
+        18,
+        "F18 \u00b7 en | SMB | EU | SEPA EUR | critical"
+      ],
+      [
+        18,
+        "F19 \u00b7 de | SMB | EU | SEPA EUR | critical"
+      ],
+      [
+        18,
+        "F20 \u00b7 en | Enterprise | EU | SEPA EUR | urgent"
+      ],
+      [
+        18,
+        "Submission checklist and unresolved requirements"
+      ]
+    ],
+    "overflow": []
+  }
+}
