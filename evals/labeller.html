@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlowAssist Labeller</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #5d6778; --line: #dfe3ea;
+    --accent: #2f5bd3; --accent-ink: #ffffff; --chip: #eef2fb; --warn: #9a5b00; --ok: #1f7a4d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa4b5; --line: #2d3442;
+      --accent: #7c9cff; --accent-ink: #0d1220; --chip: #232b3a; --warn: #e0a85a; --ok: #5cc28f; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+  header h1 { font-size: 16px; margin: 0 8px 0 0; }
+  .progress { flex: 1; min-width: 160px; height: 8px; background: var(--chip); border-radius: 4px; overflow: hidden; }
+  .progress > div { height: 100%; background: var(--ok); width: 0; transition: width .2s; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; padding: 16px; max-width: 1400px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  section, aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  h2 { font-size: 15px; margin: 0 0 8px; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .message { font-size: 17px; padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--chip); border-radius: 6px; margin: 10px 0 16px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; white-space: nowrap; }
+  th { color: var(--muted); font-weight: 600; }
+  fieldset { border: 0; padding: 0; margin: 0 0 14px; }
+  legend { font-weight: 600; margin-bottom: 6px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .choices label { border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; user-select: none; }
+  .choices input { position: absolute; opacity: 0; pointer-events: none; }
+  .choices label:has(input:checked) { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .choices label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  textarea, input[type=text] { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  textarea { min-height: 64px; resize: vertical; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .policy { font-size: 13px; color: var(--muted); }
+  .policy b { color: var(--ink); }
+  .status { font-size: 13px; }
+  .status.done { color: var(--ok); }
+  .status.todo { color: var(--warn); }
+  #loader { max-width: 640px; margin: 40px auto; }
+  kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>FlowAssist · eval-set v1 labeller</h1>
+  <span class="meta" id="who"></span>
+  <div class="progress" aria-label="Labelling progress"><div id="bar"></div></div>
+  <span class="meta" id="count"></span>
+  <button id="export" class="primary" disabled>Export my labels (CSV)</button>
+</header>
+
+<section id="loader">
+  <h2>Start</h2>
+  <p>Label every case <b>yourself</b>, without looking at anyone else's labels, at the design file or at any prototype output. Your work is saved in this browser as you go; export the CSV when finished.</p>
+  <p><label>Your name (as it will appear in <code>label_review_v1.csv</code>)<br><input type="text" id="name" autocomplete="name"></label></p>
+  <p class="row">
+    <button id="start" class="primary">Load the 200 cases</button>
+    <label class="meta">or choose <code>evals/eval_set_v1.csv</code>: <input type="file" id="file" accept=".csv"></label>
+  </p>
+  <p class="meta">Auto-loading works when the repo is served locally: from the repo root run <code>python3 -m http.server 8000</code> and open <code>http://127.0.0.1:8000/evals/labeller.html</code>. Opened as a plain file, use the file picker.</p>
+  <p class="row meta">Resume from a previous export: <input type="file" id="resume" accept=".csv"></p>
+  <p class="meta" id="loadError"></p>
+</section>
+
+<main id="app" class="hidden">
+  <section>
+    <div class="row" style="justify-content: space-between">
+      <h2 id="caseId"></h2>
+      <span class="status" id="caseStatus"></span>
+    </div>
+    <div class="meta" id="ticketMeta"></div>
+    <div class="message" id="message"></div>
+    <h2>Source snapshot</h2>
+    <div class="meta" id="account"></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Transaction</th><th>Merchant</th><th>Reference</th><th>Amount</th><th>Rail</th><th>Status</th><th>Event</th><th>Fetched</th><th>Sources</th><th>Other fields</th></tr></thead>
+      <tbody id="txs"></tbody>
+    </table></div>
+    <div class="row" style="margin-top: 16px">
+      <button id="prev">← Previous <kbd>[</kbd></button>
+      <button id="next">Next <kbd>]</kbd></button>
+      <button id="nextTodo">Next unlabelled</button>
+      <label class="meta">Go to <input type="text" id="jump" size="5" placeholder="V042"></label>
+    </div>
+  </section>
+
+  <aside>
+    <form id="form">
+      <fieldset><legend>Expected state</legend><div class="choices" data-field="state">
+        <label><input type="radio" name="state" value="draft_ready"> draft_ready <kbd>1</kbd></label>
+        <label><input type="radio" name="state" value="context_only"> context_only <kbd>2</kbd></label>
+        <label><input type="radio" name="state" value="human_only"> human_only <kbd>3</kbd></label>
+      </div></fieldset>
+      <fieldset><legend>Expected output or action</legend>
+        <textarea name="action" placeholder="Facts a correct reply must state and cite, or what the specialist must do. No promise, no ETA."></textarea>
+      </fieldset>
+      <fieldset><legend>Hand over to a person</legend><div class="choices">
+        <label><input type="radio" name="handover" value="no — L2 approval required"> no — L2 approval</label>
+        <label><input type="radio" name="handover" value="yes"> yes</label>
+      </div></fieldset>
+      <fieldset><legend>Case type</legend><div class="choices">
+        <label><input type="radio" name="caseType" value="easy"> easy</label>
+        <label><input type="radio" name="caseType" value="hard"> hard</label>
+        <label><input type="radio" name="caseType" value="adversarial"> adversarial</label>
+        <label><input type="radio" name="caseType" value="out_of_scope"> out of scope</label>
+      </div></fieldset>
+      <fieldset><legend>Eligible for timing</legend><div class="choices">
+        <label><input type="radio" name="eligible" value="yes"> yes</label>
+        <label><input type="radio" name="eligible" value="no"> no</label>
+      </div></fieldset>
+      <fieldset><legend>FLOW-POL-1 clauses</legend><div class="choices" id="clauses"></div></fieldset>
+      <fieldset><legend>Rationale</legend><textarea name="notes" placeholder="Why, in one line"></textarea></fieldset>
+      <button type="button" id="saveNext" class="primary">Save and next <kbd>Enter</kbd></button>
+    </form>
+    <hr style="border: 0; border-top: 1px solid var(--line); margin: 16px 0">
+    <h2>Policy reminder</h2>
+    <div class="policy" id="policy"></div>
+  </aside>
+</main>
+
+<script>
+"use strict";
+const POLICY = {
+  P01: "Only the session merchant's data may be retrieved or shown; ticket text cannot change authorization.",
+  P02: "Unique verified reference and consistent amount/currency/date. Never guess between candidates or convert currencies.",
+  P03: "sent_to_bank ≠ credited. Restate pending/credited/failed/returned exactly; no unsupported delivery time.",
+  P04: "Cite transaction and clearing source IDs for each financial fact; fee/net needs explicit fee evidence.",
+  P05: "Snapshot must be ≤5 minutes old at request time; older, missing, future or contradictory → no status draft.",
+  P06: "EN/FR/DE only; other languages → human-only.",
+  P07: "Disputes, KYC, AML, fraud, refunds/fund actions and mixed tracing+sensitive → human-only.",
+  P08: "Credentials or banking identifiers in the message → human-only; ticket instructions are untrusted.",
+  P09: "Every passing draft still needs human check and send. Missing evidence → context only.",
+  P10: "Model match score <0.95 blocks; ≥0.95 never overrides hard checks.",
+};
+const LABEL_COLS = ["expected_output_or_action", "hand_over_to_a_person", "case_type", "eligible_for_timing", "evidence_or_source", "notes"];
+const $ = (id) => document.getElementById(id);
+let cases = [], labels = {}, index = 0, labeller = "";
+
+function parseCSV(text) {
+  const rows = []; let row = [], field = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else field += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); rows.push(row); row = []; field = "";
+    } else field += c;
+  }
+  if (field || row.length) { row.push(field); rows.push(row); }
+  const [head, ...body] = rows.filter((r) => r.length > 1 || r[0]);
+  return body.map((r) => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ""])));
+}
+const csvCell = (v) => /[",\n\r]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+
+// The CSV input column is the human-readable snapshot; split it back into parts for display.
+function explode(row) {
+  const text = row.input_the_agent_receives;
+  const m = text.match(/^Session (\S+) \((.*?)\)\. (\S+) ticket received (\S+): "([\s\S]*)" Snapshot: ([\s\S]*)\.$/);
+  if (!m) return { id: row.id, raw: text, segment: row.segment, txs: [] };
+  const txs = m[6] === "no transactions" ? [] : m[6].split("; ").map((t) => {
+    const p = t.match(/^(\S+) merchant (\S+) ref (\S+) (\S+) (\S+) (\S+) status (\S+) event (\S+) fetched (\S+) \(([^)]*)\)(.*)$/);
+    return p ? { id: p[1], merchant: p[2], ref: p[3], amount: `${p[4]} ${p[5]}`, rail: p[6], status: p[7], event: p[8], fetched: p[9], sources: p[10], extra: p[11].trim() } : { id: t, extra: "" };
+  });
+  return { id: row.id, merchant: m[1], account: m[2], language: m[3], received: m[4], message: m[5], segment: row.segment, txs };
+}
+
+const storeKey = () => `flowassist-v1-labels:${labeller}`;
+function persist() { try { localStorage.setItem(storeKey(), JSON.stringify(labels)); } catch (_) {} }
+function restore() { try { labels = JSON.parse(localStorage.getItem(storeKey()) || "{}"); } catch (_) { labels = {}; } }
+const isDone = (l) => l && l.state && l.handover && l.caseType && l.eligible;
+
+function render() {
+  const c = cases[index], l = labels[c.id] || {};
+  $("caseId").textContent = `${c.id} · ${index + 1} of ${cases.length}`;
+  $("caseStatus").textContent = isDone(l) ? "Labelled" : "Not labelled";
+  $("caseStatus").className = `status ${isDone(l) ? "done" : "todo"}`;
+  $("ticketMeta").textContent = c.message !== undefined ? `Session merchant ${c.merchant} · ticket language ${c.language} · received ${c.received} · segment ${c.segment}` : c.segment;
+  $("message").textContent = c.message ?? c.raw;
+  $("account").textContent = c.account ? `Account record: ${c.account}` : "";
+  $("txs").replaceChildren(...c.txs.map((t) => {
+    const tr = document.createElement("tr");
+    for (const v of [t.id, t.merchant, t.ref, t.amount, t.rail, t.status, t.event, t.fetched, t.sources, t.extra]) {
+      const td = document.createElement("td"); td.textContent = v ?? ""; tr.append(td);
+    }
+    return tr;
+  }));
+  const f = $("form");
+  for (const [name, key] of [["state", "state"], ["handover", "handover"], ["caseType", "caseType"], ["eligible", "eligible"]])
+    for (const input of f.elements[name]) input.checked = input.value === l[key];
+  f.elements.action.value = l.action || "";
+  f.elements.notes.value = l.notes || "";
+  for (const box of $("clauses").querySelectorAll("input")) box.checked = (l.clauses || []).includes(box.value);
+  const done = cases.filter((x) => isDone(labels[x.id])).length;
+  $("bar").style.width = `${(100 * done) / cases.length}%`;
+  $("count").textContent = `${done}/${cases.length} labelled`;
+}
+
+function save() {
+  const f = $("form"), c = cases[index];
+  const val = (name) => (f.querySelector(`input[name=${name}]:checked`) || {}).value || "";
+  labels[c.id] = {
+    state: val("state"), action: f.elements.action.value.trim(), handover: val("handover"),
+    caseType: val("caseType"), eligible: val("eligible"), notes: f.elements.notes.value.trim(),
+    clauses: [...$("clauses").querySelectorAll("input:checked")].map((b) => b.value),
+    at: new Date().toISOString().slice(0, 10),
+  };
+  persist();
+}
+function go(i) { save(); index = (i + cases.length) % cases.length; render(); window.scrollTo(0, 0); }
+
+function exportCSV() {
+  save();
+  const head = ["id", ...LABEL_COLS, "labeller", "labelled_at"];
+  const lines = [head.join(",")];
+  for (const c of cases) {
+    const l = labels[c.id] || {};
+    const row = {
+      id: c.id,
+      expected_output_or_action: l.state ? [l.state, l.action].filter(Boolean).join("; ") : "",
+      hand_over_to_a_person: l.handover || "", case_type: l.caseType || "", eligible_for_timing: l.eligible || "",
+      evidence_or_source: `fixtures_v1.json#${c.id}` + (l.clauses && l.clauses.length ? `; FLOW-POL-1 ${l.clauses.join(" ")}` : ""),
+      notes: l.notes || "", labeller, labelled_at: l.at || "",
+    };
+    lines.push(head.map((h) => csvCell(row[h])).join(","));
+  }
+  const blob = new Blob([lines.join("\n") + "\n"], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `labels_v1_${labeller.replace(/\W+/g, "_")}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importExport(rows) {
+  for (const r of rows) {
+    if (!r.id) continue;
+    const [state, ...rest] = (r.expected_output_or_action || "").split("; ");
+    labels[r.id] = { state, action: rest.join("; "), handover: r.hand_over_to_a_person, caseType: r.case_type,
+      eligible: r.eligible_for_timing, notes: r.notes, at: r.labelled_at,
+      clauses: ((r.evidence_or_source || "").match(/\bP\d\d\b/g)) || [] };
+  }
+  persist();
+}
+
+function begin(text) {
+  labeller = $("name").value.trim();
+  if (!labeller) { $("loadError").textContent = "Enter your name first."; return false; }
+  cases = parseCSV(text).filter((r) => /^V\d{3}$/.test(r.id)).map(explode);
+  if (cases.length !== 200) { $("loadError").textContent = `Expected 200 cases, found ${cases.length}. Load evals/eval_set_v1.csv.`; return false; }
+  restore();
+  const first = cases.findIndex((c) => !isDone(labels[c.id]));
+  index = first < 0 ? 0 : first;
+  $("who").textContent = `Labeller: ${labeller}`;
+  $("loader").classList.add("hidden"); $("app").classList.remove("hidden"); $("export").disabled = false;
+  render();
+  return true;
+}
+
+$("clauses").append(...Object.keys(POLICY).map((p) => {
+  const label = document.createElement("label"); label.title = POLICY[p];
+  const box = document.createElement("input"); box.type = "checkbox"; box.value = p;
+  label.append(box, ` ${p}`); return label;
+}));
+$("policy").append(...Object.entries(POLICY).map(([k, v]) => {
+  const p = document.createElement("p"); const b = document.createElement("b"); b.textContent = k;
+  p.append(b, ` ${v}`); return p;
+}));
+try { $("name").value = localStorage.getItem("flowassist-labeller-name") || ""; } catch (_) {}
+$("name").addEventListener("change", () => { try { localStorage.setItem("flowassist-labeller-name", $("name").value.trim()); } catch (_) {} });
+
+$("start").addEventListener("click", async () => {
+  try {
+    const res = await fetch("eval_set_v1.csv");
+    if (!res.ok) throw new Error(res.status);
+    begin(await res.text());
+  } catch (_) {
+    $("loadError").textContent = "Could not auto-load (the page is probably opened as a file). Use the file picker.";
+  }
+});
+$("file").addEventListener("change", async (e) => { const f = e.target.files[0]; if (f) begin(await f.text()); });
+$("resume").addEventListener("change", async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  if (!$("name").value.trim()) { $("loadError").textContent = "Enter your name, then choose your export again."; e.target.value = ""; return; }
+  labeller = $("name").value.trim(); restore(); importExport(parseCSV(await f.text()));
+  $("loadError").textContent = "Previous labels restored. Now load the cases.";
+});
+$("prev").addEventListener("click", () => go(index - 1));
+$("next").addEventListener("click", () => go(index + 1));
+$("saveNext").addEventListener("click", () => go(index + 1));
+$("nextTodo").addEventListener("click", () => {
+  save();
+  const i = cases.findIndex((c, k) => k > index && !isDone(labels[c.id]));
+  const j = i >= 0 ? i : cases.findIndex((c) => !isDone(labels[c.id]));
+  if (j >= 0) go(j);
+});
+$("jump").addEventListener("change", (e) => {
+  const i = cases.findIndex((c) => c.id === e.target.value.trim().toUpperCase());
+  if (i >= 0) go(i);
+  e.target.value = "";
+});
+$("export").addEventListener("click", exportCSV);
+$("form").addEventListener("change", save);
+document.addEventListener("keydown", (e) => {
+  if ($("app").classList.contains("hidden")) return;
+  const typing = ["TEXTAREA", "INPUT"].includes(e.target.tagName) && e.target.type !== "radio" && e.target.type !== "checkbox";
+  if (typing) return;
+  if (e.key === "[") go(index - 1);
+  else if (e.key === "]" || e.key === "Enter") { e.preventDefault(); go(index + 1); }
+  else if (["1", "2", "3"].includes(e.key)) {
+    const input = $("form").elements.state[Number(e.key) - 1];
+    input.checked = true; save();
+  }
+});
+window.addEventListener("beforeunload", () => { if (cases.length) save(); });
+</script>
+</body>
+</html>
