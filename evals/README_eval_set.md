@@ -35,6 +35,14 @@ Swap blocks freely, but keep both the table and the `TEAM` order in `labeller.ht
 3. Commit the agreed labels with your own accounts, then tag the commit `eval-v1`. From then on, never change a label to match an output.
 4. Only then add a v1 runner and run it. Any case read while changing the engine becomes development data and must be named in the report.
 
+### Fast review without a server
+
+Run `python3 scripts/package_lenny_review.py /tmp/FlowAssist-Lenny.html`, then open that HTML file directly in a browser. It includes only Lenny's 44 inputs and his 40 disclosed AI proposals. No server, login or file picker is needed. The four shared cases remain blank. The same compact view is available through the **Vue rapide** button in the regular labeller.
+
+Review the ticket, the source cards (including snapshot age) and the proposed decision; choose **Valider et suivant** or **Corriger**. Each acceptance saves one case. Navigation, skipping, export and closing the page never accept proposals. Corrections are saved only with **Save and next**. Progress is stored in that browser; export the CSV before switching browsers or moving the file. The CSV keeps the existing merge format and accepted/corrected AI provenance.
+
+`node --test scripts/test_labeller.cjs` checks acceptance, navigation, persistence, CSV provenance and blank shared cases in a DOM harness; it is not browser rendering evidence. No engine is run on v1.
+
 `python3 scripts/verify_eval_v1.py` checks structure and coverage without running the engine.
 
 # Session 4 status — 9 November 2026

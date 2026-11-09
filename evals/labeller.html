@@ -49,6 +49,20 @@
   #loader { max-width: 640px; margin: 40px auto; }
   kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
   .ai { margin: 6px 0 10px; padding: 8px 12px; border-radius: 6px; border: 1px dashed var(--warn); color: var(--warn); font-size: 13px; }
+  body.quick main { grid-template-columns: minmax(0, 1fr) minmax(320px, 440px); }
+  body.quick #guide, body.quick #policy, body.quick #policyTitle { display: none; }
+  #quickSources { display: none; }
+  body.quick #quickSources { display: grid; gap: 8px; }
+  body.quick .table-wrap { display: none; }
+  .source-card { padding: 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; overflow-wrap: anywhere; }
+  .source-card.foreign { border-color: var(--warn); }
+  .source-card p { margin: 3px 0; }
+  body.quick .message { font-size: 15px; margin-bottom: 10px; }
+  body.quick aside { align-self: start; position: sticky; top: 70px; }
+  #quickSummary { background: var(--chip); padding: 12px; border-radius: 6px; white-space: pre-wrap; }
+  #quickActions { position: sticky; bottom: 0; background: var(--panel); padding: 12px 0; }
+  td.foreign { color: var(--warn); font-weight: bold; }
+  @media (max-width: 900px) { body.quick main { grid-template-columns: 1fr; } body.quick aside { position: static; } }
   .hidden { display: none !important; }
 </style>
 </head>
@@ -57,13 +71,13 @@
   <h1>FlowAssist · eval-set v1 labeller</h1>
   <span class="meta" id="who"></span>
   <div class="progress" aria-label="Labelling progress"><div id="bar"></div></div>
-  <span class="meta" id="count"></span>
+  <span class="meta" id="count"></span><button id="quickToggle">Vue rapide</button>
   <button id="export" class="primary" disabled>Export my labels (CSV)</button>
 </header>
 
 <section id="loader">
   <h2>Start</h2>
-  <p>Label every case <b>yourself</b>, without looking at anyone else's labels, at the design file or at any prototype output. Your work is saved in this browser as you go; export the CSV when finished.</p>
+  <p>Label every case <b>yourself</b>, without looking at anyone else's labels, at the design file or at any prototype output. Use Save and next to record each decision in this browser; navigation and export do not accept a proposal. Export the CSV when finished.</p>
   <p><label>Who are you?<br>
     <select id="member">
       <option value="">Choose…</option>
@@ -92,6 +106,7 @@
     <div class="message" id="message"></div>
     <h2>Source snapshot</h2>
     <div class="meta" id="account"></div>
+    <div id="quickSources"></div>
     <div class="table-wrap"><table>
       <thead><tr><th>Transaction</th><th>Merchant</th><th>Reference</th><th>Amount</th><th>Rail</th><th>Status</th><th>Event</th><th>Fetched</th><th>Sources</th><th>Other fields</th></tr></thead>
       <tbody id="txs"></tbody>
@@ -117,6 +132,11 @@
       <p class="policy">All yes → <b>draft_ready</b>: write the facts the reply must state (transaction, amount, exact status, event time, LED/CLE citations, no promised date). Remember: sent_to_bank ≠ credited. Handover is "no — L2 approval" only for draft_ready. Eligible for timing = yes only for draft_ready tracing. Label what a <b>correct</b> assistant should do, not what the prototype does.</p>
     </details>
     <hr style="border: 0; border-top: 1px solid var(--line); margin: 12px 0">
+    <div id="quickPanel" class="hidden">
+      <h2>Décision proposée</h2><p id="quickSummary"></p>
+      <p class="meta">Compare avec le ticket et les sources à gauche. Une validation enregistre uniquement ce cas. Après correction, utilise « Save and next » pour enregistrer.</p>
+      <div id="quickActions" class="row"><button id="acceptQuick" class="primary">Valider et suivant · Entrée</button><button id="editQuick">Corriger</button><button id="skipQuick">Passer</button></div>
+    </div>
     <form id="form">
       <fieldset><legend>Expected state</legend><div class="choices" data-field="state">
         <label><input type="radio" name="state" value="draft_ready"> draft_ready <kbd>1</kbd></label>
@@ -145,7 +165,7 @@
       <button type="button" id="saveNext" class="primary">Save and next <kbd>Enter</kbd></button>
     </form>
     <hr style="border: 0; border-top: 1px solid var(--line); margin: 16px 0">
-    <h2>Policy reminder</h2>
+    <h2 id="policyTitle">Policy reminder</h2>
     <div class="policy" id="policy"></div>
   </aside>
 </main>
@@ -167,14 +187,22 @@ const POLICY = {
 const LABEL_COLS = ["expected_output_or_action", "hand_over_to_a_person", "case_type", "eligible_for_timing", "evidence_or_source", "notes"];
 const $ = (id) => document.getElementById(id);
 let cases = [], labels = {}, index = 0, labeller = "", proposals = {};
+let quick = new URLSearchParams(location.search).get("quick") === "1";
+const offline = globalThis.FLOW_REVIEW_BUNDLE;
+if (offline) quick = true;
 
 // Optional AI-proposed labels (evals/proposals_v1_<name>.csv). Shown for review only; each one
 // becomes a label when the labeller saves the case, and the export records accepted vs corrected.
 async function loadProposals() {
   try {
-    const res = await fetch(`proposals_v1_${labeller}.csv`);
-    if (!res.ok) return;
-    for (const p of parseCSV(await res.text())) {
+    let proposalText;
+    if (offline) proposalText = offline.proposals;
+    else {
+      const res = await fetch(`proposals_v1_${labeller}.csv`);
+      if (!res.ok) return;
+      proposalText = await res.text();
+    }
+    for (const p of parseCSV(proposalText)) {
       const draft = p.state === "draft_ready";
       proposals[p.id] = { state: p.state, action: p.action, caseType: p.case_type, notes: p.notes,
         handover: draft ? "no — L2 approval required" : "yes", eligible: draft ? "yes" : "no",
@@ -239,6 +267,12 @@ const isDone = (l) => l && l.state && l.handover && l.caseType && l.eligible;
 
 function render() {
   const c = cases[index], p = proposals[c.id], l = labels[c.id] || p || {};
+  document.body.classList.toggle("quick", quick);
+  $("quickToggle").textContent = quick ? "Formulaire complet" : "Vue rapide";
+  $("quickPanel").classList.toggle("hidden", !quick || !l.state);
+  $("form").classList.toggle("hidden", quick && !!l.state);
+  $("quickSummary").textContent = `${({draft_ready:"Brouillon autorisé après contrôle humain",context_only:"Demander une clarification ou des sources fiables",human_only:"Traitement par une personne"})[l.state] || ""} (${l.state || ""})\n\n${l.notes || ""}\n\n${l.action || ""}\n\n${l.caseType || ""} · Transmission : ${l.handover || ""} · Chronométrage : ${l.eligible || ""}\n${(l.clauses || []).join(" · ")}`;
+  $("acceptQuick").textContent = index === cases.length - 1 ? "Valider ce dernier cas · Entrée" : "Valider et suivant · Entrée";
   $("caseId").textContent = `${c.id} · ${index + 1} of ${cases.length}`;
   $("aiBanner").classList.toggle("hidden", !p);
   $("aiBanner").textContent = !p ? "" : labels[c.id]
@@ -252,10 +286,24 @@ function render() {
   $("account").textContent = c.account ? `Account record: ${c.account}` : "";
   $("txs").replaceChildren(...c.txs.map((t) => {
     const tr = document.createElement("tr");
-    for (const v of [t.id, t.merchant, t.ref, t.amount, t.rail, t.status, t.event, t.fetched, t.sources, t.extra]) {
-      const td = document.createElement("td"); td.textContent = v ?? ""; tr.append(td);
+    for (const v of [t.id, t.merchant, t.ref, t.amount, t.rail, t.status, t.event, `${t.fetched} (${Math.round((Date.parse(c.received) - Date.parse(t.fetched)) / 1000)} s)`, t.sources, t.extra]) {
+      const td = document.createElement("td"); td.textContent = v ?? ""; if (t.merchant !== c.merchant) td.classList.add("foreign"); tr.append(td);
     }
     return tr;
+  }));
+  $("quickSources").replaceChildren(...c.txs.map((t) => {
+    const card = document.createElement("div"); card.className = "source-card";
+    const age = (Date.parse(c.received) - Date.parse(t.fetched)) / 1000;
+    const lines = [
+      `${t.id} · ${t.ref} · ${t.merchant === c.merchant ? "Compte autorisé" : "AUTRE COMPTE : " + t.merchant}`,
+      `${t.amount} · ${t.status} · ${t.rail}`,
+      `Événement : ${t.event}`,
+      `Source reçue : ${t.fetched} · âge ${Number.isFinite(age) ? age + " s" : "invalide"}${age > 300 || age < 0 ? " — hors délai" : ""}`,
+      `${t.sources}${t.extra ? " · " + t.extra : ""}`
+    ];
+    if (t.merchant !== c.merchant) card.classList.add("foreign");
+    for (const text of lines) { const line = document.createElement("p"); line.textContent = text; card.append(line); }
+    return card;
   }));
   const f = $("form");
   for (const [name, key] of [["state", "state"], ["handover", "handover"], ["caseType", "caseType"], ["eligible", "eligible"]])
@@ -281,10 +329,9 @@ function save() {
   if (p) labels[c.id].origin = fingerprint(labels[c.id]) === fingerprint(p) ? "AI-proposed, accepted" : "AI-proposed, corrected";
   persist();
 }
-function go(i) { save(); index = (i + cases.length) % cases.length; render(); window.scrollTo(0, 0); }
+function go(i) { index = (i + cases.length) % cases.length; render(); window.scrollTo(0, 0); }
 
 function exportCSV() {
-  save();
   const head = ["id", ...LABEL_COLS, "labeller", "labelled_at", "label_origin"];
   const lines = [head.join(",")];
   for (const c of cases) {
@@ -323,7 +370,7 @@ function begin(text) {
   labeller = chosenName();
   if (!labeller) { $("loadError").textContent = "Choose who you are first."; return false; }
   const all = parseCSV(text).filter((r) => /^V\d{3}$/.test(r.id)).map(explode);
-  if (all.length !== 200) { $("loadError").textContent = `Expected 200 cases, found ${all.length}. Load evals/eval_set_v1.csv.`; return false; }
+  if (all.length !== (offline ? 44 : 200)) { $("loadError").textContent = `Expected 200 cases, found ${all.length}. Load evals/eval_set_v1.csv.`; return false; }
   const scope = scopeFor(labeller);
   cases = scope ? all.filter((c) => scope.ids.has(c.id)) : all;
   restore();
@@ -379,9 +426,23 @@ $("resume").addEventListener("change", async (e) => {
 });
 $("prev").addEventListener("click", () => go(index - 1));
 $("next").addEventListener("click", () => go(index + 1));
-$("saveNext").addEventListener("click", () => go(index + 1));
-$("nextTodo").addEventListener("click", () => {
+function acceptAndNext() {
+  const f = $("form");
+  if (!["state", "handover", "caseType", "eligible"].every((key) => f.querySelector(`input[name=${key}]:checked`)) || !f.elements.action.value.trim() || !f.elements.notes.value.trim() || !$("clauses").querySelector("input:checked")) {
+    $("caseStatus").textContent = "Complète état, action, transmission, type, chronométrage, clause et justification.";
+    return;
+  }
   save();
+  if (index < cases.length - 1) go(index + 1);
+  else { render(); $("caseStatus").textContent = "Enregistré. Exporte ton CSV en haut de la page."; $("export").focus(); }
+}
+$("saveNext").addEventListener("click", acceptAndNext);
+$("acceptQuick").addEventListener("click", acceptAndNext);
+$("editQuick").addEventListener("click", () => { $("form").classList.remove("hidden"); $("quickPanel").classList.add("hidden"); });
+$("skipQuick").addEventListener("click", () => go(index + 1));
+$("quickToggle").addEventListener("click", () => { quick = !quick; if (cases.length) render(); });
+$("form").addEventListener("submit", (e) => { e.preventDefault(); acceptAndNext(); });
+$("nextTodo").addEventListener("click", () => {
   const i = cases.findIndex((c, k) => k > index && !isDone(labels[c.id]));
   const j = i >= 0 ? i : cases.findIndex((c) => !isDone(labels[c.id]));
   if (j >= 0) go(j);
@@ -392,19 +453,26 @@ $("jump").addEventListener("change", (e) => {
   e.target.value = "";
 });
 $("export").addEventListener("click", exportCSV);
-$("form").addEventListener("change", save);
+
 document.addEventListener("keydown", (e) => {
   if ($("app").classList.contains("hidden")) return;
   const typing = ["TEXTAREA", "INPUT"].includes(e.target.tagName) && e.target.type !== "radio" && e.target.type !== "checkbox";
   if (typing) return;
   if (e.key === "[") go(index - 1);
-  else if (e.key === "]" || e.key === "Enter") { e.preventDefault(); go(index + 1); }
+  else if (e.key === "]") { e.preventDefault(); go(index + 1); }
+  else if (e.key === "Enter" && !["BUTTON", "SUMMARY", "SELECT", "A"].includes(e.target.tagName)) { e.preventDefault(); acceptAndNext(); }
   else if (["1", "2", "3"].includes(e.key)) {
     const input = $("form").elements.state[Number(e.key) - 1];
-    input.checked = true; save();
+    input.checked = true; $("form").classList.remove("hidden"); $("quickPanel").classList.add("hidden");
   }
 });
-window.addEventListener("beforeunload", () => { if (cases.length) save(); });
+window.addEventListener("beforeunload", () => { if (cases.length) persist(); });
+if (offline) {
+  $("member").value = offline.member;
+  // This packaged page contains only this member's 44 cases.
+  begin(offline.cases);
+  loadProposals();
+}
 </script>
 </body>
 </html>
