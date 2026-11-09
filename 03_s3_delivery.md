@@ -1,4 +1,4 @@
-# 03 — S3 delivery matrix · 3 November 2026
+# 03 — S3 delivery matrix · updated 9 November 2026
 
 **Decision:** v2 design ready for S4; no claim of user validation, benchmark success or production readiness. The team has chosen to omit participant research. This matrix exposes the resulting assignment gap alongside completed work.
 
@@ -25,7 +25,7 @@ The S3 surface supports tracing, ambiguous candidates, a compliance route and ac
 
 ## Public demo handover
 
-The primary repository belongs to BenjaminAHS; the synchronized v0.4 deployment copy belongs to lsantus-mines. Primary-push synchronization is [verified by a successful run](https://github.com/BenjaminAHS/project-product-management/actions/runs/41667205280). The existing Vercel project is owned by Team Montagne; its production deployment is Ready. [Public demo](https://deploy-project-product-management.vercel.app) returned anonymous HTTP 200 and matches all five v0.4 runtime assets; rendered browser checks remain unperformed. See [deployment handover](prototype/DEPLOYMENT.md). Publication exposes the extended local application; it does not establish the S4 pipeline or the performance criterion. Update the README and prototype record together once the production URL is verified.
+The primary repository belongs to BenjaminAHS; the synchronized v0.4 deployment copy belongs to lsantus-mines. Primary-push synchronization is [verified by a successful run](https://github.com/BenjaminAHS/project-product-management/actions/runs/41667205280). The existing Vercel project is owned by Team Montagne; its production deployment is Ready. [Public demo](https://deploy-project-product-management.vercel.app) returned anonymous HTTP 200 and matches all five v0.4 runtime assets; rendered browser checks remain unperformed. See [deployment handover](prototype/DEPLOYMENT.md). Publication exposes the extended local application; it does not establish the S4 pipeline or the performance criterion. S4 update: primary `034267c` and publication snapshot `8a8a2cf` were verified synchronized on 9 November. HTTP delivery of the updated engine was not confirmed because of DNS failure; the successful HTTP evidence above dates from 3 November.
 
 ## Working ownership and schedule
 The following is a proposed division of work, not a record of completed work or signed approvals.
@@ -42,7 +42,7 @@ The following is a proposed division of work, not a record of completed work or 
 The assignment DOCX states 8 November 2026; the earlier template states Friday 6 November. Use 6 November as the packaging target. Future S4–S8 documents remain outside this S3 revision.
 
 ## Reproducible checks
-`python scripts/verify_s3.py` (Python + Node.js) checks 20 unique complete cases, seven proposed eligible cases, policy IDs, document links, HTML IDs, the identical brief/annex criterion and 30 domain/interaction scenarios. See [verification report](prototype/verification.md). Browser rendering, screenshots, keyboard navigation, live authorization and model metrics have not been verified.
+`python3 scripts/verify_s3.py` (Python + Node.js) now checks 50 unique complete development cases, 15 proposed eligible cases, policy IDs, document links, HTML IDs, the identical brief/annex criterion and 32 domain/interaction scenarios. The original S3 seed is F01–F20; its design-review CSV still covers those 20 cases. See [verification report](prototype/verification.md). Browser rendering, screenshots, keyboard navigation, live authorization and model metrics have not been verified.
 
 ## Extended application v0.4
 The local demo now executes intake → account/history pre-reading → scoped matching → source-based drafting/checking → human final review → recorded reply or specialist handover → lifecycle/audit/timing. Ten fixtures and custom synthetic cases are supported. [Coverage and remaining production integrations](docs/PRODUCT_COVERAGE.md). Deterministic checks are implemented; the model evaluator, live systems, shared authentication and protected persistence are not. S3 research/label/economic requirements remain unchanged.

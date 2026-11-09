@@ -1,4 +1,6 @@
-# Vercel agent setup · verified 3 November 2026
+# Vercel agent setup · historical configuration verified 3 November 2026
+
+Current release evidence is maintained in [the deployment guide](../prototype/DEPLOYMENT.md): S4 Git snapshot synchronization was confirmed on 9 November; updated HTTP delivery remains unconfirmed due to DNS failure.
 
 The requested [official onboarding playbook](https://vercel.com/get-started.md) was fetched and followed using its Codex route.
 

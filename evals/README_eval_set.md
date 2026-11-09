@@ -4,9 +4,9 @@ The CSV now contains **50 synthetic proposed labels**, including 15 proposed eli
 
 Run `python3 scripts/verify_s4.py` for artifact checks and both runs; use `node scripts/eval_s4.cjs` for the deterministic development report. See [report](report_v0.md), [architecture](../04_architecture.md), `fixtures_v0.json`, `results_baseline_v0.json`, `results_v0.json`, `label_review.csv` and `grader_reviews.csv`. The runner scores expected states and local checks, never human sendability or time savings.
 
-# FlowAssist evaluation seed · S3
+# Historical S3 seed · F01–F20
 
-`eval_set_v0.csv` contains **20 synthetic cases** with proposed expected actions and source references. All inputs and initial labels were AI-generated. **Human labelling required by the assignment is pending**: do not describe these as human-labelled, golden or frozen. No prototype outputs or performance measurements exist yet. `reference_policy.md` defines the fictional policy and source semantics.
+At S3 delivery, `eval_set_v0.csv` contained **20 synthetic cases** with proposed expected actions and source references. All inputs and initial labels were AI-generated. **Human labelling required by the assignment is pending**: do not describe these as human-labelled, golden or frozen. At that S3 stage no prototype outputs or performance measurements existed; current development outputs are in the S4 report. `reference_policy.md` defines the fictional policy and source semantics.
 
 ## Before a run
 1. Two team members independently read all inputs and source snapshots, correct/approve the expected outputs, handover and `eligible_for_timing`, and record their Git-authored review in `label_review.csv`.
@@ -30,7 +30,7 @@ Paired test: comparable agents, randomized/counterbalanced order and different e
 ## Coverage and status
 Seven proposed eligible cases (F01–F04, F13, F14, F20), thirteen negative/fallback cases; catastrophic identity/status cases deliberately oversampled. EN/FR/DE and unsupported PT; SMB/Enterprise; EUR/SEPA and USD/SWIFT; all EU-region synthetic accounts. Segment results must show denominators; no population weighting inferred. Live timeouts, row-level security and backend permissions require S4 integration tests in addition to these input fixtures.
 
-No pass rate, timing result, independent grader judgement or human label approval is claimed in S3. `label_review.csv` is a blank review log keyed to the 20 case IDs.
+No pass rate, timing result, independent grader judgement or human label approval is claimed in S3. `label_review.csv` originally reserved 20 case IDs and now reserves all 50; `grader_reviews.csv` separately records output judgements.
 
 ## v2 label design review — 3 November 2026
 `label_design_review.csv` records the policy references, proposed eligibility/handover and rationale for every case. This is an AI-assisted desk review against FLOW-POL-1, not independent human labelling or a measured model evaluation. No labels were changed to fit model outputs. `label_review.csv` remains reserved for genuine human review; no names, approvals or commits are invented. Structural checks are reproducible with `python scripts/verify_s3.py` on macOS.

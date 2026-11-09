@@ -1,4 +1,4 @@
-# FlowAssist v0.4 — couverture du parcours P2
+# FlowAssist v0.4 + correctifs S4 — couverture du parcours P2
 
 L’énoncé de référence est **P2 · Agent-assist copilot for a fintech (B2B payments)** dans `course/project_proposals.docx`. La v0.4 fait fonctionner le parcours métier dans une démonstration autonome. Elle ne prétend pas remplacer les systèmes de paiement réels.
 
@@ -35,3 +35,7 @@ Autres cas inclus : paiement échoué en USD, paiement retourné, rapprochement 
 Les connecteurs de lecture, l’authentification/autorisation serveur, la persistance partagée, l’audit protégé, le modèle de génération et le modèle évaluateur doivent être intégrés et validés sur des systèmes autorisés. Les résultats de recherche utilisateurs, les 20 labels proposés et le critère de 41,2 % ne deviennent pas validés du fait de cette extension. Le protocole A/B cible reste randomisé par agent ; les temps de cette démo ne le remplacent pas.
 
 L’autonomie client et les actions sur les fonds restent exclues. Les trois MUST et cinq WON’T du livrable S3 restent la décision de périmètre initiale ; la v0.4 étend l’expérience locale sans réintroduire les actions financières, les réponses autonomes ou les conseils sensibles exclus.
+
+## Mise à jour S4 · 9 novembre 2026
+
+Le parcours v0.4 est conservé. Les correctifs moteur portent sur les références/montants et le contrôle d’une confiance fournie pour un matching déclaré modèle. Les 32 tests passent et les 50 cas de développement produisent les états attendus (15 brouillons). Aucun modèle réel ne calcule cette confiance. Le [rapport S4](../evals/report_v0.md) distingue ces contrôles de la qualité humaine et des gains de temps ; la [publication](../prototype/DEPLOYMENT.md) distingue synchronisation Git et vérification HTTP.

@@ -1,6 +1,16 @@
 # FlowAssist — Vercel deployment handover
 
-**Updated: 3 November 2026. Status: deployment copy verified; synchronization prepared; public demo verified; automatic synchronization and public v0.4 verified.**
+**Updated: 9 November 2026. S4 source push and publication snapshot verified; latest successful HTTP asset verification remains the 3 November release.**
+
+## Latest Git release evidence · 9 November 2026
+
+- Primary `main` push succeeded for `034267cbc22a`.
+- A fresh publication checkout contained `8a8a2cf75f1076b507bc55cf163c61b09b1c9d26` (`Sync primary main at 034267cbc22a`).
+- `python3 scripts/sync_deploy.py --checkout /private/tmp/flowassist-deploy-034267c` reported **0 changed, 0 removed; workflows preserved**. The temporary path is local evidence, not a required setup path for other machines.
+- The initial local synchronization attempt failed DNS; retrying with a fresh direct Git clone allowed the snapshot comparison. The matching publication commit confirms the copy; the Actions run itself was not inspected because `gh` was unauthenticated.
+- `python3 scripts/verify_production.py` could not resolve the production host. The latest successful anonymous HTTP/asset evidence remains **3 November**, below. Do not infer an updated Ready deployment or current byte parity from the Git comparison alone.
+
+The following initial setup and release evidence is historical unless explicitly dated otherwise.
 
 ## Repository and deployment ownership
 
@@ -64,7 +74,7 @@ After deployment succeeds:
 5. Search/filter tickets, switch between merchants and confirm that each restores only its own text while approval resets. Check a narrow/mobile viewport and keyboard navigation. Record actual findings rather than assuming the structural checks establish rendering/accessibility.
 6. Record the production domain, Vercel project owner, deployed source commit and check date below; update the root README and `03_prototype_link.md` together.
 
-| Release evidence | Current status |
+| Historical release evidence (3 November) | Recorded status |
 |---|---|
 | Source | Shared repository above; Vercel configuration tracked |
 | Deployment repository | `lsantus-mines/deploy-project-product-management`, branch `main`; copy contents verified |
@@ -76,7 +86,7 @@ After deployment succeeds:
 
 ## Local checks and demo scope
 
-Run `python scripts/verify_s3.py` from the repository root with Python and Node.js. The current run passes the artifact checks and 30 domain/interaction scenarios. See [verification limits](verification.md).
+Run `python scripts/verify_s3.py` from the repository root with Python and Node.js. The current run passes the artifact checks and 32 domain/interaction scenarios; `python3 scripts/verify_s4.py` also reproduces the 50-case development evaluation. See [verification limits](verification.md).
 
 Hosting changes access to the same S3 demo; it adds no live model, bank connector, Zendesk integration, shared backend storage, customer sending or fund action. The v0.4 adds per-tab sessionStorage for synthetic cases, local analysis, lifecycle and audit/timing. All ten starting cases remain synthetic. For immediate local use, open `prototype/index.html`, or run `python -m http.server 8000 --bind 127.0.0.1` at the repository root and visit `http://127.0.0.1:8000/prototype/`.
 

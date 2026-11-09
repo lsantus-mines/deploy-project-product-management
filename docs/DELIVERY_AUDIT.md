@@ -25,4 +25,4 @@ Paylio needs pandas/scikit-learn; the existing Anaconda environment provides the
 
 ## Release
 
-Primary target: `BenjaminAHS/project-product-management`, `main`. After a successful push run `python3 scripts/sync_deploy.py`, confirm workflow synchronization, and run `python3 scripts/verify_production.py` before claiming updated production delivery. Local DNS failures prevent assuming any of those remote steps succeeded.
+Primary target: `BenjaminAHS/project-product-management`, `main`. After a successful push run `python3 scripts/sync_deploy.py`, confirm workflow synchronization, and run `python3 scripts/verify_production.py` before claiming updated production delivery. Primary `034267c` was pushed successfully on 9 November. Publication `8a8a2cf` was verified synchronized with zero changes/removals. Updated production HTTP delivery could not be checked due to DNS failure; the Actions run itself was not inspected because GitHub CLI was not authenticated.

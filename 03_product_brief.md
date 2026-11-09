@@ -28,7 +28,7 @@ Zendesk sidebar: verified merchant, source timestamps, editable cited draft, all
 ## 7. Success criterion
 > By 8 November 2026, on a frozen 200-case synthetic tracing benchmark with eligibility labelled before execution and paired human timing, FlowAssist saves at least 41.2% of total active handling time on eligible cases versus manual handling, including review and fallback time, with QA ≥92%, grounding-check precision ≥98%, and zero wrong-transaction disclosures, cross-tenant exposures, unauthorized sends or monetary actions.
 
-S3 supplies 20 seeds, not measured success. [Denominator and grading](evals/README_eval_set.md). A tracing-only pass does not validate S2's dispute/compliance value or authorize production.
+S3 supplied 20 seeds; the current S4 development set contains 50 cases and does not establish measured business success. [Denominator and grading](evals/README_eval_set.md). A tracing-only pass does not validate S2's dispute/compliance value or authorize production.
 
 ## 8. Risks and rollback trigger
 Wrong match, stale facts, fabricated certainty, injection and review fatigue. Any critical exposure or attempted send/fund write immediately disables drafting; Ops owns the stop, Engineering enforces it, DPO/CCO assesses the incident. Failed performance means redesign, not a lowered threshold.

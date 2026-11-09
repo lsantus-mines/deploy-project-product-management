@@ -1,84 +1,88 @@
-# PayFlow B2B — Agent-Assist Copilot for B2B Payments
+# FlowAssist — Payment operations copilot
 
-**Course:** Data & AI Product: From Diagnosis to Delivery (MSA-DAT07-04) · Albert School & Mines Paris-PSL · shared project with Agentic Workflows  
-**Cohort:** M2-INTER-1  
+Projet **P2 · PayFlow B2B** — Data & AI Product: From Diagnosis to Delivery (MSA-DAT07-04), Albert School / Mines Paris-PSL · M2-INTER-1.
 
-## Session 4 — 9 novembre 2026
+FlowAssist aide un spécialiste support à tracer un paiement, vérifier ses sources et préparer une réponse EN/FR/DE avec validation humaine. PayFlow est un scénario pédagogique ; les comptes, tickets et paiements de l’application sont synthétiques.
 
-[Livraison S4](04_s4_delivery.md) · [Audit des séances fournies](docs/DELIVERY_AUDIT.md) · [Architecture réelle](04_architecture.md) · [Rapport v0](evals/report_v0.md). Le jeu comprend 50 cas synthétiques de développement ; les labels humains et deux évaluateurs indépendants restent nécessaires. Corrections du parsing des montants/références et 32 tests locaux. Reproduction : `python3 scripts/verify_s3.py` puis `node scripts/eval_s4.cjs`.
+## Version actuelle · 9 novembre 2026
+
+Le prototype local implémente le parcours complet : création de ticket, contexte du compte, recherche limitée au compte, clarification de référence, réponse citée, inspection des sources, validation, traitement manuel et transfert local. Le moteur utilise des règles et des gabarits ; il n’appelle aucun modèle, système bancaire ou Zendesk. Aucun message client ni mouvement de fonds n’est exécuté.
+
+- **32 tests domaine/interface passent.**
+- **50/50 états attendus concordent** sur les cas de développement ; 15 brouillons, zéro brouillon sur les cas human-only et aucune source étrangère observée.
+- Les corrections couvrent les références et montants, ainsi que l’abstention sur une correspondance déclarée comme issue d’un modèle avec score absent, invalide ou inférieur à 0,95. Le score ne remplace aucun contrôle d’identité ou de source.
+- Le starter Paylio original a été exécuté : routage 0,88, hit@3 1,00, score heuristique 8/20 = 40 % pour un seuil de 45 %. Cette heuristique ne constitue pas une notation humaine.
+
+Les 50 cas ont été examinés pendant le développement : ces résultats servent à la régression, pas à revendiquer une performance sur un benchmark tenu à l’écart. Le critère métier reste ≥41,2 % de gain de temps actif apparié sur les cas éligibles, QA ≥92 %, précision de détection ≥98 % et zéro exposition critique. Les résultats automatiques ne démontrent pas ce critère.
+
+[Architecture](04_architecture.md) · [Rapport d’évaluation](evals/report_v0.md) · [Livraison S4](04_s4_delivery.md) · [Audit des séances](docs/DELIVERY_AUDIT.md) · [Couverture produit](docs/PRODUCT_COVERAGE.md).
+
+## Utiliser le prototype
+
+Ouvrir [prototype/index.html](prototype/index.html), ou lancer depuis la racine :
+
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Puis accéder à `http://127.0.0.1:8000/prototype/`. Aucun compte, installation npm ou clé API n’est nécessaire. Les brouillons et actions sont enregistrés dans le sessionStorage de l’onglet ; seules des données synthétiques doivent être saisies.
+
+[Adresse de la démonstration hébergée](https://deploy-project-product-management.vercel.app). Le dernier contrôle HTTP réussi date du 3 novembre ; la copie Git de publication a été vérifiée synchronisée avec la livraison S4 le 9 novembre. Le nouveau déploiement HTTP n’a pas pu être confirmé à cause d’une erreur DNS. [État de publication et procédure](prototype/DEPLOYMENT.md).
+
+## Vérifier et reproduire
+
+Python et Node.js suffisent aux vérifications FlowAssist :
+
+```sh
+python3 scripts/verify_s3.py
+python3 scripts/verify_s4.py
+```
+
+Le premier contrôle les artefacts, liens et 32 scénarios domaine/interface. Le second vérifie les 50 cas, les grilles de revue et les empreintes, puis reproduit les passages initial et courant. Pour ne relancer que le moteur :
+
+```sh
+node scripts/eval_s4.cjs
+node scripts/eval_s4.cjs --baseline
+```
+
+Le starter Paylio requiert pandas et scikit-learn. Dans l’environnement local où ils sont installés :
+
+```sh
+/opt/anaconda3/bin/python scripts/run_paylio.py
+```
+
+Sur une autre machine, utiliser un interpréteur Python disposant de ces dépendances. [Instructions runtime](prototype/README.md) · [Preuves et limites des vérifications](prototype/verification.md) · [Historique des changements](prototype/CHANGELOG.md).
+
+## Documents du projet
+
+| Séance | Livrables | État documentaire |
+|---|---|---|
+| S1 | [Pitch](00_pitch.md), [problème](01_problem_statement.md), [gouvernance](governance.md) | Diagnostic, hypothèses, sources et limites du scénario |
+| S2 | [Modèle Excel](02_sizing.xlsx), [mémo](02_investment_memo.md) | Trois scénarios, coûts, alternative nommée, seuil de 41,2 % ; réserves financières explicites |
+| S3 | [Brief v2](03_product_brief.md), [détails de conception](03_design_details.md), [Lean Canvas](03_ai_lean_canvas.md), [analyse des besoins](03_user_research.md), [prototype](03_prototype_link.md), [matrice de livraison](03_s3_delivery.md) | Synthèse de conception ; brief v1 archivé dans `research/` |
+| S3–S4 | [Spec v2](spec.md), [architecture](04_architecture.md), [gouvernance](governance.md) | Contrats, contrôles humains, mode manuel, corrections S4-M01–M03 et périmètre réel |
+| S4 | [50 cas CSV](evals/eval_set_v0.csv), [guide](evals/README_eval_set.md), [rapport](evals/report_v0.md), [livraison](04_s4_delivery.md) | Labels proposés, fixtures exécutables, résultats avant/après et grilles de revue |
+
+Les versions PDF S1–S3 et leurs archives datées du 6 novembre sont accessibles dans [Assignments](Assignments/README.md). Leur index de 20 cas reflète le seed S3 ; le CSV courant en contient 50. Les fichiers Markdown courants décrivent les évolutions S4. Les consignes et modèles originaux restent dans `course/`, `S3_templates/` et `S4_templates/`.
+
+Les documents distinguent preuves automatiques, hypothèses et validations humaines ; ils ne certifient pas des entretiens, des jugements indépendants ou des contributions personnelles non établis. Les séances ultérieures ne sont pas présentées comme livrées sur la base de simples titres prévisionnels.
 
 ## Team
-| Name | Git handle | Also in the Agentic Workflows team? |
-|---|---|---|
-| Lenny Santus | @lsantus-mines | no |
-| Anthony Rascle | @antotototototo18 | no |
-| Antoine Rabeau | @antorabo75 | no |
-| Benjamin Caujolle | @BenjaminAHS | no |
-| Colin Sibieude | @csib-wq | no |
 
-## Our agent
-- **Starting point:** Proposal P2 — Agent-assist copilot for a fintech (B2B payments).
-- **The company:** PayFlow B2B — European B2B payments fintech, 800 merchant enterprise & marketplace customers, 12,000 support tickets / month, support team of 18 Tier-1 payment operations specialists.
-- **The job, in one sentence:** When a merchant opens a support ticket regarding a transaction, payout, or dispute, the agent pre-reads the merchant's account and transaction ledgers, flags regulatory constraints (PSD2 SCA, AML/KYC status), and drafts a cited response with transaction links in the Zendesk sidebar for the human agent to review, edit, and send.
-- **Trust level per step (S3 scope):** L1 entity suggestions; L3 internal tenant-scoped retrieval with human transaction confirmation; L2 cited drafting and validation; person-only customer sending; L4 bounded audit metadata. The model score cannot authorize data access. Dispute/KYC requests route to specialists. See `governance.md` Session 3 for updates to the earlier L4 matching proposal.
-- **One thing it must never do:** It must **never** send a reply directly to a merchant, **never** execute or promise a fund transfer, refund, or settlement release, and **never** match or disclose transaction details without cryptographically verified merchant account ID match (preventing cross-tenant data leakage).
+| Membre | GitHub | Également dans l’équipe Agentic Workflows ? |
+|---|---|---|
+| Lenny Santus | @lsantus-mines | non |
+| Anthony Rascle | @antotototototo18 | non |
+| Antoine Rabeau | @antorabo75 | non |
+| Benjamin Caujolle | @BenjaminAHS | non |
+| Colin Sibieude | @csib-wq | non |
 
 ## Repository structure
-One numbered file per session. Every member authors commits in at least four of the numbered files.
 
-| File | Session | Status | Description |
-|---|---|---|---|
-| `00_pitch.md` | before S3 | done | Half-page pitch & 7-point checklist (Proposal P2 adapted) |
-| `01_problem_statement.md` | S1–S2 — Assignment 1 | done | Problem statement, 5 Whys, AI justification, press release, hypotheses |
-| `governance.md` | created for S1, updated S2 | done | EU AI Act tier, GDPR basis, accountability, guardrails, cost-of-error owners |
-| `02_sizing.xlsx` | S2 — Assignment 2 | done | Bottom-up financial model (3 scenarios, 7 cost lines, sensitivity, build vs buy) |
-| `02_investment_memo.md` | S2 — Assignment 2 | done | One-page CFO investment memo (CONDITIONAL GO, €159.8k EV, 41.2% flip point) |
-| `03_product_brief.md`, `03_design_details.md` | S3 | v2 design complete | Concise brief, process, sorted RICE, model tables; v1 archived |
-| `03_ai_lean_canvas.md` | S3 | v2 aligned | All 14 blocks aligned with S1/S2 and the v2 brief |
-| `03_user_research.md` | S3 | design synthesis complete | Three work situations, five decisions and two acceptance scenarios; no participant research |
-| `03_prototype_link.md`, `/prototype` | S3 | full local workflow v0.4 | Intake, account context, scoped analysis, human review, lifecycle, audit and session timing |
-| `spec.md` | S3 | skeleton v1 ready | Contracts, trust levels, edge cases and v2 acceptance behavior |
-| `/evals/eval_set_v0.csv` | S3 | 20 cases with design review | Synthetic inputs and proposed labels; independent human approval absent |
-| `04_architecture.md` | S4 | upcoming | Technical architecture, RAG pipelines, grounding evaluator, tool schemas |
-| `05_metrics.md` | S5 | upcoming | Business & technical metrics, counter-metrics, eval-set definitions |
-| `06_ab_protocol.md` | S6 | upcoming | Agent-level RCT experiment design, sample size calculation, MDE |
-| `07_operations.md` | S7 | upcoming | Model monitoring, drift detection, incident playbooks, on-call runbooks |
-| `08_launch_memo.md` | S8 | upcoming | Final launch memo, go/no-go criteria, executive readout |
-| `product_brief.md` | final | upcoming | Consolidated deliverable for final oral defence |
-| `/prototype`, `/evals` | S3 → S4 | S3 surface/seed ready; pipeline pending | Deterministic local workflow now; live connectors and model evaluation remain S4 work |
+### Source et publication
 
-## Assignment PDFs
+Développer dans [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), branche `main`. Vercel utilise la copie [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), avec un historique séparé. Après chaque push primaire réussi, exécuter `python3 scripts/sync_deploy.py` et confirmer le résultat ; préserver les workflows de destination et ne jamais forcer le push. [Instructions du dépôt](AGENTS.md) · [Guide de synchronisation](docs/ACTIVER_SYNC_GITHUB.md).
 
-Concise PDF editions, with required details and source archives:
+La dernière livraison technique est le commit primaire `034267c`, copié dans le commit de publication `8a8a2cf`. Le contrôle local a confirmé zéro fichier modifié ou supprimé entre ces snapshots ; cette vérification Git ne prouve pas la disponibilité du site.
 
-- [Assignment 1 — Team, agent and problem](Assignments/Assignment_1_Team_Agent_Problem.pdf) · 4 pages.
-- [Assignment 2 — Sizing and investment memo](Assignments/Assignment_2_Sizing_Investment_Memo.pdf) · 6 pages; one-page memo followed by the model annex.
-- [Assignment 3 — MVP brief and design loop](Assignments/Assignment_3_MVP_Brief_and_Design_Loop.pdf) · 7 pages; one-page briefs/canvas, concise annexes and a 20-case index; complete cases in the source CSV.
-
-[Package notes and original-format archives](Assignments/README.md). Outstanding participant research, human label review and individual Git contributions are explicitly identified; PDF packaging does not establish their completion. Team handles: Antoine **@antorabo75**, Colin **@csib-wq**.
-
-## Assignment 3 — delivery v2 · 3 November 2026
-
-Start with [the brief v2](03_product_brief.md), [design details](03_design_details.md), [Lean Canvas](03_ai_lean_canvas.md), [specification](spec.md) and [prototype instructions](03_prototype_link.md). [The delivery matrix](03_s3_delivery.md) maps the assignment to every artifact and states the remaining limits. The original templates are preserved in `S3_templates/`; [brief v1](research/brief_v1.md) is archived for comparison.
-
-- **Design:** six-step process, source types/error assumptions/trust/metrics; eight sorted RICE features, three MUST and five WON’T; component model choices; six-question data audit and updated governance.
-- **Application v0.4:** ten starting cases and new-ticket intake; scoped merchant account/history; an executable deterministic matching/generation/checking engine; reference clarification; source review and final human approval; lifecycle/priority tracking; specialist handovers; sessionStorage restoration; local audit, receipt exports and measured visible-tab timings. [P2 coverage](docs/PRODUCT_COVERAGE.md), [runtime instructions](prototype/README.md) and [changelog](prototype/CHANGELOG.md). No live model or payment connector is claimed.
-- **v2 decisions:** inspect every source before insertion, explain the missing reference directly, preserve snapshot times in handover, route compliance to its specialist and disable insertion during manual fallback. [D01–D05](03_user_research.md) trace these decisions to acceptance scenarios.
-- **Application v0.4:** [open the public demo](https://deploy-project-product-management.vercel.app) or open [prototype/index.html](prototype/index.html) locally, or run `python -m http.server 8000 --bind 127.0.0.1` and visit `http://127.0.0.1:8000/prototype/`. No install, account or API key. Nothing is sent to a real customer, bank or queue.
-- **Verification:** `python scripts/verify_s3.py` (Python + Node.js) checks document links, CSV structure/policy references, HTML IDs, shared success criterion and **30 domain and interaction scenarios**. [Verification limits](prototype/verification.md): no browser rendering/screenshot, live integrations or validated product performance.
-- **Evaluation:** 20 self-contained synthetic cases and an [AI design review](evals/label_design_review.csv). Labels remain proposed; the [human review register](evals/label_review.csv) is reserved for actual independent approvals. Seven eligible cases test tracing; thirteen cover blocking/handover. No benchmark pass or time saving is claimed.
-- **Research:** the team excludes participant interviews/tests. The research document therefore provides work situations, design rationale and reproducible acceptance scenarios. It does not claim interviews, user validation or compliance with that part of Assignment 3. Member-authored commits and human label approvals must also reflect actual actions.
-- **Threshold:** ≥41.2% paired active-time saving on eligible tracing, with QA ≥92%, grounding precision ≥98% and zero critical exposures. This remains a target for a frozen 200-case benchmark; tracing alone does not establish the complete S2 business case.
-- **Deadline:** the assignment DOCX states **8 November 2026**; the template states **Friday 6 November, start of S5**. Packaging target: 6 November, retaining 8 November in the stated evaluation criterion. No tests are backdated.
-
-## Public hosting on Vercel
-
-**Primary source:** [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), `main`. **Deployment copy:** [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), `main`. The copy is synchronized with the v0.4 application; its separate history is preserved. Product changes belong in the primary repository.
-
-Every primary `main` push triggers [the sync workflow](.github/workflows/sync-deploy.yml), which copies the latest committed source into deployment `main` without force-pushing or replacing destination workflows. **Automatic synchronization verified:** [successful push-triggered run](https://github.com/BenjaminAHS/project-product-management/actions/runs/41667205280) for primary commit `e33deb3`. The workflow uses the configured `DEPLOY_REPO_TOKEN` secret. Setup, permissions and the local fallback are documented in [the deployment guide](prototype/DEPLOYMENT.md). **Guide en français à transmettre à Benjamin : [activer le secret Actions](docs/ACTIVER_SYNC_GITHUB.md).** Agents must also synchronize after their primary pushes, following [repository instructions](AGENTS.md).
-
-**Live demo: [FlowAssist](https://deploy-project-product-management.vercel.app).** The v0.4 production deployment was verified Ready on 3 November 2026. All five assets returned anonymous HTTP 200 and match the local runtime files byte for byte. [Repeat the HTTP checks](scripts/verify_production.py). [vercel.json](vercel.json) copies only the prototype HTML, stylesheet, fixtures, domain engine and application JavaScript into `dist/`, serving the app at `/` without environment variables. The existing project is `deploy-project-product-management`, owned by Team Montagne; CLI login is verified as `lsantus-mines`. See [the prototype record](03_prototype_link.md) for verification limits. For immediate use, open [prototype/index.html](prototype/index.html) locally.
-
-## Rules
-- Commit with your own Git account: the individual question at the oral is about a commit you signed.
-- Tag the final version `v1.0` before the first oral of your cohort. No commits after the first oral starts.
+Chaque membre doit utiliser son propre compte Git. La version finale sera taguée `v1.0` avant le premier oral de la cohorte ; aucun commit après le début de cet oral.

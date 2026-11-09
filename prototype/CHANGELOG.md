@@ -1,5 +1,13 @@
 # FlowAssist interface changelog
 
+## S4 engine corrections and documentation · 9 November 2026
+
+- Corrected reference extraction (FAC/RE/REF) and monetary token boundaries; reference digits and hyphens no longer become monetary amounts or negative signs.
+- Model-derived matching inputs now require a finite numeric confidence in [0.95, 1]; unknown provenance fails closed, and untrusted source notes are excluded from drafting fields. All existing identity and evidence checks still apply.
+- Expanded the development suite to 50 cases, with archived initial fixtures/engine, deterministic result hashes, 50 current expected states and 15 drafts. Added regression coverage for a total of 32 domain/interaction tests.
+- Added S4 architecture, report, spec v2 changes, governance, review grids and a reproducible replay of the unmodified Paylio starter. These are development checks, not measured business performance.
+- Updated the README and cross-document counts, commands, financial evidence boundary and deployment status. Primary `034267c` was pushed and publication snapshot `8a8a2cf` verified identical; updated HTTP delivery remains unconfirmed after DNS failure.
+
 ## v0.4 · 3 November 2026
 
 - Replaced hardcoded replies with a separate synthetic data module and pure matching/drafting/checking engine.

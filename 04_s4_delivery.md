@@ -17,6 +17,6 @@ Référence : `S4_templates/README_S4.md` et Assignment 4 (remise 15 novembre, 2
 
 Les 50 cas ont été consommés pour développement après analyse : remplacer le benchmark avant une mesure indépendante. Pas de faux verdict de succès, de gain de temps ou de validation par des personnes.
 
-Vérifications locales : `python3 scripts/verify_s3.py` (32 scénarios domaine/interface) ; `python3 scripts/verify_s4.py` (alignement des 50 cas, grilles, empreintes et réexécution avant/après). Le harnais DOM n’est pas une preuve visuelle navigateur. Aucune nouvelle publication en ligne n’est revendiquée.
+Vérifications locales : `python3 scripts/verify_s3.py` (32 scénarios domaine/interface) ; `python3 scripts/verify_s4.py` (alignement des 50 cas, grilles, empreintes et réexécution avant/après). Le harnais DOM n’est pas une preuve visuelle navigateur. Le commit primaire `034267c` a été poussé ; la copie de publication `8a8a2cf` a été vérifiée identique le 9 novembre. Le déploiement HTTP actualisé reste non confirmé à cause d’une erreur DNS.
 
 Clôture technique : F19 résolu, 50/50 états attendus, 15 brouillons, 0 brouillon sur human-only ; 32 tests. Les vrais entretiens, jugements et contributions personnelles ne sont jamais remplacés par une simulation IA.

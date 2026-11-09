@@ -1,4 +1,4 @@
-# FlowAssist v0.4 verification · 3 November 2026
+# FlowAssist verification · updated 9 November 2026
 
 ```sh
 python scripts/verify_s3.py
@@ -20,3 +20,7 @@ Production deployment `dpl_4isLr4HL3Y1s1a3DgVSzm6rgf61g` is Ready. On 3 November
 ## Session 4 · 9 November 2026
 
 `python3 scripts/verify_s4.py` validates the 50-case development suite and both pinned baseline/current runs. All 50 current states agree, with 15 drafts. Confidence is validated for model-derived match inputs; it never overrides merchant scope or source checks. The unmodified Paylio starter was run with the existing Anaconda environment (`scripts/run_paylio.py`); evidence is in `docs/evidence/s4/paylio-run.txt`. Browser verification was attempted but no in-app execution tool or runnable local Playwright package is available in this environment.
+
+## Git publication evidence · 9 November 2026
+
+Primary `034267c` was pushed successfully. A fresh checkout of publication `8a8a2cf` compared identical through the synchronization script (0 changed, 0 removed). Updated HTTP checks failed DNS, so the verified v0.4 HTTP release above remains historical evidence from 3 November.
