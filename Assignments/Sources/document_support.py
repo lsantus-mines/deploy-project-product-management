@@ -193,22 +193,7 @@ for n,files in [(1,files1),(2,files2),(3,files3)]:
   briefs={1:'Assignment_1_Team_Agent_Problem (1).docx',2:'Assignment_2_Sizing_Investment_Memo (1).docx',3:'Assignment_3_MVP_Brief_and_Design_Loop_due_8_Nov.docx'}
   instruction = ROOT/briefs[n]
   if not instruction.exists():
-   instruction = REPO/('course/Assignment_1_Team_Agent_Problem.docx' if n==1 else 'course/Assignment_2_Sizing_Investment_Memo.docx' if n==2 else briefs[n])
+   instruction = REPO/'course'/{1:'Assignment_1_Team_Agent_Problem.docx',2:'Assignment_2_Sizing_Investment_Memo.docx',3:'Assignment_3_MVP_Brief_and_Design_Loop.docx'}[n]
   z.write(instruction,'assignment_instructions.docx')
 (OUT/'Sources'/'validation.json').write_text(json.dumps(checks,indent=2))
-(OUT/'README.md').write_text('''# Assignments — FlowAssist
-
-Trois PDF consolidés, préparés le 6 novembre 2026 à partir des consignes DOCX fournies et des sources de `project-product-management/`.
-
-- Assignment 1 : équipe, problème, diagnostic, hypothèses, pitch et gouvernance.
-- Assignment 2 : mémo d’une page en page 1, puis modèle, hypothèses, sept coûts, sensibilité, build/buy et gouvernance. Calculs recomputés depuis Excel ; seuil exact 41,174 %, arrondi à 41,2 %. Les limites du modèle original sont explicites.
-- Assignment 3 : brief v2 (page 1), Lean Canvas (page 2), brief v1 (page 3), annexes, spécification, gouvernance et les 20 cas complets.
-
-Les PDF restent en anglais comme les livrables et les consignes. Les archives Sources conservent les formats Markdown, Excel et CSV exigés ainsi que les consignes originales. Les HTML permettent de régénérer les mises en page. Les fichiers originaux du dépôt n’ont pas été modifiés.
-
-## Exigences encore non satisfaites par les éléments disponibles
-
-Assignment 3 : trois conversations réelles, essais à voix haute par deux utilisateurs, modifications attribuables à ces observations et labellisation humaine des cas. Ces éléments ne sont ni inventés ni présentés comme réalisés. La durée initiale de construction du prototype n’est pas démontrée. Les contributions Git personnelles doivent également être vérifiées dans l’historique réel.
-
-Les anciennes affirmations de données internes mesurées sont corrigées par les limites de preuve déjà consignées en S3. Le modèle financier historique présente des limites de répartition des catégories et de facturation par équivalent de temps ; celles-ci sont documentées dans le PDF 2. Ces PDF ne constituent donc pas une attestation de conformité complète aux consignes.
-''')
+# Assignments/README.md is maintained by hand (it also covers Assignment 4); not regenerated here.

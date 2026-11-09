@@ -6,7 +6,7 @@
 - Model-derived matching inputs now require a finite numeric confidence in [0.95, 1]; unknown provenance fails closed, and untrusted source notes are excluded from drafting fields. All existing identity and evidence checks still apply.
 - Expanded the development suite to 50 cases, with archived initial fixtures/engine, deterministic result hashes, 50 current expected states and 15 drafts. Added regression coverage for a total of 32 domain/interaction tests.
 - Added S4 architecture, report, spec v2 changes, governance, review grids and a reproducible replay of the unmodified Paylio starter. These are development checks, not measured business performance.
-- Updated the README and cross-document counts, commands, financial evidence boundary and deployment status. Primary `034267c` was pushed and publication snapshot `8a8a2cf` verified identical; updated HTTP delivery remains unconfirmed after DNS failure.
+- Updated the README and cross-document counts, commands, financial evidence boundary and deployment status. Primary `034267c` was pushed and publication snapshot `8a8a2cf` verified identical; updated HTTP delivery was later verified on 9 November (five assets, HTTP 200, matching hashes).
 
 ## v0.4 · 3 November 2026
 

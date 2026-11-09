@@ -4,7 +4,7 @@
 
 **Cohort:** M2-INTER-1
 
-**Site Vercel : [ouvrir FlowAssist](https://deploy-project-product-management.vercel.app)**
+**Live demo: [open FlowAssist](https://deploy-project-product-management.vercel.app)**
 
 ## Team
 
@@ -51,54 +51,54 @@ Supporting S3 files: [AI Lean Canvas](03_ai_lean_canvas.md), [design details](03
 - Commit with your own Git account: the individual question at the oral is about a commit you signed.
 - Tag the final version `v1.0` before the first oral of your cohort. No commits after the first oral starts.
 
-## Version actuelle · 9 novembre 2026
+## Current version · 9 November 2026
 
-Le prototype local implémente le parcours complet : création de ticket, contexte du compte, recherche limitée au compte, clarification de référence, réponse citée, inspection des sources, validation, traitement manuel et transfert local. Le moteur utilise des règles et des gabarits ; il n’appelle aucun modèle, système bancaire ou Zendesk. Aucun message client ni mouvement de fonds n’est exécuté.
+The local prototype implements the full journey: ticket creation, account context, account-scoped lookup, reference clarification, cited reply, source inspection, approval, manual handling and local handover. The engine uses rules and templates; it calls no model, banking system or Zendesk. No customer message or fund movement is executed.
 
-- **32 tests domaine/interface passent.**
-- **50/50 états attendus concordent** sur les cas de développement ; 15 brouillons, zéro brouillon sur les cas human-only et aucune source étrangère observée.
-- Les corrections couvrent les références et montants, ainsi que l’abstention sur une correspondance déclarée comme issue d’un modèle avec score absent, invalide ou inférieur à 0,95. Le score ne remplace aucun contrôle d’identité ou de source.
-- Le starter Paylio original a été exécuté : routage 0,88, hit@3 1,00, score heuristique 8/20 = 40 % pour un seuil de 45 %. Cette heuristique ne constitue pas une notation humaine.
+- **32 domain/interface tests pass.**
+- **50/50 expected states match** on the development cases; 15 drafts, zero drafts on human-only cases and no foreign source observed.
+- The fixes cover references and amounts, plus abstention on a match declared as model-based with a missing, invalid or below-0.95 score. The score never replaces an identity or source check.
+- The original Paylio starter was run: routing 0.88, hit@3 1.00, heuristic score 8/20 = 40% against a 45% threshold. That heuristic is not a human grade.
 
-Les 50 cas ont été examinés pendant le développement : ces résultats servent à la régression, pas à revendiquer une performance sur un benchmark tenu à l’écart. Le critère métier reste ≥41,2 % de gain de temps actif apparié sur les cas éligibles, QA ≥92 %, précision de détection ≥98 % et zéro exposition critique. Les résultats automatiques ne démontrent pas ce critère.
+The 50 cases were examined during development: these results serve as regression, not as a performance claim on a held-out benchmark. The business criterion remains ≥41.2% paired active-time saving on eligible cases, QA ≥92%, detection precision ≥98% and zero critical exposures. The automated results do not demonstrate this criterion.
 
-[Architecture](04_architecture.md) · [Rapport d’évaluation](evals/report_v0.md) · [Livraison S4](04_s4_delivery.md) · [Audit des séances](docs/DELIVERY_AUDIT.md) · [Couverture produit](docs/PRODUCT_COVERAGE.md).
+[Architecture](04_architecture.md) · [Eval report](evals/report_v0.md) · [S4 delivery](04_s4_delivery.md) · [Session audit](docs/DELIVERY_AUDIT.md) · [Product coverage](docs/PRODUCT_COVERAGE.md).
 
-## Utiliser le prototype
+## Using the prototype
 
-Ouvrir [prototype/index.html](prototype/index.html), ou lancer depuis la racine :
+Open [prototype/index.html](prototype/index.html), or run from the repository root:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Puis accéder à `http://127.0.0.1:8000/prototype/`. Aucun compte, installation npm ou clé API n’est nécessaire. Les brouillons et actions sont enregistrés dans le sessionStorage de l’onglet ; seules des données synthétiques doivent être saisies.
+Then go to `http://127.0.0.1:8000/prototype/`. No account, npm install or API key is needed. Drafts and actions are stored in the tab's sessionStorage; enter synthetic data only.
 
-[Adresse de la démonstration hébergée](https://deploy-project-product-management.vercel.app). Le dernier contrôle HTTP réussi date du 3 novembre ; la copie Git de publication a été vérifiée synchronisée avec la livraison S4 le 9 novembre. Le nouveau déploiement HTTP n’a pas pu être confirmé à cause d’une erreur DNS. [État de publication et procédure](prototype/DEPLOYMENT.md).
+[Hosted demo](https://deploy-project-product-management.vercel.app). The Git publication copy was verified in sync with the S4 delivery on 9 November, and the HTTP check the same day confirms all five files (anonymous HTTP 200, identical hashes). [Publication status and procedure](prototype/DEPLOYMENT.md).
 
-## Vérifier et reproduire
+## Verify and reproduce
 
-Python et Node.js suffisent aux vérifications FlowAssist :
+Python and Node.js are enough for the FlowAssist checks:
 
 ```sh
 python3 scripts/verify_s3.py
 python3 scripts/verify_s4.py
 ```
 
-Le premier contrôle les artefacts, liens et 32 scénarios domaine/interface. Le second vérifie les 50 cas, les grilles de revue et les empreintes, puis reproduit les passages initial et courant. Pour ne relancer que le moteur :
+The first checks artifacts, links and 32 domain/interface scenarios. The second checks the 50 cases, review grids and hashes, then reproduces the initial and current runs. To rerun only the engine:
 
 ```sh
 node scripts/eval_s4.cjs
 node scripts/eval_s4.cjs --baseline
 ```
 
-Le starter Paylio requiert pandas et scikit-learn. Dans l’environnement local où ils sont installés :
+The Paylio starter needs pandas and scikit-learn. In the local environment where they are installed:
 
 ```sh
 /opt/anaconda3/bin/python scripts/run_paylio.py
 ```
 
-Sur une autre machine, utiliser un interpréteur Python disposant de ces dépendances. [Instructions runtime](prototype/README.md) · [Preuves et limites des vérifications](prototype/verification.md) · [Historique des changements](prototype/CHANGELOG.md).
+On another machine, use a Python interpreter that has these dependencies. [Runtime instructions](prototype/README.md) · [Verification evidence and limits](prototype/verification.md) · [Changelog](prototype/CHANGELOG.md).
 
 ## Assignment PDFs and sources
 
@@ -111,8 +111,8 @@ Sur une autre machine, utiliser un interpréteur Python disposant de ces dépend
 
 The documents distinguish automated checks, assumptions and human validation. They do not certify real conversations, independent judgements or individual contributions beyond the available evidence. Future deliverables in the template remain visible as future work rather than being omitted or described as completed.
 
-## Source et publication
+## Source and publication
 
-Développer dans [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), branche `main`. Vercel utilise la copie [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), avec un historique séparé. Après chaque push primaire réussi, exécuter `python3 scripts/sync_deploy.py` et confirmer le résultat ; préserver les workflows de destination et ne jamais forcer le push. [Instructions du dépôt](AGENTS.md) · [Guide de synchronisation](docs/ACTIVER_SYNC_GITHUB.md).
+Develop in [BenjaminAHS/project-product-management](https://github.com/BenjaminAHS/project-product-management), branch `main`. Vercel uses the copy [lsantus-mines/deploy-project-product-management](https://github.com/lsantus-mines/deploy-project-product-management), which has a separate history. After every successful primary push, run `python3 scripts/sync_deploy.py` and confirm the result; preserve destination workflows and never force-push. [Repository instructions](AGENTS.md) · [Sync setup guide (French)](docs/ACTIVER_SYNC_GITHUB.md).
 
-La livraison PDF S4 `60267d0` a été poussée et sa copie de publication comparée sans différence. La synchronisation Git ne constitue pas une vérification HTTP du site ; les preuves datées sont conservées dans [le guide de déploiement](prototype/DEPLOYMENT.md).
+The S4 PDF delivery `60267d0` was pushed and its publication copy compared with no differences. Git synchronization is not an HTTP check of the site; dated evidence is kept in [the deployment guide](prototype/DEPLOYMENT.md).

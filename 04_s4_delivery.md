@@ -1,22 +1,22 @@
-# Session 4 — état de livraison au 9 novembre 2026
+# Session 4 — delivery status at 9 November 2026
 
-Référence : `S4_templates/README_S4.md` et Assignment 4 (remise 15 novembre, 23:59).
+Reference: `S4_templates/README_S4.md` and Assignment 4 (due 15 November, 23:59).
 
-| Exigence | Livrable / état |
+| Requirement | Deliverable / status |
 |---|---|
-| Prototype exécutable, quatre décisions | `prototype/engine.js` : classify → règles analyze → sourceRecords/makeDraft → evaluateDraft ; interface avec revue et mode manuel |
-| 50 cas étiquetés avant passage | CSV 50 lignes, labels IA proposés ; F21–F50 écrits avant exécution, seed S3 déjà exposé ; validation humaine encore requise |
-| Exécution et nombre contre le critère | `node scripts/eval_s4.cjs`, résultats avant/après et `evals/report_v0.md` ; critère métier non démontré |
-| Deux évaluateurs indépendants | Grille `evals/grader_reviews.csv` prête ; à remplir par deux personnes, aucune attestation simulée |
-| Trois causes / spec v2 | Rapport et S4-M01–M03 ; trois familles corrigées ; aucun désaccord d’état sur les 50 cas de développement |
-| Architecture conforme au réel | `04_architecture.md`, neuf sections, checkpoints ⊘ et switch ⏻ |
-| Gouvernance S4 | `governance.md`, contrôle humain, propriétaire/portée du switch et stockage |
-| Quatre commits, quatre auteurs propres | À réaliser par les membres avec leurs comptes. L’assistant ne peut pas fabriquer les contributions ni réécrire l’historique pour satisfaire cette règle |
-| Exécuter le starter Paylio une fois | Réalisé sans modifier le starter via `/opt/anaconda3/bin/python scripts/run_paylio.py`. Routage 0,88 ; hit@3 1,00 ; heuristique 8/20 = 40 % (seuil 45 %) ; human-only 0. Preuve : `docs/evidence/s4/paylio-run.txt`. |
-| S3 : trois conversations et brief v2 | Les documents existent ; les conversations humaines ne peuvent pas être attestées par une modification automatique |
+| Executable prototype, four decisions | `prototype/engine.js`: classify → analyze rules → sourceRecords/makeDraft → evaluateDraft; interface with review and manual mode |
+| 50 cases labelled before the run | 50-row CSV, AI-proposed labels; F21–F50 written before execution, S3 seed already exposed; human validation still required |
+| Run and number against the criterion | `node scripts/eval_s4.cjs`, before/after results and `evals/report_v0.md`; business criterion not demonstrated |
+| Two independent graders | Grid `evals/grader_reviews.csv` ready; to be filled in by two people, no simulated attestation |
+| Three causes / spec v2 | Report and S4-M01–M03; three families fixed; no state disagreement on the 50 development cases |
+| Architecture matching the real code | `04_architecture.md`, nine sections, checkpoints ⊘ and switch ⏻ |
+| Governance S4 | `governance.md`: human checkpoints, switch owner/scope and storage |
+| Four commits, four own authors | To be done by members with their own accounts. An assistant cannot fabricate contributions or rewrite history to satisfy this rule |
+| Run the Paylio starter once | Done without modifying the starter via `/opt/anaconda3/bin/python scripts/run_paylio.py`. Routing 0.88; hit@3 1.00; heuristic 8/20 = 40% (threshold 45%); human-only 0. Evidence: `docs/evidence/s4/paylio-run.txt`. |
+| S3: three conversations and brief v2 | The documents exist; human conversations cannot be attested by an automated edit. Fieldwork kit: `research/fieldwork_template.md` |
 
-Les 50 cas ont été consommés pour développement après analyse : remplacer le benchmark avant une mesure indépendante. Pas de faux verdict de succès, de gain de temps ou de validation par des personnes.
+The 50 cases were consumed for development after analysis: replace the benchmark before an independent measurement. No false verdict of success, time saving or validation by people.
 
-Vérifications locales : `python3 scripts/verify_s3.py` (32 scénarios domaine/interface) ; `python3 scripts/verify_s4.py` (alignement des 50 cas, grilles, empreintes et réexécution avant/après). Le harnais DOM n’est pas une preuve visuelle navigateur. Le commit primaire `034267c` a été poussé ; la copie de publication `8a8a2cf` a été vérifiée identique le 9 novembre. Le déploiement HTTP actualisé reste non confirmé à cause d’une erreur DNS.
+Local checks: `python3 scripts/verify_s3.py` (32 domain/interface scenarios); `python3 scripts/verify_s4.py` (alignment of the 50 cases, grids, hashes and before/after rerun). The DOM harness is not visual browser evidence. Primary commit `034267c` was pushed; publication copy `8a8a2cf` was verified identical on 9 November. Updated HTTP deployment verified on 9 November: `scripts/verify_production.py` returns anonymous HTTP 200 and identical hashes for all five files.
 
-Clôture technique : F19 résolu, 50/50 états attendus, 15 brouillons, 0 brouillon sur human-only ; 32 tests. Les vrais entretiens, jugements et contributions personnelles ne sont jamais remplacés par une simulation IA.
+Technical close-out: F19 resolved, 50/50 expected states, 15 drafts, 0 drafts on human-only; 32 tests. Real interviews, judgements and personal contributions are never replaced by an AI simulation.

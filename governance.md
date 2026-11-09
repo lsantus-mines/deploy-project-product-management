@@ -87,10 +87,24 @@ This extension supersedes the v0.3 “no browser storage” description for the 
 
 The engine filters public fixtures by assigned merchant, requires a unique reference, checks amount/currency/source schema/freshness/status, and evaluates generated templates before exposure. Its gate is deterministic, not a model score. Compliance/dispute/fund-action requests route to specialists; no legal deadline or diagnosis is generated. The recorded human reply/handovers are local demonstrations, with no external message or financial write. Production authentication, row-level access control, lawful real-data processing, live connectors and model evaluation remain requirements. [P2 coverage](docs/PRODUCT_COVERAGE.md).
 
-## Session 4 — index des contrôles
+## Session 4 — checkpoints and evaluation
 
-Voir la section détaillée « Session 4 — contrôles et évaluation » ci-dessous.
-*L2 approval interfaces, diff tracking, grounding threshold circuit breaker, and one-click agent override switches.*
+9 November 2026. Operations are local and synthetic; no server-side identity or real bank authorization is shipped.
+
+| Checkpoint ⊘ | Kind | Owner and effect |
+|---|---|---|
+| Sensitive intent, unknown language, missing/ambiguous/stale or inconsistent evidence | Abstention | The engine blocks; the specialist decides on the investigation |
+| Payment sources | Approval | The specialist inspects every source, then approves the draft |
+| Insertion and editing | Approval | Any edit invalidates the approval; factual check and final approval required |
+| Reply / resolution | Approval | The specialist records a local action only; no customer sending |
+| Handover | Approval | Reason required, refreshed preview, explicit recording; no real queue contacted |
+| Evaluation before a pilot | Exhaustive review | Two independent people, to be named; all 50 labels and outputs reviewed; not mere sampling |
+
+**⏻ Owner and scope:** each specialist can switch their ticket to manual mode in their tab. Assisted insertion is then disabled; resuming resets inspection and approval. The automated scenario "manual fallback and resume require a fresh inspection" passed on 9 November 2026; this is not a test attested by Ops. No global stop exists; Ops must name its owner and test a server-side stop before a pilot.
+
+**Storage and access:** `evals/eval_set_v0.csv`, `fixtures_v0.json`, the JSON results and the CSV grids are versioned in the repository: visible to anyone with access to the repository and potentially to its publication copy. No customer data may enter them. App drafts and notes live in the tab's sessionStorage, with an in-memory fallback; this is neither secure storage nor an immutable journal. Known secret patterns are masked, with no general guarantee of personal-data detection.
+
+**Evaluation integrity:** labels for F21–F50 were AI-proposed before the run; the F01–F20 seed was already exposed. After review and fixes, all 50 became development cases. Do not reuse this set for an independent claim. Human graders must fill in `label_review.csv` and `grader_reviews.csv` themselves; no identity, approval or timing is invented. F19 is fixed: a model score of 0.94 forces abstention; source notes play no part in generation. No real model is evaluated. Code and fixture hashes are in the results. See `evals/report_v0.md`.
 
 ## Session 5 — counter-metrics and the segments we report (to come)
 *Primary metric (AHT), counter-metrics (QA score, 7-day reopen rate, agent override rate), and protected reporting segments.*
@@ -100,22 +114,3 @@ Voir la section détaillée « Session 4 — contrôles et évaluation » ci-des
 
 ## Session 7 — accountable owner, rollback authority, incident path (to come)
 *Rollback triggers, operational on-call rotation, kill-switch authority, and incident post-mortem playbooks.*
-
-## Session 4 — contrôles et évaluation
-
-9 novembre 2026. Les opérations sont locales et synthétiques ; aucune identité serveur ni autorisation bancaire réelle n’est livrée.
-
-| Point ⊘ | Type | Responsable et effet |
-|---|---|---|
-| Intention sensible, langue inconnue, preuve absente/ambiguë/périmée ou incohérente | Abstention | Moteur bloque ; spécialiste décide de l’investigation |
-| Sources de paiement | Approbation | Spécialiste inspecte chaque source, puis approuve le brouillon |
-| Insertion et édition | Approbation | Modification invalide l’accord ; contrôle factuel et validation finale requis |
-| Réponse / résolution | Approbation | Spécialiste enregistre seulement une action locale ; aucun envoi client |
-| Transfert | Approbation | Motif obligatoire, aperçu actualisé, enregistrement explicite ; aucune queue réelle contactée |
-| Évaluation avant pilote | Revue exhaustive | Deux personnes indépendantes à nommer ; 50 labels et sorties à relire ; pas de simple échantillonnage |
-
-**⏻ Propriétaire et portée :** chaque spécialiste peut passer son ticket en mode manuel dans son onglet. L’insertion assistée est alors désactivée ; la reprise remet inspection et accord à zéro. Le scénario automatisé « manual fallback and resume require a fresh inspection » a passé le 9 novembre 2026 ; ce n’est pas une attestation de test par Ops. Aucun arrêt global n’existe ; Ops doit nommer son propriétaire et tester un arrêt serveur avant un pilote.
-
-**Stockage et accès :** `evals/eval_set_v0.csv`, `fixtures_v0.json`, les résultats JSON et les grilles CSV sont versionnés dans le dépôt : visibles aux personnes ayant accès au dépôt et potentiellement à sa copie de publication. Aucune donnée client ne doit y entrer. Les brouillons et notes de l’app sont en sessionStorage de l’onglet, avec repli mémoire ; ce n’est pas un stockage sécurisé ni un journal immuable. Les patterns connus de secrets sont masqués, sans garantie de détection générale de données personnelles.
-
-**Intégrité de l’évaluation :** labels proposés par IA avant exécution pour F21–F50 ; seed F01–F20 déjà exposé. Après examen et correction, les 50 deviennent développement. Ne pas réutiliser ce jeu pour une revendication indépendante. Les évaluateurs humains doivent remplir eux-mêmes `label_review.csv` et `grader_reviews.csv` ; aucune identité, approbation ou mesure de temps n’est inventée. F19 est corrigé : un score modèle 0,94 impose l’abstention ; les notes de source ne participent pas à la génération. Aucun modèle réel n’est évalué. Les empreintes du code et des fixtures sont dans les résultats. Voir `evals/report_v0.md`.

@@ -1,21 +1,21 @@
-# Assignments — FlowAssist · version synthétique
+# Assignments — FlowAssist · condensed edition
 
-PDF révisés le 6 novembre 2026. Antoine : **@antorabo75** ; Colin : **@csib-wq**. Identifiants corrigés dans le README du projet, les PDF, les HTML et les archives sources.
+PDFs revised on 6 November 2026. Antoine: **@antorabo75**; Colin: **@csib-wq**. Handles corrected in the project README, PDFs, HTML and source archives.
 
-- Assignment 1 : synthèse du problème, diagnostic, hypothèses, baseline et six réponses de gouvernance.
-- Assignment 2 : mémo d’une page, modèle, registre complet Low/Base/High, sept coûts, sensibilité, build/buy, prix et risques.
-- Assignment 3 : PDF de 7 pages ; brief v2, Lean Canvas et brief v1 d’une page chacun, annexes condensées et index des 20 cas. Les cas complets restent dans le CSV exigé, fourni dans l’archive source.
+- Assignment 1: problem summary, diagnosis, hypotheses, baseline and six governance answers.
+- Assignment 2: one-page memo, model, full Low/Base/High register, seven costs, sensitivity, build/buy, pricing and risks.
+- Assignment 3: 7-page PDF; brief v2, Lean Canvas and brief v1 one page each, condensed annexes and an index of the 20 cases. The complete cases remain in the required CSV, included in the source archive.
 
-Les consignes nécessitant des actions humaines restent explicitement non attestées : entretiens, essais utilisateurs, labels humains et contributions Git personnelles. Les limites du modèle financier original restent signalées. Les PDF ne prétendent pas à une conformité totale quand les preuves manquent.
+Instructions that require human actions remain explicitly unattested: interviews, user tests, human labels and personal Git contributions. The original financial model's limitations remain flagged. The PDFs do not claim full compliance where evidence is missing.
 
-Mise à jour documentaire du 9 novembre : ces PDF et archives restent les éditions S1–S3 du 6 novembre, avec leur index historique de 20 cas. Le CSV courant contient 50 cas de développement ; [le rapport S4](../evals/report_v0.md), [l’architecture](../04_architecture.md) et [l’audit](../docs/DELIVERY_AUDIT.md) décrivent les évolutions récentes. Le mémo Markdown courant reprend les corrections économiques explicitées dans le PDF S2.
+Documentation update of 9 November: these PDFs and archives remain the 6 November S1–S3 editions, with their historical 20-case index. The current CSV holds 50 development cases; [the S4 report](../evals/report_v0.md), [the architecture](../04_architecture.md) and [the audit](../docs/DELIVERY_AUDIT.md) describe the recent changes. The current Markdown memo includes the economic corrections made explicit in the S2 PDF.
 
-Les archives Sources conservent les fichiers requis dans leur format d’origine et les consignes DOCX. Les hypothèses et anciennes affirmations de sources non vérifiées y sont conservées pour traçabilité ; les corrections explicites des PDF prévalent. Génération : depuis la racine du dépôt project-product-management, `/opt/anaconda3/bin/python Assignments/Sources/build_assignments.py`.
+The Sources archives keep the required files in their original format along with the DOCX instructions. Earlier assumptions and unverified source claims are kept there for traceability; the explicit corrections in the PDFs take precedence. Build: from the root of the project-product-management repository, `/opt/anaconda3/bin/python Assignments/Sources/build_assignments.py`.
 
-## Assignment 4 · 9 novembre 2026
+## Assignment 4 · 9 November 2026
 
-[PDF synthétique — Prototype & Architecture](Assignment_4_Prototype_and_Architecture.pdf) · **4 pages** : résultats contre le critère, erreurs → spec v2, architecture réelle avec checkpoints ⊘ et switch ⏻, composants, fallbacks, gouvernance, données et reproduction.
+[Condensed PDF — Prototype & Architecture](Assignment_4_Prototype_and_Architecture.pdf) · **4 pages**: results against the criterion, misses → spec v2, real architecture with checkpoints ⊘ and switch ⏻, components, fallbacks, governance, data and reproduction.
 
-[Archive des sources originales](Sources/Assignment_4_sources.zip) : prototype, spec, architecture, gouvernance, 50 cas, fixtures et résultats avant/après, grilles et consignes. Le PDF synthétise les éléments documentés sans transformer les résultats automatiques en validation humaine.
+[Original sources archive](Sources/Assignment_4_sources.zip): prototype, spec, architecture, governance, 50 cases, before/after fixtures and results, grids and instructions. The PDF summarizes the documented elements without turning automated results into human validation. The archive is the 9 November snapshot; the Markdown files in the repository are the current versions.
 
-Génération indépendante (ne modifie pas les éditions S1–S3) : `/opt/anaconda3/bin/python Assignments/Sources/build_assignment4.py`. Contenu éditable : `Sources/assignment4_content.md` ; HTML : `Sources/Assignment_4.html` ; contrôles de pagination et empreinte : `Sources/validation_s4.json`.
+Independent build (does not modify the S1–S3 editions): `/opt/anaconda3/bin/python Assignments/Sources/build_assignment4.py`. Editable content: `Sources/assignment4_content.md`; HTML: `Sources/Assignment_4.html`; pagination and hash checks: `Sources/validation_s4.json`.

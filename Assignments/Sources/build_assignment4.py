@@ -64,7 +64,7 @@ assert len(rows)==50
 results=json.loads((ROOT/'evals/results_v0.json').read_text())
 assert results['summary']['stateMatches']==50 and results['summary']['drafts']==15
 assert '35/50' in content
-paths=['04_architecture.md','04_s4_delivery.md','spec.md','governance.md','03_product_brief.md','03_ai_lean_canvas.md','03_user_research.md','03_prototype_link.md','AGENTS.md','vercel.json','Assignment_4_Prototype_and_Architecture_due_15_Nov (1).docx']
+paths=['04_architecture.md','04_s4_delivery.md','spec.md','governance.md','03_product_brief.md','03_ai_lean_canvas.md','03_user_research.md','03_prototype_link.md','AGENTS.md','vercel.json','course/Assignment_4_Prototype_and_Architecture.docx']
 paths += [str(p.relative_to(ROOT)) for folder in ['prototype','evals','S4_templates'] for p in (ROOT/folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts]
 paths += ['scripts/test_app.cjs','scripts/verify_s3.py','scripts/verify_s4.py','scripts/eval_s4.cjs','scripts/run_paylio.py','docs/evidence/s4/paylio-run.txt','Assignments/Sources/assignment4_content.md','Assignments/Sources/build_assignment4.py']
 with zipfile.ZipFile(SRC/'Assignment_4_sources.zip','w',zipfile.ZIP_DEFLATED) as z:

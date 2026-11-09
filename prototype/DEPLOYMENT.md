@@ -28,7 +28,7 @@ The [GitHub workflow](../.github/workflows/sync-deploy.yml) triggers on every pu
 
 The workflow copies committed files and deletions into the deployment repository and makes a normal commit/push. It preserves the destination history and destination-owned `.github/workflows/` files. Workflow definitions are excluded from cross-repository copying, so the destination credential requires only Contents write permission. The sync fails on an unexpected repository, dirty checkout, unsafe path/symlink or concurrent remote update; it never force-pushes. Secrets and local `.git` metadata are never copied. A no-change run creates no commit.
 
-**Guide français pas à pas : [activer le secret Actions](../docs/ACTIVER_SYNC_GITHUB.md).**
+**Step-by-step guide (in French): [enable the Actions secret](../docs/ACTIVER_SYNC_GITHUB.md).**
 
 **Verified status:** [push-triggered workflow run](https://github.com/BenjaminAHS/project-product-management/actions/runs/41667205280) succeeded for primary `e33deb3`. The secret is now effective. The following instructions remain for renewal or reconfiguration.
 

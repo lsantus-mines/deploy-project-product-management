@@ -23,4 +23,4 @@ Production deployment `dpl_4isLr4HL3Y1s1a3DgVSzm6rgf61g` is Ready. On 3 November
 
 ## Git publication evidence · 9 November 2026
 
-Primary `034267c` was pushed successfully. A fresh checkout of publication `8a8a2cf` compared identical through the synchronization script (0 changed, 0 removed). Updated HTTP checks failed DNS, so the verified v0.4 HTTP release above remains historical evidence from 3 November.
+Primary `034267c` was pushed successfully. A fresh checkout of publication `8a8a2cf` compared identical through the synchronization script (0 changed, 0 removed). A first HTTP check failed DNS; the rerun on 9 November passed: all five assets returned anonymous HTTP 200 and match the S4 sources.
