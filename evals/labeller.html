@@ -48,6 +48,7 @@
   .status.todo { color: var(--warn); }
   #loader { max-width: 640px; margin: 40px auto; }
   kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+  .ai { margin: 6px 0 10px; padding: 8px 12px; border-radius: 6px; border: 1px dashed var(--warn); color: var(--warn); font-size: 13px; }
   .hidden { display: none !important; }
 </style>
 </head>
@@ -86,6 +87,7 @@
       <h2 id="caseId"></h2>
       <span class="status" id="caseStatus"></span>
     </div>
+    <p class="ai hidden" id="aiBanner"></p>
     <div class="meta" id="ticketMeta"></div>
     <div class="message" id="message"></div>
     <h2>Source snapshot</h2>
@@ -164,7 +166,25 @@ const POLICY = {
 };
 const LABEL_COLS = ["expected_output_or_action", "hand_over_to_a_person", "case_type", "eligible_for_timing", "evidence_or_source", "notes"];
 const $ = (id) => document.getElementById(id);
-let cases = [], labels = {}, index = 0, labeller = "";
+let cases = [], labels = {}, index = 0, labeller = "", proposals = {};
+
+// Optional AI-proposed labels (evals/proposals_v1_<name>.csv). Shown for review only; each one
+// becomes a label when the labeller saves the case, and the export records accepted vs corrected.
+async function loadProposals() {
+  try {
+    const res = await fetch(`proposals_v1_${labeller}.csv`);
+    if (!res.ok) return;
+    for (const p of parseCSV(await res.text())) {
+      const draft = p.state === "draft_ready";
+      proposals[p.id] = { state: p.state, action: p.action, caseType: p.case_type, notes: p.notes,
+        handover: draft ? "no — L2 approval required" : "yes", eligible: draft ? "yes" : "no",
+        clauses: p.clauses.split(" ").filter(Boolean) };
+    }
+    $("who").textContent += ` · ${Object.keys(proposals).length} AI-proposed labels to review`;
+    render();
+  } catch (_) {}
+}
+const fingerprint = (l) => JSON.stringify([l.state, l.action, l.handover, l.caseType, l.eligible, [...(l.clauses || [])].sort(), l.notes]);
 
 // Split: member i labels V(40i+1)–V(40i+40) plus the last 4 cases of the previous member's block.
 const TEAM = ["Lenny", "Anthony", "Antoine", "Benjamin", "Colin"];
@@ -218,10 +238,15 @@ function restore() { try { labels = JSON.parse(localStorage.getItem(storeKey()) 
 const isDone = (l) => l && l.state && l.handover && l.caseType && l.eligible;
 
 function render() {
-  const c = cases[index], l = labels[c.id] || {};
+  const c = cases[index], p = proposals[c.id], l = labels[c.id] || p || {};
   $("caseId").textContent = `${c.id} · ${index + 1} of ${cases.length}`;
-  $("caseStatus").textContent = isDone(l) ? "Labelled" : "Not labelled";
-  $("caseStatus").className = `status ${isDone(l) ? "done" : "todo"}`;
+  $("aiBanner").classList.toggle("hidden", !p);
+  $("aiBanner").textContent = !p ? "" : labels[c.id]
+    ? `AI-proposed label · ${labels[c.id].origin === "AI-proposed, corrected" ? "corrected" : "accepted"} by you`
+    : "AI-proposed label, not yet reviewed. Check it against the 5 questions, correct anything wrong, then press Enter to accept.";
+  const reviewed = isDone(labels[c.id]);
+  $("caseStatus").textContent = reviewed ? "Labelled" : "Not labelled";
+  $("caseStatus").className = `status ${reviewed ? "done" : "todo"}`;
   $("ticketMeta").textContent = c.message !== undefined ? `Session merchant ${c.merchant} · ticket language ${c.language} · received ${c.received} · segment ${c.segment}` : c.segment;
   $("message").textContent = c.message ?? c.raw;
   $("account").textContent = c.account ? `Account record: ${c.account}` : "";
@@ -252,13 +277,15 @@ function save() {
     clauses: [...$("clauses").querySelectorAll("input:checked")].map((b) => b.value),
     at: new Date().toISOString().slice(0, 10),
   };
+  const p = proposals[c.id];
+  if (p) labels[c.id].origin = fingerprint(labels[c.id]) === fingerprint(p) ? "AI-proposed, accepted" : "AI-proposed, corrected";
   persist();
 }
 function go(i) { save(); index = (i + cases.length) % cases.length; render(); window.scrollTo(0, 0); }
 
 function exportCSV() {
   save();
-  const head = ["id", ...LABEL_COLS, "labeller", "labelled_at"];
+  const head = ["id", ...LABEL_COLS, "labeller", "labelled_at", "label_origin"];
   const lines = [head.join(",")];
   for (const c of cases) {
     const l = labels[c.id] || {};
@@ -268,6 +295,7 @@ function exportCSV() {
       hand_over_to_a_person: l.handover || "", case_type: l.caseType || "", eligible_for_timing: l.eligible || "",
       evidence_or_source: `fixtures_v1.json#${c.id}` + (l.clauses && l.clauses.length ? `; FLOW-POL-1 ${l.clauses.join(" ")}` : ""),
       notes: l.notes || "", labeller, labelled_at: l.at || "",
+      label_origin: !l.state ? "" : l.origin ? `${l.origin} by ${labeller}` : `written by hand by ${labeller}`,
     };
     lines.push(head.map((h) => csvCell(row[h])).join(","));
   }
@@ -285,6 +313,7 @@ function importExport(rows) {
     const [state, ...rest] = (r.expected_output_or_action || "").split("; ");
     labels[r.id] = { state, action: rest.join("; "), handover: r.hand_over_to_a_person, caseType: r.case_type,
       eligible: r.eligible_for_timing, notes: r.notes, at: r.labelled_at,
+      origin: (r.label_origin || "").startsWith("AI-proposed") ? r.label_origin.replace(/ by .*$/, "") : undefined,
       clauses: ((r.evidence_or_source || "").match(/\bP\d\d\b/g)) || [] };
   }
   persist();
@@ -335,12 +364,12 @@ $("start").addEventListener("click", async () => {
   try {
     const res = await fetch("eval_set_v1.csv");
     if (!res.ok) throw new Error(res.status);
-    begin(await res.text());
+    if (begin(await res.text())) loadProposals();
   } catch (_) {
     $("loadError").textContent = "Could not auto-load (the page is probably opened as a file). Use the file picker.";
   }
 });
-$("file").addEventListener("change", async (e) => { const f = e.target.files[0]; if (f) begin(await f.text()); });
+$("file").addEventListener("change", async (e) => { const f = e.target.files[0]; if (f && begin(await f.text())) loadProposals(); });
 $("resume").addEventListener("change", async (e) => {
   const f = e.target.files[0];
   if (!f) return;

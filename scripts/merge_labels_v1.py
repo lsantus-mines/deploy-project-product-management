@@ -7,7 +7,8 @@ Each member labels a block of 40 cases plus 4 shared cases from the previous blo
 - Refuses to write anything until all 200 cases are labelled by at least one person.
 - Copies single labels, and double labels that agree on state, handover, case type and
   eligibility, into evals/eval_set_v1.csv (the first labeller's wording is kept).
-- Fills evals/label_review_v1.csv with who labelled what, and when.
+- Fills evals/label_review_v1.csv with who labelled what, and when, and records in the
+  `origin` column whether each label was written by hand or AI-proposed and reviewed.
 - Prints the agreement rate on the shared cases and lists disagreements; a third person
   adjudicates each one, writes the reason in `adjudication` and edits the case by hand.
 Never runs the engine.
@@ -71,6 +72,8 @@ for row in rows:
         continue
     for k in COPIED:
         row[k] = a[k]
+    origin = a.get("label_origin") or f"written by hand by {a['labeller']}"
+    row["origin"] = f"AI-generated synthetic input; label {origin} before any run"
 
 with eval_path.open("w", newline="", encoding="utf-8") as stream:
     writer = csv.DictWriter(stream, columns)
