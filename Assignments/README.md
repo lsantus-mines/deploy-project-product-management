@@ -11,3 +11,11 @@ Les consignes nécessitant des actions humaines restent explicitement non attest
 Mise à jour documentaire du 9 novembre : ces PDF et archives restent les éditions S1–S3 du 6 novembre, avec leur index historique de 20 cas. Le CSV courant contient 50 cas de développement ; [le rapport S4](../evals/report_v0.md), [l’architecture](../04_architecture.md) et [l’audit](../docs/DELIVERY_AUDIT.md) décrivent les évolutions récentes. Le mémo Markdown courant reprend les corrections économiques explicitées dans le PDF S2.
 
 Les archives Sources conservent les fichiers requis dans leur format d’origine et les consignes DOCX. Les hypothèses et anciennes affirmations de sources non vérifiées y sont conservées pour traçabilité ; les corrections explicites des PDF prévalent. Génération : depuis la racine du dépôt project-product-management, `/opt/anaconda3/bin/python Assignments/Sources/build_assignments.py`.
+
+## Assignment 4 · 9 novembre 2026
+
+[PDF synthétique — Prototype & Architecture](Assignment_4_Prototype_and_Architecture.pdf) · **4 pages** : résultats contre le critère, erreurs → spec v2, architecture réelle avec checkpoints ⊘ et switch ⏻, composants, fallbacks, gouvernance, données et reproduction.
+
+[Archive des sources originales](Sources/Assignment_4_sources.zip) : prototype, spec, architecture, gouvernance, 50 cas, fixtures et résultats avant/après, grilles et consignes. Le PDF synthétise les éléments documentés sans transformer les résultats automatiques en validation humaine.
+
+Génération indépendante (ne modifie pas les éditions S1–S3) : `/opt/anaconda3/bin/python Assignments/Sources/build_assignment4.py`. Contenu éditable : `Sources/assignment4_content.md` ; HTML : `Sources/Assignment_4.html` ; contrôles de pagination et empreinte : `Sources/validation_s4.json`.

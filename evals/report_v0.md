@@ -13,7 +13,7 @@
 | **Réponses que deux personnes enverraient sans modification** | **Non mesuré ; pas 0 %** |
 | Brouillons sur les 13 cas attendus human-only | 0/13 |
 | Sources d’un autre compte dans la sortie | 0/50 cas ; contrôle local seulement |
-| Sorties sans brouillon après correction | 34/50 ; inclut routage, ambiguïté et blocages, pas uniquement le policy checker |
+| Sorties sans brouillon après correction | 35/50 ; inclut routage, ambiguïté et blocages, pas uniquement le policy checker |
 | Routage d’intention seul | Non mesuré indépendamment |
 | Retrieval hit@3 | Non applicable : recherche déterministe par référence, pas de retriever top-k |
 | Temps actif apparié, QA, précision/recall du détecteur | Non mesurés |

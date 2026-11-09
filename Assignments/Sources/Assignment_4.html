@@ -1,0 +1,271 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Assignment 4 — FlowAssist</title><style>
+@font-face{font-family:Body;src:url("file:///System/Library/Fonts/Supplemental/Arial.ttf")}
+@font-face{font-family:Body;src:url("file:///System/Library/Fonts/Supplemental/Arial Bold.ttf");font-weight:700}
+@page{size:A4;margin:16mm 16mm 16mm;@bottom-left{content:"FLOWASSIST · ASSIGNMENT 4 · 9 NOVEMBER 2026";font:7pt Body;color:#567079}@bottom-right{content:counter(page) " / " counter(pages);font:7pt Body;color:#567079}}
+body{font:8.7pt/1.27 Body,Arial,sans-serif;color:#243644;margin:0}
+h1{font-size:21pt;line-height:1.12;color:#123c45;margin:0 0 4mm}
+h2{font-size:11.5pt;color:#146e76;margin:3mm 0 1.5mm;break-after:avoid}
+p{margin:0 0 2.4mm}a{color:#08747c;text-decoration:none;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:7.6pt;line-height:1.23;margin:2mm 0 3mm}
+th{background:#153e4c;color:white}th,td{text-align:left;vertical-align:top;padding:1.5mm;border-bottom:.5pt solid #d9e3e7;overflow-wrap:anywhere}
+tr{break-inside:avoid}tbody tr:nth-child(even){background:#eff5f5}
+ul{padding-left:4.5mm;margin:1.5mm 0 2.5mm}li{margin-bottom:1.4mm}
+code{font-size:8pt;overflow-wrap:anywhere}pre{white-space:pre-wrap;background:#eff5f5;padding:3mm;font:8pt/1.25 monospace;overflow-wrap:anywhere}
+.diagram{font:8pt/1.18 monospace;padding:3mm;margin:2mm 0 3mm}
+.kicker{font-size:8pt;letter-spacing:1.2pt;font-weight:bold;color:#16848a;margin-bottom:3mm}
+.meta{font-size:8pt;color:#526b77;margin-bottom:4mm}
+section{break-before:page}section:first-child{break-before:auto}
+</style></head><body><section><div class="kicker">ASSIGNMENT 4 · PROTOTYPE & ARCHITECTURE</div>
+
+<h1>FlowAssist — build, evaluate, explain</h1>
+<div class="meta">PayFlow B2B · P2 · 9 November 2026<br>Lenny Santus · Anthony Rascle · Antoine Rabeau · Benjamin Caujolle · Colin Sibieude<br>Due: 15 November 2026, 23:59 (Assignment 4 DOCX; workshop templates retain 6 November).</div>
+
+<p><strong>Job.</strong> A copilot helps payment-support specialists trace a synthetic payment and prepare a cited EN/FR/DE reply. A person inspects the evidence and approves the final text; every recorded action remains local.</p>
+<p><strong>Prototype:</strong> <a href="https://deploy-project-product-management.vercel.app">FlowAssist on Vercel</a> · <a href="https://github.com/BenjaminAHS/project-product-management">Source repository</a>. The current runtime uses rules and templates, with no live model, bank or Zendesk connection. The Git publication copy was verified; the latest successful HTTP asset check remains 3 November.</p>
+<h2>1. Evaluation v0 — the number against the criterion</h2>
+<p><strong>Criterion inherited from the brief:</strong> ≥41.2% paired total active handling-time saving on pre-labelled eligible tracing cases in a frozen 200-case benchmark, QA ≥92%, unsafe-draft detection precision ≥98%, and zero critical exposures. A draft count is not this business criterion.</p>
+<table>
+<thead>
+<tr>
+<th>Observation</th>
+<th style="text-align: right;">Initial run</th>
+<th style="text-align: right;">Corrected development run</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Expected output states matched</td>
+<td style="text-align: right;">37/50 = 74%</td>
+<td style="text-align: right;">50/50 = 100%</td>
+</tr>
+<tr>
+<td>Drafts produced with local policy check passing</td>
+<td style="text-align: right;">2/50 = 4%</td>
+<td style="text-align: right;">15/50 = 30%</td>
+</tr>
+<tr>
+<td>Drafts on expected human-only cases</td>
+<td style="text-align: right;">0/13</td>
+<td style="text-align: right;">0/13</td>
+</tr>
+<tr>
+<td>Cases with foreign-account sources in output</td>
+<td style="text-align: right;">0/50</td>
+<td style="text-align: right;">0/50</td>
+</tr>
+<tr>
+<td>Outputs without a draft</td>
+<td style="text-align: right;">48/50</td>
+<td style="text-align: right;">35/50</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Human sendability, QA and paired time saving:</strong> not measured by these scripts. <strong>Verdict: the business criterion is not demonstrated.</strong> State agreement is not grounding precision. Intent routing alone is not scored independently; retrieval hit@3 is not applicable to exact-reference matching. No-draft counts include routing and missing/invalid evidence, not just policy blocks.</p>
+<p><strong>Two-grader method.</strong> Each person independently checks account/transaction identity, exact money/status/time, citations, safety and language, then answers “Would I send this without editing?” yes/no. Disagreements require adjudication; unresolved cases remain pending/fail. <code>label_review.csv</code> reserves label approvals and <code>grader_reviews.csv</code> reserves output judgements. Labels are AI proposals; no independent human judgement is inferred from automated checks.</p>
+<h2>2. Starter replay — separate from FlowAssist</h2>
+<p>The supplied Paylio starter was executed unchanged: routing accuracy <strong>0.88</strong>, retrieval hit@3 <strong>1.00</strong>, citation-based “sendable” heuristic <strong>8/20 = 40%</strong> against <strong>45%</strong>, human-only drafts <strong>0</strong>, policy blocks <strong>0</strong>. Its “sendable” column is an automated heuristic, not two graders’ opinion. Main misses: Release notes 4.12 (9 cases), Add an admin user (2), Payslips as PDF (1). Proposed spec changes are recorded without tuning the starter against these tickets.</p></section><section><div class="kicker">ARCHITECTURE · THE IMPLEMENTED WORKFLOW</div>
+
+<h1>Four steps, bounded decisions</h1>
+<h2>3. Diagram — human checkpoints ⊘ and override ⏻</h2>
+<p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 330" width="100%" height="280" role="img" aria-label="Four-step workflow with approval, abstention and manual override">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#146e76"/></marker></defs>
+<rect width="800" height="330" fill="#eff5f5"/>
+<g fill="#ffffff" stroke="#91b7b8" stroke-width="1.2">
+<rect x="15" y="25" width="140" height="44" rx="5"/><rect x="185" y="25" width="150" height="44" rx="5"/><rect x="365" y="25" width="160" height="44" rx="5"/><rect x="555" y="25" width="225" height="44" rx="5"/>
+<rect x="555" y="110" width="225" height="48" rx="5"/><rect x="275" y="110" width="240" height="48" rx="5"/><rect x="15" y="110" width="220" height="48" rx="5"/>
+<rect x="555" y="220" width="225" height="56" rx="5"/><rect x="275" y="220" width="240" height="56" rx="5"/><rect x="15" y="220" width="220" height="56" rx="5"/>
+</g>
+<g fill="none" stroke="#146e76" stroke-width="1.5" marker-end="url(#arrow)">
+<path d="M155 47 H185"/><path d="M335 47 H365"/><path d="M525 47 H555"/><path d="M667 69 V110"/>
+<path d="M555 134 H515"/><path d="M275 134 H235"/><path d="M125 158 V220"/>
+<path d="M780 47 H792 V248 H780"/><path d="M667 158 V220"/>
+<path d="M445 69 V90 H540 V248 H555"/>
+<path d="M555 248 H515"/>
+</g>
+<g font-family="Arial,sans-serif" font-size="12" text-anchor="middle" fill="#243644">
+<text x="85" y="44">Synthetic ticket</text><text x="85" y="59">+ assigned merchant</text>
+<text x="260" y="51">1 · classify intent</text><text x="445" y="51">2 · routing rule</text>
+<text x="667" y="44">3 · scoped lookup + match</text><text x="667" y="59">→ cited template</text>
+<text x="667" y="138">4 · evaluateDraft policy check</text>
+<text x="395" y="129">⊘ Inspect every source</text><text x="395" y="145">+ approve suggestion</text>
+<text x="125" y="129">Editor → ⊘ final factual review</text><text x="125" y="145">Edits invalidate approval</text>
+<text x="125" y="245">Record local reply / resolve</text><text x="125" y="261">No external send</text>
+<text x="667" y="244">⊘ Human investigation</text><text x="667" y="261">No automatic draft</text>
+<text x="395" y="244">⊘ Reason + current preview</text><text x="395" y="261">→ record local handover</text>
+<text x="533" y="127" font-size="10">pass</text><text x="692" y="191" font-size="10">block</text>
+<text x="640" y="90" font-size="10">unsupported / missing / invalid evidence → abstain</text>
+<text x="400" y="310">⏻ Operator selects manual mode for one ticket/tab; resume resets inspection and approval.</text>
+</g></svg></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Component / implementation</th>
+<th>Rung · pattern</th>
+<th>Trust</th>
+<th>Checkpoint ⊘</th>
+<th>Observed metric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>classify</code> in engine.js</td>
+<td>1 rules · routing</td>
+<td>L1 suggestion</td>
+<td>Abstain on sensitive intent</td>
+<td>End-to-end states; no standalone routing score</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>analyze</code>: language, scope, reference, evidence constraints</td>
+<td>1 rules · routing/chaining</td>
+<td>L3 local read scope</td>
+<td>Abstention when constraints fail</td>
+<td>50/50 expected development states</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>sourceRecords</code>, <code>makeDraft</code></td>
+<td>1 templates · chaining</td>
+<td>L2 draft</td>
+<td>Inspect every source, approve</td>
+<td>15/50 drafts; 0 foreign-source cases</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>evaluateDraft</code> + UI final review</td>
+<td>1 rules · chaining</td>
+<td>L2 checked draft</td>
+<td>Approve again after edits</td>
+<td>0/13 human-only drafts; critical edits blocked</td>
+</tr>
+</tbody>
+</table>
+<p>These levels describe the project’s autonomy scale, not a security certification. Paylio’s educational ladder is 2/1/3/1; FlowAssist’s delivered components are explicitly <strong>1/1/1/1</strong>. No pretrained model or model evaluator is claimed.</p>
+<h2>4. Workflow or agent?</h2>
+<p>A <strong>workflow</strong>: the path and all branches are fixed in code; no model chooses its tools or next steps. This suits financial identity/status risks and supports explicit abstention. Moving up requires server authentication and authorization, read-only connectors, strict model-output schemas, timeouts and independent evaluation. Customer sending and financial actions stay human-controlled and outside this prototype.</p></section><section><div class="kicker">FAIL-SAFE BEHAVIOUR · GOVERNANCE · DATA</div>
+
+<h1>What blocks, who decides, where data lives</h1>
+<h2>5. Fallbacks and runtime contracts</h2>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Implemented response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No retrieval hit or no unique reference</td>
+<td>No draft. Ask for a unique reference or prepare an authorized handover. An amount alone never confirms a transaction.</td>
+</tr>
+<tr>
+<td>Low/missing confidence</td>
+<td>For <code>matchMethod=model</code>, require a finite numeric <code>matchScore</code> in [0.95, 1]; otherwise abstain. Unknown methods block. The runtime does not compute this score.</td>
+</tr>
+<tr>
+<td>Policy checker blocks</td>
+<td>Critical monetary/citation/promise errors cannot be approved. Noncanonical wording needs manual factual review; rules do not certify arbitrary prose.</td>
+</tr>
+<tr>
+<td>API unavailable</td>
+<td>No API exists in this runtime. Live timeout behaviour is an integration requirement, not a completed test. Manual mode remains available; storage errors fall back to memory.</td>
+</tr>
+</tbody>
+</table>
+<p>Merchant scope, unique reference, supplied amount/currency, schema, consistent status and fee reconciliation must pass before drafting. Evidence age is <strong>0–300,000 ms</strong> against the ticket’s fixture request time. A high score cannot bypass these checks. Source notes are excluded from financial fields used to draft. UI intake allows <strong>30 workspace cases</strong> and <strong>3,000 message characters</strong>; the offline 50-case suite is separate.</p>
+<h2>6. Human checkpoints and override ⏻</h2>
+<p><strong>Approval:</strong> source-by-source inspection and draft approval; final editor review; explicit local response/resolution; required reason, current preview and explicit handover recording. Editing invalidates the corresponding approval or preview. <strong>Abstention:</strong> sensitive/unsupported intent, missing or ambiguous identity, stale/invalid/conflicting evidence and failed policy checks. Evaluation is intended as an exhaustive independent review, not a sampling shortcut.</p>
+<p><strong>Switch owner and scope:</strong> the operator can select manual mode for one ticket in one browser tab. Insertion is disabled; resuming assistance clears source inspection and approval. There is no server-wide switch. Ops owns the future global stop mechanism before a real pilot.</p>
+<p><strong>Switch test:</strong> automated on <strong>9 November 2026</strong>, scenario “manual fallback and resume require a fresh inspection” in <code>scripts/test_app.cjs</code>; part of <strong>32 passing domain/interaction tests</strong>. This is code-level evidence, not a user study or a browser-rendering check.</p>
+<h2>7. Data, provenance and access</h2>
+<ul>
+<li><strong>Demo:</strong> <code>prototype/data.js</code>, ten public synthetic starting cases, fictional accounts, ledger/clearing fixtures and historical context. No training data or real customer exports.</li>
+<li><strong>Development evaluation:</strong> <code>evals/eval_set_v0.csv</code>, <strong>50</strong> rows (F01–F50), <strong>15</strong> proposed timing-eligible cases. Every row contains input, expected action, evidence, handover, segment, origin and case notes; executable adapters live in <code>fixtures_v0.json</code>.</li>
+<li><strong>Separation:</strong> F01–F20 were exposed S3 seeds. F21–F50 had proposed labels before execution. After failures were inspected and the engine corrected, <strong>all 50 became development data</strong>, excluded from future held-out claims. Labels were not changed to fit outputs. F19’s adapter now encodes the score/note already in its original scenario.</li>
+<li><strong>Storage/access:</strong> CSVs, review grids and results are versioned with repository access and copied to the publication repository; they are not Vercel website assets. App drafts, notes and actions use per-tab sessionStorage, with known-secret pattern redaction and memory fallback. This is neither secure financial storage nor an immutable audit log. Use synthetic data only.</li>
+</ul></section><section><div class="kicker">SPEC V2 · REPRODUCTION · DELIVERABLES</div>
+
+<h1>Every observed miss becomes a requirement</h1>
+<h2>8. Failure families → spec v2</h2>
+<table>
+<thead>
+<tr>
+<th>Miss / examples</th>
+<th>Component</th>
+<th>Required change and evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reference hyphens/digits misread as negative amounts or monetary values. F01, F13, F14, F20, F21–F26, F49: 11 initial failures.</td>
+<td>Extraction / routing constraint</td>
+<td><strong>S4-M01:</strong> separate reference and amount tokens; retain real negative-amount rejection. Corrected; regression tests added.</td>
+</tr>
+<tr>
+<td>FAC/RE formats ignored. F02, F03: 2 initial failures.</td>
+<td>Extraction / lookup</td>
+<td><strong>S4-M02:</strong> recognize FAC-, RE- and REF- while retaining scope, identity and money constraints. Corrected and tested.</td>
+</tr>
+<tr>
+<td>Model-score/note contract not represented. F19: revealed after parsing correction.</td>
+<td>Matching contract / policy</td>
+<td><strong>S4-M03:</strong> represent model provenance and score; fail closed below 0.95 or for invalid scores; ignore source-note instructions. F19 now abstains without changing its expected label.</td>
+</tr>
+</tbody>
+</table>
+<p>The first two families account for 13 initial disagreements. The third was uncovered later; it is not presented as a third equally frequent initial failure. All three are resolved on this development suite. Full text, before/after outputs and hashes are preserved in the repository.</p>
+<h2>9. Reproduce and inspect</h2>
+<pre><code class="language-sh">python3 scripts/verify_s3.py     # artifacts + 32 domain/UI tests
+python3 scripts/verify_s4.py     # 50 cases, grids, hashes, both runs
+node scripts/eval_s4.cjs        # current development outputs
+node scripts/eval_s4.cjs --baseline  # archived initial run
+</code></pre>
+<p>Python and Node.js suffice for FlowAssist. The unmodified Paylio replay additionally needs pandas/scikit-learn: <code>python scripts/run_paylio.py</code> with a suitable interpreter (locally <code>/opt/anaconda3/bin/python</code>). Its recorded output is <code>docs/evidence/s4/paylio-run.txt</code>.</p>
+<p><strong>Version trace:</strong> runtime source <code>56971d9</code> (documentation follow-ups do not change the engine); exact engine and fixture SHA-256 values are in <code>results_v0.json</code>. The original engine and adapter are preserved in <code>engine_baseline_v0.js</code> and <code>fixtures_baseline_v0.json</code>. The two runs intentionally use separately versioned fixtures; F19’s later representation is explicit.</p>
+<h2>10. Required original-format artifacts</h2>
+<table>
+<thead>
+<tr>
+<th>Assignment requirement</th>
+<th>Repository artifact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Working prototype / four logical steps</td>
+<td><code>prototype/</code> and <code>scripts/test_app.cjs</code></td>
+</tr>
+<tr>
+<td>Report v0 and three misses</td>
+<td><code>evals/report_v0.md</code></td>
+</tr>
+<tr>
+<td>Architecture: diagram, component table, workflow, fallbacks, switch, data</td>
+<td><code>04_architecture.md</code></td>
+</tr>
+<tr>
+<td>Every miss marked in spec v2</td>
+<td><code>spec.md</code>, S4-M01–M03</td>
+</tr>
+<tr>
+<td>50 cases with labels, evidence and segments</td>
+<td><code>evals/eval_set_v0.csv</code>, <code>fixtures_v0.json</code></td>
+</tr>
+<tr>
+<td>Human checkpoints, switch ownership/test and data access</td>
+<td>Session 4 section of <code>governance.md</code></td>
+</tr>
+<tr>
+<td>Independent label/output review records</td>
+<td><code>evals/label_review.csv</code>, <code>evals/grader_reviews.csv</code></td>
+</tr>
+<tr>
+<td>S3 starting documents</td>
+<td>Brief v2, Lean Canvas, research/design record and prototype link</td>
+</tr>
+</tbody>
+</table>
+<p>This PDF is the concise readout; the companion source archive retains the required files in their original formats. Existing author records remain in Git. Four commits by four people, independent human grading and real S3 conversations cannot be certified by PDF generation or simulated with AI identities.</p>
+<p><strong>Next build, three lines:</strong> freeze a new held-out benchmark; collect independent judgements and paired timings; add authenticated read-only integrations and a global stop mechanism before a real pilot. The full three-category S2 economics are not validated by a tracing-only demonstration.</p></section></body></html>

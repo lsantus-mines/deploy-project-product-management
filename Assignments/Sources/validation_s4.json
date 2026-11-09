@@ -1,0 +1,9 @@
+{
+  "file": "Assignment_4_Prototype_and_Architecture.pdf",
+  "pages": 4,
+  "cases": 50,
+  "overflow": [],
+  "sha256": "a866163408e1dd2ddaa3adfe85e2950cacc11cfab69f00d666f7b3daca032b4c",
+  "source": "assignment4_content.md",
+  "build": "/opt/anaconda3/bin/python Assignments/Sources/build_assignment4.py"
+}

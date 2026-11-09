@@ -1,5 +1,7 @@
 # FlowAssist — Payment operations copilot
 
+**Site Vercel : [ouvrir FlowAssist](https://deploy-project-product-management.vercel.app)**
+
 Projet **P2 · PayFlow B2B** — Data & AI Product: From Diagnosis to Delivery (MSA-DAT07-04), Albert School / Mines Paris-PSL · M2-INTER-1.
 
 FlowAssist aide un spécialiste support à tracer un paiement, vérifier ses sources et préparer une réponse EN/FR/DE avec validation humaine. PayFlow est un scénario pédagogique ; les comptes, tickets et paiements de l’application sont synthétiques.
@@ -63,7 +65,7 @@ Sur une autre machine, utiliser un interpréteur Python disposant de ces dépend
 | S3–S4 | [Spec v2](spec.md), [architecture](04_architecture.md), [gouvernance](governance.md) | Contrats, contrôles humains, mode manuel, corrections S4-M01–M03 et périmètre réel |
 | S4 | [50 cas CSV](evals/eval_set_v0.csv), [guide](evals/README_eval_set.md), [rapport](evals/report_v0.md), [livraison](04_s4_delivery.md) | Labels proposés, fixtures exécutables, résultats avant/après et grilles de revue |
 
-Les versions PDF S1–S3 et leurs archives datées du 6 novembre sont accessibles dans [Assignments](Assignments/README.md). Leur index de 20 cas reflète le seed S3 ; le CSV courant en contient 50. Les fichiers Markdown courants décrivent les évolutions S4. Les consignes et modèles originaux restent dans `course/`, `S3_templates/` et `S4_templates/`.
+Le [PDF Assignment 4 — Prototype & Architecture](Assignments/Assignment_4_Prototype_and_Architecture.pdf) fournit une synthèse de quatre pages, accompagnée de [ses sources](Assignments/Sources/Assignment_4_sources.zip). Les versions PDF S1–S3 et leurs archives datées du 6 novembre sont accessibles dans [Assignments](Assignments/README.md). Leur index de 20 cas reflète le seed S3 ; le CSV courant en contient 50. Les fichiers Markdown courants décrivent les évolutions S4. Les consignes et modèles originaux restent dans `course/`, `S3_templates/` et `S4_templates/`.
 
 Les documents distinguent preuves automatiques, hypothèses et validations humaines ; ils ne certifient pas des entretiens, des jugements indépendants ou des contributions personnelles non établis. Les séances ultérieures ne sont pas présentées comme livrées sur la base de simples titres prévisionnels.
 
