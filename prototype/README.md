@@ -27,6 +27,10 @@ Keyboard: `/` search; `J`/`K` next/previous visible ticket outside form fields; 
 - `app.js`: workflow, scoped ticket buffers, session storage, review state, audit/timing and exports.
 - `styles.css`: responsive visual system; no remote fonts or component libraries.
 
-Run `python scripts/verify_s3.py` (Python + Node.js) for artifact checks and **30 domain/interaction scenarios**. No npm installation is required. [Verification report](verification.md) states what remains unverified, including real browser rendering and live integrations.
+Run `python scripts/verify_s3.py` (Python + Node.js) for artifact checks and **32 domain/interaction scenarios**. No npm installation is required. [Verification report](verification.md) states what remains unverified, including real browser rendering and live integrations.
 
 Vercel builds from the repository root using [vercel.json](../vercel.json), copying the five runtime assets into `dist/`. Changes go to the primary repository and then [the deployment copy](DEPLOYMENT.md). [Changelog](CHANGELOG.md).
+
+## Session 4
+
+Reference formats FAC/RE/REF are supported alongside the existing formats. A reference suffix cannot be interpreted as a monetary amount or a negative sign. See [architecture](../04_architecture.md), [evaluation report](../evals/report_v0.md) and [delivery status](../04_s4_delivery.md). The 50-case development run is reproducible with `node scripts/eval_s4.cjs`; human sendability remains ungraded.

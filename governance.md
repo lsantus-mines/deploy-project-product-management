@@ -87,7 +87,9 @@ This extension supersedes the v0.3 “no browser storage” description for the 
 
 The engine filters public fixtures by assigned merchant, requires a unique reference, checks amount/currency/source schema/freshness/status, and evaluates generated templates before exposure. Its gate is deterministic, not a model score. Compliance/dispute/fund-action requests route to specialists; no legal deadline or diagnosis is generated. The recorded human reply/handovers are local demonstrations, with no external message or financial write. Production authentication, row-level access control, lawful real-data processing, live connectors and model evaluation remain requirements. [P2 coverage](docs/PRODUCT_COVERAGE.md).
 
-## Session 4 — human-in-the-loop points and the override switch (to come)
+## Session 4 — index des contrôles
+
+Voir la section détaillée « Session 4 — contrôles et évaluation » ci-dessous.
 *L2 approval interfaces, diff tracking, grounding threshold circuit breaker, and one-click agent override switches.*
 
 ## Session 5 — counter-metrics and the segments we report (to come)
@@ -98,3 +100,22 @@ The engine filters public fixtures by assigned merchant, requires a unique refer
 
 ## Session 7 — accountable owner, rollback authority, incident path (to come)
 *Rollback triggers, operational on-call rotation, kill-switch authority, and incident post-mortem playbooks.*
+
+## Session 4 — contrôles et évaluation
+
+9 novembre 2026. Les opérations sont locales et synthétiques ; aucune identité serveur ni autorisation bancaire réelle n’est livrée.
+
+| Point ⊘ | Type | Responsable et effet |
+|---|---|---|
+| Intention sensible, langue inconnue, preuve absente/ambiguë/périmée ou incohérente | Abstention | Moteur bloque ; spécialiste décide de l’investigation |
+| Sources de paiement | Approbation | Spécialiste inspecte chaque source, puis approuve le brouillon |
+| Insertion et édition | Approbation | Modification invalide l’accord ; contrôle factuel et validation finale requis |
+| Réponse / résolution | Approbation | Spécialiste enregistre seulement une action locale ; aucun envoi client |
+| Transfert | Approbation | Motif obligatoire, aperçu actualisé, enregistrement explicite ; aucune queue réelle contactée |
+| Évaluation avant pilote | Revue exhaustive | Deux personnes indépendantes à nommer ; 50 labels et sorties à relire ; pas de simple échantillonnage |
+
+**⏻ Propriétaire et portée :** chaque spécialiste peut passer son ticket en mode manuel dans son onglet. L’insertion assistée est alors désactivée ; la reprise remet inspection et accord à zéro. Le scénario automatisé « manual fallback and resume require a fresh inspection » a passé le 9 novembre 2026 ; ce n’est pas une attestation de test par Ops. Aucun arrêt global n’existe ; Ops doit nommer son propriétaire et tester un arrêt serveur avant un pilote.
+
+**Stockage et accès :** `evals/eval_set_v0.csv`, `fixtures_v0.json`, les résultats JSON et les grilles CSV sont versionnés dans le dépôt : visibles aux personnes ayant accès au dépôt et potentiellement à sa copie de publication. Aucune donnée client ne doit y entrer. Les brouillons et notes de l’app sont en sessionStorage de l’onglet, avec repli mémoire ; ce n’est pas un stockage sécurisé ni un journal immuable. Les patterns connus de secrets sont masqués, sans garantie de détection générale de données personnelles.
+
+**Intégrité de l’évaluation :** labels proposés par IA avant exécution pour F21–F50 ; seed F01–F20 déjà exposé. Après examen et correction, les 50 deviennent développement. Ne pas réutiliser ce jeu pour une revendication indépendante. Les évaluateurs humains doivent remplir eux-mêmes `label_review.csv` et `grader_reviews.csv` ; aucune identité, approbation ou mesure de temps n’est inventée. F19 est corrigé : un score modèle 0,94 impose l’abstention ; les notes de source ne participent pas à la génération. Aucun modèle réel n’est évalué. Les empreintes du code et des fixtures sont dans les résultats. Voir `evals/report_v0.md`.

@@ -89,3 +89,18 @@ Search/filtering changes only inbox visibility, not merchant scope. Keyboard nex
 Lifecycle: `open → waiting | escalated | resolved`; reopen returns to `open` with review/inspection reset. A resolved outcome requires inspected sources, a non-critical final reply and explicit final human review. The action records a demo receipt; it does not send. Handover requires an up-to-date preview and explicit recording; reason/note edits invalidate it. Account history is scoped separately from transaction evidence and is never used to invent payment facts.
 
 The tab-local journal and receipt exports are not immutable or authenticated. Visible-tab timings stop on pause, hidden tab, other views, intake/export interruption and terminal/waiting states; they are a workflow timing aid, not validated AHT or causal savings. Session restoration never restores approval. `node --test scripts/test_app.cjs` exercises current domain/UI behavior. Live APIs, shared identity/storage, LLM generation/evaluation and agent-level A/B remain unimplemented target integrations.
+
+## Session 4 · spec v2 — changements du 9 novembre 2026
+
+Cette section remplace les nombres S3 obsolètes : 50 cas, dont 15 proposés éligibles ; les 50 sont désormais de développement après correction. Le contrat de production des sections précédentes ne devient pas une fonctionnalité livrée du seul fait de l’évaluation.
+
+| ID | Miss → exigence v2 | État et validation |
+|---|---|---|
+| S4-M01 | Un tiret à l’intérieur d’une référence n’est jamais un signe négatif. Les chiffres d’une référence ne deviennent jamais un montant devant EUR/USD. Les montants réellement négatifs restent bloqués. | Corrigé dans `entities` et `analyze` ; régression dédiée et F01/F13/F14/F20/F21–F26/F49. Cas consommés pour développement. |
+| S4-M02 | Extraire aussi FAC-, RE- et REF-, sans donner de pouvoir d’accès à la référence ; conserver le filtrage par compte et les contraintes de montant/devise. | Corrigé ; F02/F03 et régression dédiée. |
+| S4-M03 | Lorsqu’un connecteur/modèle existe, représenter explicitement score et notes non fiables ; score absent/<0,95 → abstention, notes jamais exécutées. | **Corrigé** : `matchMethod=model` exige un score numérique fini dans [0,95 ; 1] ; provenance inconnue bloquée. `sourceRecords` et `makeDraft` ignorent les notes non fiables. F19 encode le score et la note du scénario d’origine ; son label reste inchangé. Aucun modèle réel n’est appelé. Tests couvrant scores absents, invalides, limites et score élevé avec compte étranger. |
+
+Commande d’évaluation : `node scripts/eval_s4.cjs`. Avant/après conservés dans `evals/results_baseline_v0.json` et `evals/results_v0.json`. Deux évaluateurs doivent encore apprécier les réponses ; concordance d’état ≠ sendability, précision de grounding ou gain de temps. Toute correction faite après lecture d’un cas transforme celui-ci en développement : nouveau jeu indépendant requis avant une revendication de performance.
+
+### Résultat de clôture technique S4
+32 scénarios de test passent ; 50/50 états attendus concordent, 15 brouillons et zéro brouillon sur human-only. Les 50 restent de développement. F19 ne contient plus de champ de contrat non représenté ; le score est une entrée, pas une mesure calculée par un modèle. Le starter Paylio original a été exécuté : heuristique 8/20 (40 %), pas une notation humaine. Les causes pédagogiques Paylio restent des propositions de spec : compléter la section Release notes 4.12 (9 cas), revoir le routage sous seuil pour Add an admin user (2 cas) et Payslips as PDF (1 cas), puis tester sur un nouveau jeu sans régler le seuil contre ces tickets.

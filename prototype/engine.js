@@ -27,7 +27,7 @@
     const amounts = [];
     let invalidAmount = false;
     const re =
-      /(?:\b(EUR|USD)\s*|([€$])\s*)(\d[\d\s,.]*\d|\d)|\b(\d[\d\s,.]*\d|\d)\s*(EUR|USD|euros?)\b/gi;
+      /(?:\b(EUR|USD)\s*|([€$])\s*)(\d[\d\s,.]*\d|\d)|(?<![A-Za-z0-9-])(\d[\d\s,.]*\d|\d)\s*(EUR|USD|euros?)\b/gi;
     for (const m of text.matchAll(re)) {
       const minor = parseMinor((m[3] || m[4]).trim());
       const token = (m[1] || m[2] || m[5]).toUpperCase();
@@ -43,7 +43,7 @@
         text
           .toUpperCase()
           .match(
-            /\b(?:INV|TX|SWIFT|RETURN|NET|STALE|CHECK|BETA)-[A-Z0-9-]+\b/g,
+            /\b(?:INV|FAC|RE|REF|TX|SWIFT|RETURN|NET|STALE|CHECK|BETA)-[A-Z0-9-]+\b/g,
           ) || [],
       ),
     ];
@@ -225,7 +225,7 @@
       );
     if (
       extracted.invalidAmount ||
-      /\b(?:GBP|JPY|CHF|CAD)\b|[£¥]|(?:EUR|USD|€|\$)\s*[-−]|[-−]\s*\d[\d ,.]*\s*(?:EUR|USD)/i.test(
+      /\b(?:GBP|JPY|CHF|CAD)\b|[£¥]|(?:EUR|USD|€|\$)\s*[-−]|(?:^|\s)[-−]\s*\d[\d ,.]*\s*(?:EUR|USD)/i.test(
         ticket.message,
       )
     )
@@ -328,6 +328,16 @@
         "Fee reconciliation failed",
         "The documented gross, fee and net do not reconcile.",
       );
+    // Model-derived matches must declare their provenance and a valid score.
+    // A score never overrides merchant, reference, money or evidence checks.
+    if (tx.matchMethod !== undefined && !["reference", "model"].includes(tx.matchMethod))
+      return block("Unknown matching method", "Use manual investigation for unrecognized matching provenance.");
+    if (tx.matchMethod === "model" &&
+        (typeof tx.matchScore !== "number" || !Number.isFinite(tx.matchScore) ||
+         tx.matchScore < 0.95 || tx.matchScore > 1))
+      return block("Model confidence requires manual review", "A model-derived match requires a finite score from 0.95 to 1, in addition to all identity and evidence checks.");
+    // Source notes are untrusted data. sourceRecords and makeDraft only read
+    // allowlisted financial fields, never note instructions.
     base.transaction = tx;
     base.state = "draft_ready";
     base.gate = "Unique reference · merchant and payment verified";

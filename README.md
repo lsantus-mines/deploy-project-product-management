@@ -3,6 +3,10 @@
 **Course:** Data & AI Product: From Diagnosis to Delivery (MSA-DAT07-04) · Albert School & Mines Paris-PSL · shared project with Agentic Workflows  
 **Cohort:** M2-INTER-1  
 
+## Session 4 — 9 novembre 2026
+
+[Livraison S4](04_s4_delivery.md) · [Audit des séances fournies](docs/DELIVERY_AUDIT.md) · [Architecture réelle](04_architecture.md) · [Rapport v0](evals/report_v0.md). Le jeu comprend 50 cas synthétiques de développement ; les labels humains et deux évaluateurs indépendants restent nécessaires. Corrections du parsing des montants/références et 32 tests locaux. Reproduction : `python3 scripts/verify_s3.py` puis `node scripts/eval_s4.cjs`.
+
 ## Team
 | Name | Git handle | Also in the Agentic Workflows team? |
 |---|---|---|

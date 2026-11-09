@@ -9,16 +9,16 @@ Tier-1 payment operations specialists at PayFlow B2B (a European fintech serving
 
 | Number in the sentence | Value | Measured / analogy / guess | Source or test |
 |---|---|---|---|
-| Merchant accounts | 800 | Measured | Active enterprise and marketplace merchant accounts in CRM (Q3 2026). |
-| Monthly ticket volume | 12,000 | Measured | Zendesk ticket logs averaged over the trailing 12 months (144,000 tickets/yr). |
-| Share of handling time spent investigating | 40 % | Measured | Time-and-motion study on 250 sampled tickets tracked via screen-recording in June 2026. |
-| Baseline Average Handling Time (AHT) | 18.0 min | Measured | Median handling time recorded across tier-1 Zendesk payment queues. |
-| Investigation time per ticket | 7.2 min | Measured | 40 % × 18.0 min baseline AHT. |
-| Median first response time | 4.5 hours | Measured | Zendesk SLA monitoring metrics over Q1–Q3 2026. |
+| Merchant accounts | 800 | Scenario assumption | P2 course scenario; no CRM observation is implied. |
+| Monthly ticket volume | 12,000 | Scenario assumption | P2 course scenario: 12,000/month, 144,000/year derived. |
+| Share of handling time spent investigating | 40 % | Scenario assumption | P2 course scenario: 40%; validate with future paired timing. |
+| Baseline Average Handling Time (AHT) | 18.0 min | Scenario assumption | Assumed 18-minute handling time for planning. |
+| Investigation time per ticket | 7.2 min | Scenario assumption | 40 % × 18.0 min baseline AHT. |
+| Median first response time | 4.5 hours | Scenario assumption | Assumed first-response time for planning. |
 | Cost of investigation labor | €414,720 / yr | Analogy | 144k tickets × (7.2 min / 60 min) × €24.00/hr loaded agent wage (derived from €55k annual loaded cost). |
 | Fully loaded cost per ticket | €10.00 | Analogy | Session 2 slide benchmark (€8–€15 all-in human ticket cost for B2B SaaS/fintech) and Paylio class exercise. |
 | Target AHT reduction | 30 % (to 12.6 min) | Guess | Tested on 200 payment tracing tickets in the Session 4 prototype (validating the hurdle flip point ≥ 41.2 % on Category 1); measured via agent-level A/B test in Session 6. |
-| Quality threshold (QA score) | ≥ 92 % | Measured | Existing internal Support QA rubric (accuracy, tone, compliance citation, policy adherence). |
+| Quality threshold (QA score) | ≥ 92 % | Scenario assumption | Existing internal Support QA rubric (accuracy, tone, compliance citation, policy adherence). |
 | Rollout timeframe | 12 weeks | Guess | Staged quarterly ramp: pilot (Q1) to full 18-agent deployment (Q4). |
 
 ### 1.1 Persona & User Journey Map (S1 Slide 19)
