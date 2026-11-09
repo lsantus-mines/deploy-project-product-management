@@ -1,6 +1,6 @@
 # 03 — S3 delivery matrix · updated 9 November 2026
 
-**Decision:** v2 design ready for S4; no claim of user validation, benchmark success or production readiness. The team has chosen to omit participant research. This matrix exposes the resulting assignment gap alongside completed work.
+**Decision:** v2 design ready for S4; no claim of user validation, benchmark success or production readiness. Three conversations and a prototype try-out took place on 9 November; their limits are listed below.
 
 | Assignment requirement | Artifact / evidence | Status |
 |---|---|---|
@@ -12,10 +12,10 @@
 | Six data-audit questions, purpose/retention/isolation/gaps/trust | Governance Session 3 | Complete design; live-data approvals absent |
 | One-sentence criterion: metric, flip threshold, guardrail, dataset, date | Brief §7, same sentence in design §7 | Complete target; not a measured result |
 | Brief v1 → v2 and one-page Lean Canvas | Archived v1; current brief; AI Lean Canvas | Complete desk-based revision |
-| Three 20-minute conversations with past-behavior evidence | User needs / design record | Not fulfilled: no conversations conducted |
+| Three 20-minute conversations with past-behavior evidence | `03_user_research.md` §0; `research/interviews_2026-11-09.csv` | Done 9 Nov with three friends of the team (2 from past jobs, 1 in role); mostly scenario questions, so weaker past-behaviour evidence |
 | Clickable surface with link and prompt | Prototype instructions and local HTML/CSS/JS v0.4 | Complete local surface; Vercel demo public and HTTP/asset verified; actual one-hour build duration unmeasured |
-| Two users try one task thinking aloud | T01/T02 acceptance scenarios; state checks | Not fulfilled: technical checks do not replace participants |
-| What users changed / could not decide | Brief §§9–10; D01–D05 design register | Responsibilities complete; changes are designer-led, not user evidence |
+| Two users try one task thinking aloud | `03_user_research.md` §0 | Partly: participants tried DEMO-01 and liked it; no completion, time or hesitation recorded |
+| What users changed / could not decide | Brief §§9–10; D06–D08 | Done: three changes with quoted evidence; D07 left to Ops/Legal |
 | Spec skeleton | spec.md v1 | Complete S4 contract |
 | 20 cases with input/action/evidence/handover/segment/origin | eval_set_v0.csv; label_design_review.csv | Complete proposed labels; manual labelling requirement unfulfilled |
 | Every member authors at least one commit using own account | Git history | No new authorship attested in this revision; cannot be supplied by the assistant |

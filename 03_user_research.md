@@ -1,6 +1,48 @@
 # 03 — User needs and design decisions · FlowAssist
 
-**3 November 2026 · Desk-based design synthesis.** No participant interviews or usability sessions were conducted. This document completes the needs analysis and v2 decision record without attributing decisions to users. It does not satisfy the assignment’s requirement for three real conversations and two participant tests.
+**Updated 9 November 2026.** Three conversations and a prototype try-out were run on 9 November (section 0). Sections 1–6 are the earlier desk-based synthesis of 3 November; its decisions D01–D05 are team decisions, and D06–D08 come from the conversations.
+
+## 0. Conversations and prototype test · 9 November 2026
+
+### Who we talked to
+| # | Profile (no personal data) | Basis of the answers | Relation | Interviewer |
+|---|---|---|---|---|
+| P1 | Former accounting intern | Past work experience | Friend of the team | Antoine |
+| P2 | Former customer-support agent | Past work experience | Friend of the team | Antoine |
+| P3 | No direct payments experience | Classmate in role (Tier-1 agent) | Friend of the team | Antoine |
+
+Raw answers, anonymized and word for word: [research/interviews_2026-11-09.csv](research/interviews_2026-11-09.csv).
+
+**Limits.** Most questions were scenarios ("what would you do if…") rather than the Mom Test's "tell me about the last time", so the answers describe intended behaviour, not observed past behaviour. P1 and P2 answered from real jobs; P3 played the role. Three friends of the team are a small, friendly sample.
+
+### What we heard
+| Quote (original French) | In English | Who | Brief assumption | Effect |
+|---|---|---|---|---|
+| « Je lui explique que "envoyé" ne veut pas forcément dire "déjà crédité". » | "Sent" does not necessarily mean "already credited". | P2 | sent_to_bank ≠ credited (D01, policy P03) | Confirms |
+| « Être claire et rassurante, sans promettre une date qu'on ne maîtrise pas. » | Clear and reassuring, without promising a date we don't control. | P1 | No ETA or promise (P03) | Confirms |
+| « …une estimation du délai si on en a une » · « Je donne le délai habituel » | An estimate of the delay if we have one · I give the usual delay. | P1, P2 | Drafts never mention timing | **Contradicts → D07** |
+| « Je lui dis précisément quelle est la prochaine étape et quand il aura de nos nouvelles. » · « je lui donnerais un délai de suivi » | I tell them exactly the next step and when they'll hear from us · I'd give a follow-up time. | P2, P3 | Context-only and handover only explain the block | **New → D06** |
+| « …dans un langage normal, pas avec du jargon bancaire. » | In normal language, not banking jargon. | P2 | Status wording mirrors ledger terms | **New → D08** |
+| « …je lui demande une référence ou un justificatif, puis je transmets le cas à l'équipe paiements. » | I ask for a reference or proof, then pass the case to the payments team. | P1 | Missing reference → ask, then hand over (D02) | Confirms |
+| « Je n'essaierais pas de l'interpréter au hasard. » | I wouldn't guess at a status I don't understand. | P3 | Unknown status → no draft | Confirms |
+| « Savoir jusqu'où je peux aller seule… quand escalader. » | Knowing how far I can go alone… when to escalate. | P3 | Visible gate and escalation reason | Confirms |
+| « Est-ce qu'il nous a déjà contactés, est-ce qu'il y a d'autres virements concernés ? » | Has he contacted us before, are other transfers involved? | P2 | Account-history panel (v0.4) | Confirms |
+
+### Prototype test
+The participants tried the hosted prototype (task: DEMO-01) and reported liking it. **Only that overall impression was recorded:** no task completion, time, hesitation point or think-aloud note. The test therefore happened but gives no usability evidence, and "they liked it" is not counted as validation. Next time: use the protocol in `research/guide_entretien_FR.md`.
+
+### Desirability gate
+- [ ] 2 of 2 finished the task without help (not recorded)
+- [ ] They told us what they did last time (partly: P1 and P2 drew on past jobs, through scenario questions)
+- [ ] At least one said "I want this before…" (not asked)
+- [x] Our out-of-scope list grew; our success criterion did not move (D06–D08 refine wording; the 41.2% criterion is unchanged)
+
+### Decisions from the conversations
+| ID | Change for v2 | Evidence | Where | Status |
+|---|---|---|---|---|
+| D06 | Every context-only or handover reply states the next step and when the merchant will hear back | P2, P3 | Brief §9, spec | Brief and spec updated; prototype unchanged |
+| D07 | A draft may state a *documented* typical processing time for the rail, labelled "typical, not guaranteed"; never a date for this payment | P1, P2 (P1 also: no promised date) | Brief §9–10, spec | Pending Ops/Legal approval; not in prototype |
+| D08 | Status wording in plain language (e.g. "sent to the recipient's bank, not yet confirmed as received") instead of ledger terms | P2 | Brief §9, spec | Brief and spec updated; prototype unchanged |
 
 ## 1. Target users and concrete work situations
 | Profile | Situation to support | Need | Design response |
@@ -36,9 +78,9 @@ These are acceptance scenarios, not completed participant tests. No task time, s
 **T02 — Ambiguity and specialist handover.** Open DEMO-02. Confirm that a unique reference is needed and no draft is available. Choose “Ambiguous transaction”, add safe context and escalate. The preview names Tier-2 payments, the merchant, reason, both authorized sources and their snapshot times. Open DEMO-03 and use the sensitive-request reason: destination is Tier-2 compliance. DEMO-04 has no transaction sources or foreign owner details.
 
 ## 5. What the users changed / could not decide
-**User-driven changes: none established.** D01–D05 are team design decisions. They improve the v2 surface but do not establish desirability. The [original brief](research/brief_v1.md) is retained for comparison.
+**User-driven changes: D06–D08** (section 0), from the 9 November conversations. D01–D05 remain team design decisions. The [original brief](research/brief_v1.md) is retained for comparison.
 
-Users cannot determine the economic hurdle (CFO/Product), measured savings and quality (paired timing and independent graders), model choice (Engineering evaluation), legal basis and retention (DPO/Legal), or scope approval (Ops/CCO). The 41.2% threshold remains fixed.
+Users could not settle whether a typical processing time reassures or risks reading as a promise (P1 wants both an estimate and no promised date): Ops and Legal decide D07. Users cannot determine the economic hurdle (CFO/Product), measured savings and quality (paired timing and independent graders), model choice (Engineering evaluation), legal basis and retention (DPO/Legal), or scope approval (Ops/CCO). The 41.2% threshold remains fixed.
 
 ## 6. Decision
-**Proceed with the S4 implementation under a conditional design GO.** Desirability is unvalidated. Technical, economic and production gates remain separate; no enthusiasm, completed interview or human label approval is asserted. Participant research is excluded by the team’s current decision, so its assignment requirement remains unmet.
+**Proceed under a conditional design GO.** Three conversations with friends of the team support the safety rules (sent ≠ credited, no promised date, ask for a reference, escalate when unsure) and add D06–D08. Desirability is not validated: the sample is small and friendly, questions were mostly hypothetical, and the prototype try-out recorded no usability data. Technical, economic and production gates remain separate.

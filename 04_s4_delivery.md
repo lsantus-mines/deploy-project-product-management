@@ -13,7 +13,7 @@ Reference: `S4_templates/README_S4.md` and Assignment 4 (due 15 November, 23:59)
 | Governance S4 | `governance.md`: human checkpoints, switch owner/scope and storage |
 | Four commits, four own authors | To be done by members with their own accounts. An assistant cannot fabricate contributions or rewrite history to satisfy this rule |
 | Run the Paylio starter once | Done without modifying the starter via `/opt/anaconda3/bin/python scripts/run_paylio.py`. Routing 0.88; hit@3 1.00; heuristic 8/20 = 40% (threshold 45%); human-only 0. Evidence: `docs/evidence/s4/paylio-run.txt`. |
-| S3: three conversations and brief v2 | The documents exist; human conversations cannot be attested by an automated edit. Fieldwork kit: `research/fieldwork_template.md` |
+| S3: three conversations and brief v2 | Done 9 Nov: three conversations, brief v2 §9 with D06–D08 and quoted evidence; the prototype try-out recorded no usability data |
 
 The 50 cases were consumed for development after analysis: replace the benchmark before an independent measurement. No false verdict of success, time saving or validation by people.
 
