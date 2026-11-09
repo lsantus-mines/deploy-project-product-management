@@ -39,7 +39,7 @@ Swap blocks freely, but keep both the table and the `TEAM` order in `labeller.ht
 
 # Session 4 status — 9 November 2026
 
-The CSV now contains **50 synthetic proposed labels**, including 15 proposed eligible cases. F01–F20 remain the exposed S3 seed; F21–F50 were labelled before execution. All 50 became development data after inspecting failures and correcting extraction. **No held-out performance claim is valid.** Human label approval and two independent output graders remain pending. `label_design_review.csv` covers only the original 20 cases. The historical S3 guidance below describes the original seed.
+The CSV now contains **50 synthetic proposed labels**, including 15 proposed eligible cases. F01–F20 remain the exposed S3 seed; F21–F50 were labelled before execution. All 50 became development data after inspecting failures and correcting extraction. **No held-out performance claim is valid.** Reviewer 1 (Antoine, 9 Nov) approved all 50 labels and grader 1 judged 15/15 drafts sendable; grader 2 remains pending; a second label reviewer is optional (A3 requires labels by hand, not two reviewers). `label_design_review.csv` covers only the original 20 cases. The historical S3 guidance below describes the original seed.
 
 Run `python3 scripts/verify_s4.py` for artifact checks and both runs; use `node scripts/eval_s4.cjs` for the deterministic development report. See [report](report_v0.md), [architecture](../04_architecture.md), `fixtures_v0.json`, `results_baseline_v0.json`, `results_v0.json`, `label_review.csv` and `grader_reviews.csv`. The runner scores expected states and local checks, never human sendability or time savings.
 

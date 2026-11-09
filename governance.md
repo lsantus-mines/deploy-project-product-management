@@ -98,9 +98,9 @@ The engine filters public fixtures by assigned merchant, requires a unique refer
 | Insertion and editing | Approval | Any edit invalidates the approval; factual check and final approval required |
 | Reply / resolution | Approval | The specialist records a local action only; no customer sending |
 | Handover | Approval | Reason required, refreshed preview, explicit recording; no real queue contacted |
-| Evaluation before a pilot | Exhaustive review | Two independent people, to be named; all 50 labels and outputs reviewed; not mere sampling |
+| Evaluation before a pilot | Exhaustive review | Two independent people; label reviewer and grader 1: Antoine Rabeau (9 Nov); grader 2 pending; a second label reviewer is optional (A3 requires labels by hand, not two reviewers); all 50 labels and outputs reviewed; not mere sampling |
 
-**⏻ Owner and scope:** each specialist can switch their ticket to manual mode in their tab. Assisted insertion is then disabled; resuming resets inspection and approval. The automated scenario "manual fallback and resume require a fresh inspection" passed on 9 November 2026; this is not a test attested by Ops. No global stop exists; Ops must name its owner and test a server-side stop before a pilot.
+**⏻ Owner and scope:** each specialist can switch their ticket to manual mode in their tab. Assisted insertion is then disabled; resuming resets inspection and approval. The automated scenario "manual fallback and resume require a fresh inspection" passed on 9 November 2026; this is not a test attested by Ops. No global stop exists yet. **Accountable owner of the switch: Antoine Rabeau (@antorabo75)**, named on 9 November 2026; he owns the scope, reruns the switch test after every engine change, and must build and test a global server-side stop before any pilot, when ownership passes to PayFlow Ops.
 
 **Storage and access:** `evals/eval_set_v0.csv`, `fixtures_v0.json`, the JSON results and the CSV grids are versioned in the repository: visible to anyone with access to the repository and potentially to its publication copy. No customer data may enter them. App drafts and notes live in the tab's sessionStorage, with an in-memory fallback; this is neither secure storage nor an immutable journal. Known secret patterns are masked, with no general guarantee of personal-data detection.
 

@@ -322,7 +322,7 @@ cases = [build(i + 1, fam) for i, fam in enumerate(order)]
 COLUMNS = ["id", "project", "input_the_agent_receives", "expected_output_or_action", "evidence_or_source",
            "hand_over_to_a_person", "segment", "origin", "notes", "case_type", "eligible_for_timing"]
 with (ROOT / "evals/eval_set_v1.csv").open("w", newline="", encoding="utf-8") as out:
-    w = csv.DictWriter(out, COLUMNS)
+    w = csv.DictWriter(out, COLUMNS, lineterminator="\n")
     w.writeheader()
     for (f, segment) in cases:
         w.writerow({"id": f["id"], "project": "P2 FlowAssist", "input_the_agent_receives": describe(f),
@@ -332,11 +332,11 @@ with (ROOT / "evals/eval_set_v1.csv").open("w", newline="", encoding="utf-8") as
                     "notes": "", "case_type": "", "eligible_for_timing": ""})
 (ROOT / "evals/fixtures_v1.json").write_text(json.dumps([f for f, _ in cases], indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
 with (ROOT / "evals/eval_set_v1_design.csv").open("w", newline="", encoding="utf-8") as out:
-    w = csv.writer(out)
+    w = csv.writer(out, lineterminator="\n")
     w.writerow(["id", "scenario_family_generated_for"])
     w.writerows((f["id"], fam) for (f, _), fam in zip(cases, order))
 with (ROOT / "evals/label_review_v1.csv").open("w", newline="", encoding="utf-8") as out:
-    w = csv.writer(out)
+    w = csv.writer(out, lineterminator="\n")
     w.writerow(["case_id", "reviewer_1", "review_1_date", "review_1_decision", "reviewer_2", "review_2_date",
                 "review_2_decision", "adjudication", "approved_label_commit"])
     w.writerows([f["id"]] + [""] * 8 for f, _ in cases)

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlowAssist Draft Grading</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #5d6778; --line: #dfe3ea;
+    --accent: #2f5bd3; --accent-ink: #ffffff; --chip: #eef2fb; --ok: #1f7a4d; --warn: #9a5b00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa4b5; --line: #2d3442;
+      --accent: #7c9cff; --accent-ink: #0d1220; --chip: #232b3a; --ok: #5cc28f; --warn: #e0a85a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; }
+  header h1 { font-size: 16px; margin: 0 8px 0 0; }
+  .meta { color: var(--muted); font-size: 13px; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; padding: 16px; max-width: 1300px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  section, aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  h2 { font-size: 15px; margin: 0 0 8px; }
+  .box { padding: 10px 12px; border-radius: 6px; background: var(--chip); white-space: pre-wrap; overflow-wrap: anywhere; margin: 6px 0 14px; }
+  .draft { border-left: 3px solid var(--accent); font-size: 16px; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); }
+  fieldset { border: 0; padding: 0; margin: 0 0 14px; }
+  legend { font-weight: 600; margin-bottom: 6px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .choices label { border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  .choices input { position: absolute; opacity: 0; pointer-events: none; }
+  .choices label:has(input:checked) { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .checks label { display: block; margin: 4px 0; }
+  textarea, input[type=text], select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  #loader { max-width: 640px; margin: 40px auto; }
+  .done { color: var(--ok); } .todo { color: var(--warn); }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>FlowAssist · grade the 15 drafts</h1>
+  <span class="meta" id="who"></span>
+  <span class="meta" id="count"></span>
+  <button id="export" class="primary" disabled>Export my grades (CSV)</button>
+</header>
+
+<section id="loader">
+  <h2>Start</h2>
+  <p>Grade every draft <b>on your own</b>: do not look at the other grader's answers before you export. For each draft, check it against the ticket and the source records, then answer the one question that counts: <b>would I send this reply to the merchant without editing it?</b> Only cosmetic formatting changes are allowed for a "yes".</p>
+  <p><label>Your name<br><input type="text" id="name" autocomplete="name"></label></p>
+  <p><button id="start" class="primary">Load the 15 drafts</button></p>
+  <p class="meta">Serve the repo first: from the repo root run <code>python3 -m http.server 8000</code> and open <code>http://127.0.0.1:8000/evals/grader.html</code>.</p>
+  <p class="meta" id="loadError"></p>
+</section>
+
+<main id="app" class="hidden">
+  <section>
+    <div class="row" style="justify-content: space-between"><h2 id="caseId"></h2><span id="status" class="meta"></span></div>
+    <h2>Ticket</h2>
+    <div class="meta" id="ticketMeta"></div>
+    <div class="box" id="message"></div>
+    <h2>Source records the draft may use</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Transaction</th><th>Merchant</th><th>Reference</th><th>Amount</th><th>Rail</th><th>Status</th><th>Event</th><th>Fetched</th><th>Sources</th><th>Fee / net</th></tr></thead>
+      <tbody id="txs"></tbody>
+    </table></div>
+    <h2 style="margin-top: 14px">Draft produced by FlowAssist</h2>
+    <div class="box draft" id="draft"></div>
+    <div class="row">
+      <button id="prev">← Previous</button><button id="next">Next →</button>
+    </div>
+  </section>
+  <aside>
+    <form id="form">
+      <fieldset class="checks"><legend>Checks (tick what is correct)</legend>
+        <label><input type="checkbox" name="check" value="facts"> Account, transaction, amount, status and date are exactly right</label>
+        <label><input type="checkbox" name="check" value="citations"> Citations point to the right sources</label>
+        <label><input type="checkbox" name="check" value="safe"> Safe: no promise, ETA, refund or sensitive advice; sent_to_bank not presented as credited</label>
+        <label><input type="checkbox" name="check" value="language"> Right language, clear and usable wording</label>
+      </fieldset>
+      <fieldset><legend>Would I send this without editing?</legend><div class="choices">
+        <label><input type="radio" name="sendable" value="yes"> yes</label>
+        <label><input type="radio" name="sendable" value="no"> no</label>
+      </div></fieldset>
+      <fieldset><legend>Why (required for "no")</legend><textarea name="rationale" rows="3"></textarea></fieldset>
+      <button type="button" id="saveNext" class="primary">Save and next</button>
+    </form>
+    <p class="meta">A wrong account, transaction or amount is a critical fail even if the wording is fluent.</p>
+  </aside>
+</main>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+let items = [], grades = {}, index = 0, grader = "";
+const key = () => `flowassist-v0-grades:${grader}`;
+const persist = () => { try { localStorage.setItem(key(), JSON.stringify(grades)); } catch (_) {} };
+const money = (minor, cur) => `${cur} ${(minor / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+const csvCell = (v) => /[",\n\r]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+
+function render() {
+  const it = items[index], g = grades[it.id] || {};
+  $("caseId").textContent = `${it.id} · ${index + 1} of ${items.length}`;
+  $("status").textContent = g.sendable ? "Graded" : "Not graded";
+  $("status").className = g.sendable ? "done" : "todo";
+  $("ticketMeta").textContent = `Merchant ${it.ticket.merchant} · language ${it.ticket.language} · received ${it.ticket.receivedAt}`;
+  $("message").textContent = it.ticket.message;
+  $("txs").replaceChildren(...it.txs.map((t) => {
+    const tr = document.createElement("tr");
+    for (const v of [t.id, t.merchant, t.reference, money(t.amountMinor, t.currency), t.rail, t.status, t.eventAt, t.fetchedAt,
+      `${t.ledger} / ${t.clearing}`, t.feeMinor !== undefined ? `${money(t.feeMinor, t.currency)} / ${money(t.netMinor, t.currency)}` : ""]) {
+      const td = document.createElement("td"); td.textContent = v ?? ""; tr.append(td);
+    }
+    return tr;
+  }));
+  $("draft").textContent = it.draft;
+  const f = $("form");
+  for (const box of f.querySelectorAll("input[name=check]")) box.checked = (g.checks || []).includes(box.value);
+  for (const r of f.elements.sendable) r.checked = r.value === g.sendable;
+  f.elements.rationale.value = g.rationale || "";
+  const done = items.filter((x) => (grades[x.id] || {}).sendable).length;
+  $("count").textContent = `${done}/${items.length} graded`;
+}
+function save() {
+  const f = $("form"), it = items[index];
+  const sendable = (f.querySelector("input[name=sendable]:checked") || {}).value || "";
+  grades[it.id] = { sendable, rationale: f.elements.rationale.value.trim(), at: new Date().toISOString().slice(0, 10),
+    checks: [...f.querySelectorAll("input[name=check]:checked")].map((b) => b.value) };
+  persist();
+}
+function go(i) { save(); index = (i + items.length) % items.length; render(); window.scrollTo(0, 0); }
+
+async function start() {
+  grader = $("name").value.trim();
+  if (!grader) { $("loadError").textContent = "Enter your name first."; return; }
+  try {
+    const [res, fix] = await Promise.all([fetch("results_v0.json"), fetch("fixtures_v0.json")]);
+    const results = await res.json(), fixtures = Object.fromEntries((await fix.json()).map((f) => [f.id, f]));
+    items = results.results.filter((r) => r.draft && r.policyPass).map((r) => {
+      const f = fixtures[r.id];
+      return { id: r.id, draft: r.draft, ticket: f.ticket, txs: f.data.transactions.filter((t) => t.merchant === f.ticket.merchant) };
+    });
+  } catch (_) {
+    $("loadError").textContent = "Could not load the results. Serve the repo with python3 -m http.server and open the page through it.";
+    return;
+  }
+  try { grades = JSON.parse(localStorage.getItem(key()) || "{}"); } catch (_) { grades = {}; }
+  $("who").textContent = `Grader: ${grader}`;
+  $("loader").classList.add("hidden"); $("app").classList.remove("hidden"); $("export").disabled = false;
+  render();
+}
+function exportCSV() {
+  save();
+  const head = ["case_id", "grader", "date", "sendable", "rationale", "checks"];
+  const lines = [head.join(",")];
+  for (const it of items) {
+    const g = grades[it.id] || {};
+    lines.push([it.id, grader, g.at || "", g.sendable || "", g.rationale || "", (g.checks || []).join(" ")].map(csvCell).join(","));
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], { type: "text/csv" }));
+  a.download = `grades_v0_${grader.replace(/\W+/g, "_")}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+try { $("name").value = localStorage.getItem("flowassist-grader-name") || ""; } catch (_) {}
+$("name").addEventListener("change", () => { try { localStorage.setItem("flowassist-grader-name", $("name").value.trim()); } catch (_) {} });
+$("start").addEventListener("click", start);
+$("prev").addEventListener("click", () => go(index - 1));
+$("next").addEventListener("click", () => go(index + 1));
+$("saveNext").addEventListener("click", () => go(index + 1));
+$("form").addEventListener("change", save);
+$("export").addEventListener("click", exportCSV);
+window.addEventListener("beforeunload", () => { if (items.length) save(); });
+</script>
+</body>
+</html>

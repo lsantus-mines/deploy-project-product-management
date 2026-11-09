@@ -76,11 +76,11 @@ for row in rows:
     row["origin"] = f"AI-generated synthetic input; label {origin} before any run"
 
 with eval_path.open("w", newline="", encoding="utf-8") as stream:
-    writer = csv.DictWriter(stream, columns)
+    writer = csv.DictWriter(stream, columns, lineterminator="\n")
     writer.writeheader()
     writer.writerows(rows)
 with review_path.open("w", newline="", encoding="utf-8") as stream:
-    writer = csv.DictWriter(stream, review_columns)
+    writer = csv.DictWriter(stream, review_columns, lineterminator="\n")
     writer.writeheader()
     writer.writerows(reviews[i] for i in ids)
 

@@ -5,9 +5,9 @@ Reference: `S4_templates/README_S4.md` and Assignment 4 (due 15 November, 23:59)
 | Requirement | Deliverable / status |
 |---|---|
 | Executable prototype, four decisions | `prototype/engine.js`: classify → analyze rules → sourceRecords/makeDraft → evaluateDraft; interface with review and manual mode |
-| 50 cases labelled before the run | 50-row CSV, AI-proposed labels; F21–F50 written before execution, S3 seed already exposed; human validation still required |
+| 50 cases labelled before the run | 50-row CSV, AI-proposed labels; F21–F50 written before execution, S3 seed already exposed; reviewer 1 (Antoine, 9 Nov) approved 50/50; a second label reviewer is optional (A3 requires labels by hand, not two reviewers) |
 | Run and number against the criterion | `node scripts/eval_s4.cjs`, before/after results and `evals/report_v0.md`; business criterion not demonstrated |
-| Two independent graders | Grid `evals/grader_reviews.csv` ready; to be filled in by two people, no simulated attestation |
+| Two independent graders | Grader 1 done (Antoine, 9 Nov: 15/15 sendable); grader 2 pending. Grading page `evals/grader.html`, merge `scripts/merge_grades_v0.py` |
 | Three causes / spec v2 | Report and S4-M01–M03; three families fixed; no state disagreement on the 50 development cases |
 | Architecture matching the real code | `04_architecture.md`, nine sections, checkpoints ⊘ and switch ⏻ |
 | Governance S4 | `governance.md`: human checkpoints, switch owner/scope and storage |

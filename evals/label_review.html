@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlowAssist Label Review</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2330; --muted: #5d6778; --line: #dfe3ea;
+    --accent: #2f5bd3; --accent-ink: #ffffff; --chip: #eef2fb; --ok: #1f7a4d; --warn: #9a5b00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa4b5; --line: #2d3442;
+      --accent: #7c9cff; --accent-ink: #0d1220; --chip: #232b3a; --ok: #5cc28f; --warn: #e0a85a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; }
+  header h1 { font-size: 16px; margin: 0 8px 0 0; }
+  .meta { color: var(--muted); font-size: 13px; }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; padding: 16px; max-width: 1300px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  section, aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  h2 { font-size: 15px; margin: 0 0 8px; }
+  .box { padding: 10px 12px; border-radius: 6px; background: var(--chip); white-space: pre-wrap; overflow-wrap: anywhere; margin: 6px 0 14px; }
+  .label { border-left: 3px solid var(--warn); }
+  .label dt { color: var(--muted); font-size: 12px; } .label dd { margin: 0 0 6px; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); }
+  fieldset { border: 0; padding: 0; margin: 0 0 14px; }
+  legend { font-weight: 600; margin-bottom: 6px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .choices label { border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  .choices input { position: absolute; opacity: 0; pointer-events: none; }
+  .choices label:has(input:checked) { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  textarea, input[type=text] { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  #loader { max-width: 640px; margin: 40px auto; }
+  .done { color: var(--ok); } .todo { color: var(--warn); }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>FlowAssist · review the 50 v0 labels</h1>
+  <span class="meta" id="who"></span>
+  <span class="meta" id="count"></span>
+  <button id="export" class="primary" disabled>Export my review (CSV)</button>
+</header>
+
+<section id="loader">
+  <h2>Start</h2>
+  <p>Each case shows the ticket, the source data and the <b>AI-proposed label</b>. Decide on your own whether the label is right. Approve it, or correct it and say why. Use the five questions (language · sensitive request · one own transaction with that reference · amount and currency · fresh and consistent) and <code>evals/reference_policy.md</code>. The prototype's outputs are deliberately not shown.</p>
+  <p><label>Your name<br><input type="text" id="name" autocomplete="name"></label></p>
+  <p><button id="start" class="primary">Load the 50 cases</button></p>
+  <p class="meta">Serve the repo first: <code>python3 -m http.server 8000</code> from the repo root, then open <code>http://127.0.0.1:8000/evals/label_review.html</code>.</p>
+  <p class="meta" id="loadError"></p>
+</section>
+
+<main id="app" class="hidden">
+  <section>
+    <div class="row" style="justify-content: space-between"><h2 id="caseId"></h2><span id="status" class="meta"></span></div>
+    <div class="meta" id="ticketMeta"></div>
+    <div class="box" id="message"></div>
+    <h2>Source data</h2>
+    <div class="meta" id="account"></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Transaction</th><th>Merchant</th><th>Reference</th><th>Amount</th><th>Status</th><th>Event</th><th>Fetched</th><th>Sources</th><th>Other fields</th></tr></thead>
+      <tbody id="txs"></tbody>
+    </table></div>
+    <h2 style="margin-top: 14px">AI-proposed label</h2>
+    <dl class="box label" id="label"></dl>
+    <div class="row"><button id="prev">← Previous</button><button id="next">Next →</button></div>
+  </section>
+  <aside>
+    <form id="form">
+      <fieldset><legend>Decision</legend><div class="choices">
+        <label><input type="radio" name="decision" value="approved"> approve</label>
+        <label><input type="radio" name="decision" value="corrected"> correct</label>
+      </div></fieldset>
+      <div id="fix" class="hidden">
+        <fieldset><legend>Correct state</legend><div class="choices">
+          <label><input type="radio" name="state" value="draft_ready"> draft_ready</label>
+          <label><input type="radio" name="state" value="context_only"> context_only</label>
+          <label><input type="radio" name="state" value="human_only"> human_only</label>
+        </div></fieldset>
+        <fieldset><legend>Correct case type</legend><div class="choices">
+          <label><input type="radio" name="caseType" value="easy"> easy</label>
+          <label><input type="radio" name="caseType" value="hard"> hard</label>
+          <label><input type="radio" name="caseType" value="adversarial"> adversarial</label>
+          <label><input type="radio" name="caseType" value="out_of_scope"> out of scope</label>
+        </div></fieldset>
+      </div>
+      <fieldset><legend>Comment (required for a correction)</legend><textarea name="comment" rows="3"></textarea></fieldset>
+      <button type="button" id="saveNext" class="primary">Save and next</button>
+    </form>
+  </aside>
+</main>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+let items = [], reviews = {}, index = 0, reviewer = "";
+const key = () => `flowassist-v0-label-review:${reviewer}`;
+const persist = () => { try { localStorage.setItem(key(), JSON.stringify(reviews)); } catch (_) {} };
+const money = (minor, cur) => typeof minor === "number" ? `${cur} ${(minor / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : `${cur} ${JSON.stringify(minor)}`;
+const csvCell = (v) => /[",\n\r]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : String(v);
+
+function parseCSV(text) {
+  const rows = []; let row = [], field = "", quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (quoted) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') quoted = false;
+      else field += c;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(field); rows.push(row); row = []; field = ""; }
+    else field += c;
+  }
+  if (field || row.length) { row.push(field); rows.push(row); }
+  const [head, ...body] = rows.filter((r) => r.length > 1 || r[0]);
+  return body.map((r) => Object.fromEntries(head.map((h, i) => [h, r[i] ?? ""])));
+}
+
+function render() {
+  const it = items[index], r = reviews[it.id] || {};
+  $("caseId").textContent = `${it.id} · ${index + 1} of ${items.length}`;
+  $("status").textContent = r.decision ? `Reviewed (${r.decision})` : "Not reviewed";
+  $("status").className = r.decision ? "done" : "todo";
+  $("ticketMeta").textContent = `Merchant ${it.ticket.merchant} · language ${it.ticket.language} · received ${it.ticket.receivedAt} · segment ${it.row.segment}`;
+  $("message").textContent = it.ticket.message;
+  $("account").textContent = it.accounts.length ? `Account: ${it.accounts.map((a) => `${a.id} (KYC ${a.kyc})`).join(", ")}` : "No account record for this merchant";
+  $("txs").replaceChildren(...it.txs.map((t) => {
+    const tr = document.createElement("tr");
+    const other = ["clearingStatus", "feeMinor", "netMinor", "matchMethod", "matchScore", "note"].filter((k) => k in t).map((k) => `${k}=${t[k]}`).join(" ");
+    for (const v of [t.id, t.merchant, t.reference, money(t.amountMinor, t.currency), t.status, t.eventAt, t.fetchedAt, `${t.ledger} / ${t.clearing}`, other]) {
+      const td = document.createElement("td"); td.textContent = v ?? ""; tr.append(td);
+    }
+    return tr;
+  }));
+  const fields = [["Expected output or action", it.row.expected_output_or_action], ["Hand over to a person", it.row.hand_over_to_a_person],
+    ["Case type", it.row.case_type], ["Eligible for timing", it.row.eligible_for_timing], ["Evidence", it.row.evidence_or_source], ["Notes", it.row.notes]];
+  $("label").replaceChildren(...fields.flatMap(([k, v]) => { const dt = document.createElement("dt"); dt.textContent = k; const dd = document.createElement("dd"); dd.textContent = v; return [dt, dd]; }));
+  const f = $("form");
+  for (const name of ["decision", "state", "caseType"]) for (const input of f.elements[name]) input.checked = input.value === r[name];
+  f.elements.comment.value = r.comment || "";
+  $("fix").classList.toggle("hidden", r.decision !== "corrected");
+  $("count").textContent = `${items.filter((x) => (reviews[x.id] || {}).decision).length}/${items.length} reviewed`;
+}
+function save() {
+  const f = $("form"), it = items[index];
+  const val = (n) => (f.querySelector(`input[name=${n}]:checked`) || {}).value || "";
+  reviews[it.id] = { decision: val("decision"), state: val("state"), caseType: val("caseType"), comment: f.elements.comment.value.trim(), at: new Date().toISOString().slice(0, 10) };
+  persist();
+  $("fix").classList.toggle("hidden", reviews[it.id].decision !== "corrected");
+}
+function go(i) { save(); index = (i + items.length) % items.length; render(); window.scrollTo(0, 0); }
+
+async function start() {
+  reviewer = $("name").value.trim();
+  if (!reviewer) { $("loadError").textContent = "Enter your name first."; return; }
+  try {
+    const [csvRes, fixRes] = await Promise.all([fetch("eval_set_v0.csv"), fetch("fixtures_v0.json")]);
+    const rows = parseCSV(await csvRes.text()), fixtures = Object.fromEntries((await fixRes.json()).map((f) => [f.id, f]));
+    items = rows.map((row) => { const f = fixtures[row.id]; return { id: row.id, row, ticket: f.ticket, accounts: f.data.accounts, txs: f.data.transactions }; });
+  } catch (_) {
+    $("loadError").textContent = "Could not load the cases. Serve the repo with python3 -m http.server and open the page through it.";
+    return;
+  }
+  try { reviews = JSON.parse(localStorage.getItem(key()) || "{}"); } catch (_) { reviews = {}; }
+  const first = items.findIndex((x) => !(reviews[x.id] || {}).decision);
+  index = first < 0 ? 0 : first;
+  $("who").textContent = `Reviewer: ${reviewer}`;
+  $("loader").classList.add("hidden"); $("app").classList.remove("hidden"); $("export").disabled = false;
+  render();
+}
+function exportCSV() {
+  save();
+  const head = ["case_id", "reviewer", "date", "decision", "corrected_state", "corrected_case_type", "comment"];
+  const lines = [head.join(",")];
+  for (const it of items) {
+    const r = reviews[it.id] || {};
+    lines.push([it.id, reviewer, r.at || "", r.decision || "", r.decision === "corrected" ? r.state : "", r.decision === "corrected" ? r.caseType : "", r.comment || ""].map(csvCell).join(","));
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], { type: "text/csv" }));
+  a.download = `label_review_v0_${reviewer.replace(/\W+/g, "_")}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+try { $("name").value = localStorage.getItem("flowassist-reviewer-name") || ""; } catch (_) {}
+$("name").addEventListener("change", () => { try { localStorage.setItem("flowassist-reviewer-name", $("name").value.trim()); } catch (_) {} });
+$("start").addEventListener("click", start);
+$("prev").addEventListener("click", () => go(index - 1));
+$("next").addEventListener("click", () => go(index + 1));
+$("saveNext").addEventListener("click", () => go(index + 1));
+$("form").addEventListener("change", save);
+$("export").addEventListener("click", exportCSV);
+window.addEventListener("beforeunload", () => { if (items.length) save(); });
+</script>
+</body>
+</html>

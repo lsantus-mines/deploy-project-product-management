@@ -43,19 +43,19 @@ A workflow: every step and branch is written in advance, and no model chooses a 
 - API down: no API is called. Integration and its timeouts are untested; local manual mode stays available. Browser storage failure: in-memory only.
 
 ## 6. The override switch ⏻
-- Operational owner of the button: the specialist using the tab. Owner of a future global stop: Ops, a named person to be appointed before any pilot.
+- Operational owner of the button: the specialist using the tab. **Accountable owner of the switch: Antoine Rabeau (@antorabo75)**, named on 9 November 2026: owns its scope, its test schedule and the decision to stop assisted drafting for all tickets; in a pilot this role passes to PayFlow Ops.
 - Action: switch the ticket to manual mode; assisted insertion is disabled. Resuming is explicit and resets inspection/approval.
 - Scope: one ticket in one tab. No global server stop.
 - Tested on 9 November 2026 by the automated run `python3 scripts/verify_s3.py`, scenario "manual fallback and resume require a fresh inspection". Not a user test or a visual browser check.
 
 ## 7. Data
 - Demo: `prototype/data.js`, entirely fictional public payments/accounts; no training.
-- Evaluation: `evals/eval_set_v0.csv`, 50 AI-proposed labels; executable fixtures in `evals/fixtures_v0.json`. Two human approvals are still required in `label_review.csv`.
+- Evaluation: `evals/eval_set_v0.csv`, 50 AI-proposed labels; executable fixtures in `evals/fixtures_v0.json`. Reviewer 1 (Antoine, 9 Nov) approved all 50 in `label_review.csv`; a second label reviewer is optional (A3 requires labels by hand, not two reviewers).
 - F01–F20 were already exposed during development; F21–F50 were labelled before the first run. After analysis and fixes, all 50 are now development cases. They are no longer a held-out set and must be replaced for an independent measurement.
 - Before/after results: `evals/results_baseline_v0.json` and `evals/results_v0.json`, with SHA-256 hashes of the engine and fixtures. Data entered in the app stays in the tab's sessionStorage. See [governance](governance.md#session-4--checkpoints-and-evaluation).
 
 ## 8. Eval result v0
-**Acceptability by two graders: not measured; business criterion not demonstrated.** The FlowAssist criterion is ≥41.2% active-time saving on 200 eligible cases, QA ≥92%, detection precision ≥98% and zero critical exposures. It is not Paylio's 45% threshold. On the development set: 50/50 matching states, 15/50 automatic drafts; no human quality judgement. See the [report](evals/report_v0.md).
+**Acceptability: grader 1 judged 15/15 drafts sendable without editing; grader 2 pending; business criterion not demonstrated.** The FlowAssist criterion is ≥41.2% active-time saving on 200 eligible cases, QA ≥92%, detection precision ≥98% and zero critical exposures. It is not Paylio's 45% threshold. On the development set: 50/50 matching states, 15/50 automatic drafts; no human quality judgement. See the [report](evals/report_v0.md).
 
 ## 9. What you would build next
 Have the labels validated and the outputs graded independently by two people.
