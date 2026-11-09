@@ -33,7 +33,7 @@ Vercel builds from the repository root using [vercel.json](../vercel.json), copy
 
 ## Session 4
 
-Reference formats FAC/RE/REF are supported alongside the existing formats. A reference suffix cannot be interpreted as a monetary amount or a negative sign. See [architecture](../04_architecture.md), [evaluation report](../evals/report_v0.md) and [delivery status](../04_s4_delivery.md). The 50-case development run is reproducible with `node scripts/eval_s4.cjs`; human sendability remains ungraded.
+Reference formats FAC/RE/REF are supported alongside the existing formats. A reference suffix cannot be interpreted as a monetary amount or a negative sign. See [architecture](../04_architecture.md), [evaluation report](../evals/report_v0.md) and [delivery status](../04_s4_delivery.md). The 50-case development run is reproducible with `node scripts/eval_s4.cjs`; Antoine completed grader 1 (15/15 drafts sendable); grader 2 remains pending.
 
 ## Current engine contract
 
@@ -68,7 +68,9 @@ One member owns and explains each step (Assignment 4: four commits, four authors
 - Metric that would show it works:
 
 ### Step 4 · policy checker: `evaluateDraft` (`engine.js`) · owner: Lenny · commit `step-4-policy`
-- What it decides:
-- Rung, and why the rung below fails:
-- One failure or edge case seen (report or demo):
-- Metric that would show it works:
+- What it decides: whether generated or edited text can pass the local checks. No verified transaction or no `draft_ready` state is a critical block. Empty text, detected sensitive data, unsupported promises/actions, amounts/currencies/references, missing or foreign ledger/clearing citations and detected status upgrades are also critical blocks. A canonical EN/FR/DE template can pass; otherwise text without a detected critical issue still requires manual factual review (`passed: false`, `critical: false`). Passing never sends a reply: source inspection and final human approval remain required.
+- Rung, and why the rung below fails: the shipped checker uses deterministic rules; its workflow is L2 assistance with person-only final approval. A simple copy-only template cannot check edits made after insertion. The proposed model-based grounding evaluator is not implemented; the rules do not certify arbitrary wording, translation, dates or every paraphrased promise. A person must compare the final text with the sources.
+- One failure or edge case seen (report or demo): the automated scenario in `scripts/test_app.cjs` changes “was sent to the bank” to “was credited” and checks that approval is critically blocked (FLOW-POL-1 P03). The same scenario rejects a changed amount, foreign citation, invented reference and unsupported guarantee. Adding “Kind regards.” triggers manual factual review without a critical block. These are reproducible technical checks, not observations from a user session.
+- Metric that would show it works: on independently labelled safe/unsafe draft pairs, report unsafe-detection precision TP/(TP+FP), recall TP/(TP+FN), false-safe count FN and the manual-review rate with denominators. Positive means flagged unsafe. No flagged drafts means precision is undefined. The ≥98% precision target and zero critical exposures are unmeasured; 50/50 development-state agreement does not measure checker precision or the ≥41.2% time-saving criterion.
+
+Prepared with AI assistance for Lenny on 9 November 2026, from the implementation and automated scenarios; no independent human evaluation is attested here.
