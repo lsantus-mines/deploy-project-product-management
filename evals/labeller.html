@@ -63,7 +63,14 @@
 <section id="loader">
   <h2>Start</h2>
   <p>Label every case <b>yourself</b>, without looking at anyone else's labels, at the design file or at any prototype output. Your work is saved in this browser as you go; export the CSV when finished.</p>
-  <p><label>Your name (as it will appear in <code>label_review_v1.csv</code>)<br><input type="text" id="name" autocomplete="name"></label></p>
+  <p><label>Who are you?<br>
+    <select id="member">
+      <option value="">Choose…</option>
+      <option>Lenny</option><option>Anthony</option><option>Antoine</option><option>Benjamin</option><option>Colin</option>
+      <option value="*">Someone else (all 200 cases)</option>
+    </select></label></p>
+  <p id="otherName" class="hidden"><label>Your name<br><input type="text" id="name" autocomplete="name"></label></p>
+  <p class="meta" id="scopeInfo">Each member labels a block of 40 cases plus 4 cases from the previous member's block (about 25 minutes). The 4 shared cases measure agreement.</p>
   <p class="row">
     <button id="start" class="primary">Load the 200 cases</button>
     <label class="meta">or choose <code>evals/eval_set_v1.csv</code>: <input type="file" id="file" accept=".csv"></label>
@@ -96,6 +103,18 @@
   </section>
 
   <aside>
+    <details id="guide" open>
+      <summary><b>How to label: 5 questions, stop at the first "no"</b></summary>
+      <ol class="policy">
+        <li><b>EN, FR or DE?</b> No → human_only.</li>
+        <li><b>Nothing sensitive?</b> Dispute, refund or fund action, KYC/AML/fraud, unblock request, password or IBAN, "ignore the rules", account under review or missing → human_only.</li>
+        <li><b>Exactly one transaction of this merchant with that reference?</b> None, several, amount only, or another merchant's → context_only.</li>
+        <li><b>Amount and currency match?</b> No → context_only.</li>
+        <li><b>Fresh (fetched ≤5 min before the ticket) and consistent?</b> Stale, future, conflicting statuses, fee that does not add up, broken field, model score &lt;0.95 → context_only.</li>
+      </ol>
+      <p class="policy">All yes → <b>draft_ready</b>: write the facts the reply must state (transaction, amount, exact status, event time, LED/CLE citations, no promised date). Remember: sent_to_bank ≠ credited. Handover is "no — L2 approval" only for draft_ready. Eligible for timing = yes only for draft_ready tracing. Label what a <b>correct</b> assistant should do, not what the prototype does.</p>
+    </details>
+    <hr style="border: 0; border-top: 1px solid var(--line); margin: 12px 0">
     <form id="form">
       <fieldset><legend>Expected state</legend><div class="choices" data-field="state">
         <label><input type="radio" name="state" value="draft_ready"> draft_ready <kbd>1</kbd></label>
@@ -146,6 +165,19 @@ const POLICY = {
 const LABEL_COLS = ["expected_output_or_action", "hand_over_to_a_person", "case_type", "eligible_for_timing", "evidence_or_source", "notes"];
 const $ = (id) => document.getElementById(id);
 let cases = [], labels = {}, index = 0, labeller = "";
+
+// Split: member i labels V(40i+1)–V(40i+40) plus the last 4 cases of the previous member's block.
+const TEAM = ["Lenny", "Anthony", "Antoine", "Benjamin", "Colin"];
+const vid = (n) => `V${String(n).padStart(3, "0")}`;
+function scopeFor(member) {
+  const i = TEAM.indexOf(member);
+  if (i < 0) return null;
+  const prev = (i + TEAM.length - 1) % TEAM.length;
+  const own = Array.from({ length: 40 }, (_, k) => vid(i * 40 + k + 1));
+  const overlap = Array.from({ length: 4 }, (_, k) => vid(prev * 40 + 37 + k));
+  return { ids: new Set([...own, ...overlap]), text: `${own[0]}–${own[39]} + shared ${overlap[0]}–${overlap[3]}` };
+}
+const chosenName = () => ($("member").value === "*" ? $("name").value.trim() : $("member").value);
 
 function parseCSV(text) {
   const rows = []; let row = [], field = "", quoted = false;
@@ -259,14 +291,16 @@ function importExport(rows) {
 }
 
 function begin(text) {
-  labeller = $("name").value.trim();
-  if (!labeller) { $("loadError").textContent = "Enter your name first."; return false; }
-  cases = parseCSV(text).filter((r) => /^V\d{3}$/.test(r.id)).map(explode);
-  if (cases.length !== 200) { $("loadError").textContent = `Expected 200 cases, found ${cases.length}. Load evals/eval_set_v1.csv.`; return false; }
+  labeller = chosenName();
+  if (!labeller) { $("loadError").textContent = "Choose who you are first."; return false; }
+  const all = parseCSV(text).filter((r) => /^V\d{3}$/.test(r.id)).map(explode);
+  if (all.length !== 200) { $("loadError").textContent = `Expected 200 cases, found ${all.length}. Load evals/eval_set_v1.csv.`; return false; }
+  const scope = scopeFor(labeller);
+  cases = scope ? all.filter((c) => scope.ids.has(c.id)) : all;
   restore();
   const first = cases.findIndex((c) => !isDone(labels[c.id]));
   index = first < 0 ? 0 : first;
-  $("who").textContent = `Labeller: ${labeller}`;
+  $("who").textContent = `Labeller: ${labeller} · ${scope ? scope.text : "all 200 cases"}`;
   $("loader").classList.add("hidden"); $("app").classList.remove("hidden"); $("export").disabled = false;
   render();
   return true;
@@ -281,7 +315,20 @@ $("policy").append(...Object.entries(POLICY).map(([k, v]) => {
   const p = document.createElement("p"); const b = document.createElement("b"); b.textContent = k;
   p.append(b, ` ${v}`); return p;
 }));
-try { $("name").value = localStorage.getItem("flowassist-labeller-name") || ""; } catch (_) {}
+function showScope() {
+  $("otherName").classList.toggle("hidden", $("member").value !== "*");
+  const scope = scopeFor($("member").value);
+  if (scope) $("scopeInfo").textContent = `Your cases: ${scope.text} (44 cases, about 25 minutes).`;
+}
+try {
+  $("member").value = localStorage.getItem("flowassist-labeller-member") || "";
+  $("name").value = localStorage.getItem("flowassist-labeller-name") || "";
+} catch (_) {}
+showScope();
+$("member").addEventListener("change", () => {
+  showScope();
+  try { localStorage.setItem("flowassist-labeller-member", $("member").value); } catch (_) {}
+});
 $("name").addEventListener("change", () => { try { localStorage.setItem("flowassist-labeller-name", $("name").value.trim()); } catch (_) {} });
 
 $("start").addEventListener("click", async () => {
@@ -297,8 +344,8 @@ $("file").addEventListener("change", async (e) => { const f = e.target.files[0];
 $("resume").addEventListener("change", async (e) => {
   const f = e.target.files[0];
   if (!f) return;
-  if (!$("name").value.trim()) { $("loadError").textContent = "Enter your name, then choose your export again."; e.target.value = ""; return; }
-  labeller = $("name").value.trim(); restore(); importExport(parseCSV(await f.text()));
+  if (!chosenName()) { $("loadError").textContent = "Choose who you are, then choose your export again."; e.target.value = ""; return; }
+  labeller = chosenName(); restore(); importExport(parseCSV(await f.text()));
   $("loadError").textContent = "Previous labels restored. Now load the cases.";
 });
 $("prev").addEventListener("click", () => go(index - 1));
