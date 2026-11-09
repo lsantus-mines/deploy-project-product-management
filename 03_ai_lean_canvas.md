@@ -1,6 +1,6 @@
 # 03 — AI Lean Canvas · FlowAssist
 
-**P2 · 3 November 2026, updated 9 November · Design v2; desk-based revision plus three conversations (D06–D08), desirability not validated.** Values from the S2 scenario, not observed prototype returns.
+**P2 · 3 November 2026, updated 9 November · Design v2; desk-based revision plus three conversations and a prototype test (D06–D10), desirability not validated.** Values from the S2 scenario, not observed prototype returns.
 
 | Classic block | Our answer | Source |
 |---|---|---|
@@ -22,4 +22,4 @@
 | 13. Human loop | L1 suggestions, L3 internal retrieval, L2 drafts, person-only approval/send; one-click handover; L4 metadata logging only | 03 §2 |
 | 14. Risks/governance | Never send, move funds, disclose another tenant or invent settlement certainty; critical violation disables drafting; Ops owns stop | governance S3 |
 
-**Next decision:** implement and evaluate in S4. D01–D05 refine source review, block wording and handover without expanding the three MUSTs. Three conversations on 9 November added D06–D08 (next step, documented typical delay, plain wording); desirability remains unvalidated. See [decision register](03_user_research.md).
+**Next decision:** implement and evaluate in S4. D01–D05 refine source review, block wording and handover without expanding the three MUSTs. Three conversations and a prototype test on 9 November added D06–D10 (next step, documented typical delay, plain wording, verified-facts summary, source guidance); 2 of 3 testers misread "sent to bank"; desirability remains unvalidated. See [decision register](03_user_research.md).

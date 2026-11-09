@@ -1,6 +1,6 @@
 # 03 — S3 delivery matrix · updated 9 November 2026
 
-**Decision:** v2 design ready for S4; no claim of user validation, benchmark success or production readiness. Three conversations and a prototype try-out took place on 9 November; their limits are listed below.
+**Decision:** v2 design ready for S4; no claim of user validation, benchmark success or production readiness. Three conversations and a prototype test took place on 9 November; their limits are listed below.
 
 | Assignment requirement | Artifact / evidence | Status |
 |---|---|---|
@@ -14,8 +14,8 @@
 | Brief v1 → v2 and one-page Lean Canvas | Archived v1; current brief; AI Lean Canvas | Complete desk-based revision |
 | Three 20-minute conversations with past-behavior evidence | `03_user_research.md` §0; `research/interviews_2026-11-09.csv` | Done 9 Nov with three friends of the team (2 from past jobs, 1 in role); mostly scenario questions, so weaker past-behaviour evidence |
 | Clickable surface with link and prompt | Prototype instructions and local HTML/CSS/JS v0.4 | Complete local surface; Vercel demo public and HTTP/asset verified; actual one-hour build duration unmeasured |
-| Two users try one task thinking aloud | `03_user_research.md` §0 | Partly: participants tried DEMO-01 and liked it; no completion, time or hesitation recorded |
-| What users changed / could not decide | Brief §§9–10; D06–D08 | Done: three changes with quoted evidence; D07 left to Ops/Legal |
+| Two users try one task thinking aloud | `03_user_research.md` §0; `research/prototype_test_2026-11-09.csv` | Done with three testers on DEMO-01: 1/3 finished alone, 5–12 min, 2/3 misread "sent to bank"; self-reported after the session, not observed live |
+| What users changed / could not decide | Brief §§9–10; D06–D10 | Done: five changes with quoted evidence; D07 left to Ops/Legal |
 | Spec skeleton | spec.md v1 | Complete S4 contract |
 | 20 cases with input/action/evidence/handover/segment/origin | eval_set_v0.csv; label_design_review.csv | Complete proposed labels; manual labelling requirement unfulfilled |
 | Every member authors at least one commit using own account | Git history | No new authorship attested in this revision; cannot be supplied by the assistant |

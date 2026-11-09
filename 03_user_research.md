@@ -1,6 +1,6 @@
 # 03 — User needs and design decisions · FlowAssist
 
-**Updated 9 November 2026.** Three conversations and a prototype try-out were run on 9 November (section 0). Sections 1–6 are the earlier desk-based synthesis of 3 November; its decisions D01–D05 are team decisions, and D06–D08 come from the conversations.
+**Updated 9 November 2026.** Three conversations and a prototype test were run on 9 November (section 0). Sections 1–6 are the earlier desk-based synthesis of 3 November; its decisions D01–D05 are team decisions, and D06–D10 come from the conversations and the test.
 
 ## 0. Conversations and prototype test · 9 November 2026
 
@@ -29,20 +29,30 @@ Raw answers, anonymized and word for word: [research/interviews_2026-11-09.csv](
 | « Est-ce qu'il nous a déjà contactés, est-ce qu'il y a d'autres virements concernés ? » | Has he contacted us before, are other transfers involved? | P2 | Account-history panel (v0.4) | Confirms |
 
 ### Prototype test
-The participants tried the hosted prototype (task: DEMO-01) and reported liking it. **Only that overall impression was recorded:** no task completion, time, hesitation point or think-aloud note. The test therefore happened but gives no usability evidence, and "they liked it" is not counted as validation. Next time: use the protocol in `research/guide_entretien_FR.md`.
+All three tried the hosted prototype on task DEMO-01 ("find what happened to the payment and prepare a reply you would send"). Details were **self-reported after the session** through seven questions, not observed live; raw answers: [research/prototype_test_2026-11-09.csv](research/prototype_test_2026-11-09.csv).
+
+| Tester | Finished without help? | Time | Where they hesitated | What they expected instead | Opened both sources? | Read sent_to_bank as "arrived"? |
+|---|---|---|---|---|---|---|
+| P1 | Partly | ~8 min | Status "sent to bank": finished, or something left to check? | An explanation of the status and the next step | Yes | **Yes** |
+| P2 | Yes | ~5 min | Moving facts from the sources into the draft: had I checked everything? | A short checklist of checks before the reply | Yes | No |
+| P3 | No | ~12 min | Which source to open first, how to read ledger vs clearing | The tool saying where to look and what each source confirms | Don't remember | **Yes** |
+
+**Result:** 1 of 3 finished without help. **2 of 3 read "sent to bank" as money already received**, which is the misreading D01 guards against and the strongest evidence for D08. Requested changes: plain status words (P1, P3), a summary of verified facts above the draft (P2), guidance on which source confirms what (P3).
 
 ### Desirability gate
-- [ ] 2 of 2 finished the task without help (not recorded)
+- [ ] Testers finished the task without help (1 of 3; P1 partly, P3 not)
 - [ ] They told us what they did last time (partly: P1 and P2 drew on past jobs, through scenario questions)
 - [ ] At least one said "I want this before…" (not asked)
-- [x] Our out-of-scope list grew; our success criterion did not move (D06–D08 refine wording; the 41.2% criterion is unchanged)
+- [x] Our out-of-scope list grew; our success criterion did not move (D06–D10 refine wording and guidance; the 41.2% criterion is unchanged)
 
 ### Decisions from the conversations
 | ID | Change for v2 | Evidence | Where | Status |
 |---|---|---|---|---|
 | D06 | Every context-only or handover reply states the next step and when the merchant will hear back | P2, P3 | Brief §9, spec | Brief and spec updated; prototype unchanged |
 | D07 | A draft may state a *documented* typical processing time for the rail, labelled "typical, not guaranteed"; never a date for this payment | P1, P2 (P1 also: no promised date) | Brief §9–10, spec | Pending Ops/Legal approval; not in prototype |
-| D08 | Status wording in plain language (e.g. "sent to the recipient's bank, not yet confirmed as received") instead of ledger terms | P2 | Brief §9, spec | Brief and spec updated; prototype unchanged |
+| D08 | Status wording in plain language (e.g. "sent to the recipient's bank, not yet confirmed as received") instead of ledger terms | P2 interview; test: P1 and P3 read sent_to_bank as received | Brief §9, spec | Brief and spec updated; prototype unchanged |
+| D09 | A "verified facts" summary above the draft (transaction, amount, status, event time, sources checked), as a pre-insert checklist | Test: P2 | Brief §9, spec | Brief and spec updated; prototype unchanged |
+| D10 | Source guidance: what the ledger record and the clearing record each confirm, and which to open first | Test: P3 (and P1 asking for the next step) | Brief §9, spec | Brief and spec updated; prototype unchanged |
 
 ## 1. Target users and concrete work situations
 | Profile | Situation to support | Need | Design response |
@@ -78,9 +88,9 @@ These are acceptance scenarios, not completed participant tests. No task time, s
 **T02 — Ambiguity and specialist handover.** Open DEMO-02. Confirm that a unique reference is needed and no draft is available. Choose “Ambiguous transaction”, add safe context and escalate. The preview names Tier-2 payments, the merchant, reason, both authorized sources and their snapshot times. Open DEMO-03 and use the sensitive-request reason: destination is Tier-2 compliance. DEMO-04 has no transaction sources or foreign owner details.
 
 ## 5. What the users changed / could not decide
-**User-driven changes: D06–D08** (section 0), from the 9 November conversations. D01–D05 remain team design decisions. The [original brief](research/brief_v1.md) is retained for comparison.
+**User-driven changes: D06–D10** (section 0), from the 9 November conversations and prototype test. D01–D05 remain team design decisions. The [original brief](research/brief_v1.md) is retained for comparison.
 
 Users could not settle whether a typical processing time reassures or risks reading as a promise (P1 wants both an estimate and no promised date): Ops and Legal decide D07. Users cannot determine the economic hurdle (CFO/Product), measured savings and quality (paired timing and independent graders), model choice (Engineering evaluation), legal basis and retention (DPO/Legal), or scope approval (Ops/CCO). The 41.2% threshold remains fixed.
 
 ## 6. Decision
-**Proceed under a conditional design GO.** Three conversations with friends of the team support the safety rules (sent ≠ credited, no promised date, ask for a reference, escalate when unsure) and add D06–D08. Desirability is not validated: the sample is small and friendly, questions were mostly hypothetical, and the prototype try-out recorded no usability data. Technical, economic and production gates remain separate.
+**Proceed under a conditional design GO.** Three conversations with friends of the team support the safety rules (sent ≠ credited, no promised date, ask for a reference, escalate when unsure) and add D06–D10. The test found a real usability problem: 2 of 3 testers read "sent to bank" as received, and only 1 of 3 finished alone. Desirability is not validated: the sample is small and friendly, questions were mostly hypothetical, and test details were self-reported. Technical, economic and production gates remain separate.

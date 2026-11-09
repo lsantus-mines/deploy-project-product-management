@@ -1,7 +1,7 @@
 # 03 — Product brief · FlowAssist · v2
 
 **P2 · PayFlow AI Product Team · 3 November 2026**
-**Status:** v2 design complete; desk-based revision plus three conversations and a prototype try-out on 9 November (D06–D08); desirability not validated. [Original v1](research/brief_v1.md). [Process, scoring and model tables](03_design_details.md) form the supporting annex.
+**Status:** v2 design complete; desk-based revision plus three conversations and a prototype test on 9 November (D06–D10); desirability not validated. [Original v1](research/brief_v1.md). [Process, scoring and model tables](03_design_details.md) form the supporting annex.
 
 ## 1. Problem, user, do-nothing
 Karim, Tier-1 payment Ops specialist, investigates disconnected records before replying. P2 provides 800 merchants, 12,000 tickets/month and 40% investigation time; S1 assumes 18-minute handling time, including 7.2 minutes investigation. Do nothing: manual tools/macros and 4% annual efficiency gain (€57,600), versus a €125,000 alternative project. No actual internal logs or time study are available here.
@@ -37,9 +37,11 @@ Wrong match, stale facts, fabricated certainty, injection and review fatigue. An
 Three conversations on 9 November (two people drawing on past accounting and support jobs, one classmate in role; [record](03_user_research.md)) led to three changes:
 - **D06 · Next step and follow-up time** in every context-only or handover reply. Evidence: P2 « je lui dis précisément quelle est la prochaine étape et quand il aura de nos nouvelles », P3 « un délai de suivi ».
 - **D07 · Documented typical processing time**, labelled "typical, not guaranteed", never a date for this payment. Evidence: P1 « une estimation du délai si on en a une », P2 « le délai habituel ». Pending Ops/Legal approval.
-- **D08 · Plain-language status wording.** Evidence: P2 « pas avec du jargon bancaire ».
+- **D08 · Plain-language status wording.** Evidence: P2 « pas avec du jargon bancaire »; in the prototype test, 2 of 3 testers (P1, P3) read "sent to bank" as money received.
+- **D09 · Verified-facts summary above the draft**, used as a pre-insert checklist. Evidence: P2 hesitated « au moment de passer des informations des sources au brouillon » and asked for « un résumé des faits vérifiés juste au-dessus du brouillon ».
+- **D10 · Source guidance**: what the ledger and clearing records each confirm, and which to open first. Evidence: P3 « je ne savais pas quelle source ouvrir en premier », and finished without completing the task (~12 min).
 
-They confirmed sent ≠ credited (P2), no promised date (P1), asking for a reference before handing over (P1) and escalating when unsure (P3). D01–D05 remain team design decisions. The prototype try-out recorded only a positive impression, so no usability change is claimed.
+They confirmed sent ≠ credited (P2), no promised date (P1), asking for a reference before handing over (P1) and escalating when unsure (P3). D01–D05 remain team design decisions. Prototype test (self-reported after the session): 1 of 3 finished without help, in about 5 to 12 minutes.
 
 ## 10. What users could not decide
 Users could not settle whether a typical delay reassures the merchant or reads as a promise (P1 wants an estimate but no promised date): Ops and Legal decide D07. CFO/Product owns the 41.2% hurdle; timing and independent graders establish performance; Engineering selects the model after evaluation; DPO/Legal confirms lawful use and retention; CCO/Ops approves scope. Users inform workflow and wording.

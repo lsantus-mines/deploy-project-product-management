@@ -1,7 +1,7 @@
 # 03 — Design details · FlowAssist · v2
 
 **Team:** Lenny Santus, Anthony Rascle, Antoine Rabeau, Benjamin Caujolle, Colin Sibieude · **P2** · **3 November 2026**
-**Status:** v2 design complete; decisions D01–D05 in `03_user_research.md` derive from desk analysis; D06–D08 from three conversations on 9 November. Desirability is not validated.
+**Status:** v2 design complete; decisions D01–D05 in `03_user_research.md` derive from desk analysis; D06–D10 from three conversations and a prototype test on 9 November. Desirability is not validated.
 
 ## 1. Problem, user, do-nothing
 Karim, a Tier-1 payment operations specialist, loses 7.2 of an 18-minute ticket to investigation across disconnected tools. FlowAssist reconstructs a payment timeline and drafts a cited reply inside Zendesk; Karim checks and sends it. The P2 case provides 800 merchants, 12,000 tickets/month and 40% investigation time; the 18-minute baseline, staffing and detailed economics are inherited S1/S2 scenario assumptions, not newly observed company data. Without it: manual search and macros, 4% annual efficiency improvement (€57,600/year), against a €125,000/year alternative project.
@@ -65,7 +65,7 @@ S3 delivered **20 seed cases**; S4 expands the current development set to **50 c
 Wrong match, fabricated settlement certainty, stale clearing feeds, prompt injection, tenant leakage and review fatigue. One unsafe exposure or attempted send/fund write → disable drafting immediately, preserve minimized evidence and route manually; Ops Lead owns the stop, Engineering enforces it, DPO/CCO assesses any data incident. A failed timing/quality gate means conditional NO-GO and redesign, not a lowered threshold.
 
 ## 9. What the users changed — v2 design register
-User-driven changes D06–D08 (next step and follow-up time, documented typical delay, plain-language status) come from the 9 November conversations; see the [brief §9](03_product_brief.md). The v2 also implements the team decisions D01 all-source inspection, D02 direct missing-reference wording, D03 timestamped evidence/handover, D04 a compliance destination, and D05 disabling insertion after manual fallback. Each decision has an acceptance scenario in [the needs and decision record](03_user_research.md). Scope and the 41.2% economic threshold stay fixed. [Original brief v1](research/brief_v1.md) records the prior design.
+User-driven changes D06–D10 (next step and follow-up time, documented typical delay, plain-language status, verified-facts summary, source guidance) come from the 9 November conversations and prototype test; see the [brief §9](03_product_brief.md). The v2 also implements the team decisions D01 all-source inspection, D02 direct missing-reference wording, D03 timestamped evidence/handover, D04 a compliance destination, and D05 disabling insertion after manual fallback. Each decision has an acceptance scenario in [the needs and decision record](03_user_research.md). Scope and the 41.2% economic threshold stay fixed. [Original brief v1](research/brief_v1.md) records the prior design.
 
 ## 10. What users could not decide
 Users can change placement, wording and handover ergonomics. CFO/Product owns the 41.2% economic hurdle; paired timing and independent graders judge performance; Engineering chooses model after ablation; DPO/Legal confirms lawful processing, contracts and retention; CCO/Ops approves allowed scope. None is established by favourable interview opinions.

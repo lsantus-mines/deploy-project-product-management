@@ -1,6 +1,6 @@
 # FlowAssist specification · v2 · S3–S4
 
-**Updated 9 November 2026 · Source:** `03_product_brief.md` v2, desk-based design decisions D01–D05 and user-driven decisions D06–D08 (9 November conversations). The production pipeline below is the target integration contract; application v0.4 implements a local deterministic demonstration described at the end.
+**Updated 9 November 2026 · Source:** `03_product_brief.md` v2, desk-based design decisions D01–D05 and user-driven decisions D06–D10 (9 November conversations and prototype test). The production pipeline below is the target integration contract; application v0.4 implements a local deterministic demonstration described at the end.
 
 ## problem
 A Tier-1 specialist investigates fragmented payment records before replying. Provide a tenant-verified tracing timeline and cited editable draft in Zendesk, retain human sending, and test ≥41.2% active time saving on eligible tracing cases. Dispute/compliance tickets get a handover, not advice.
@@ -109,12 +109,14 @@ Evaluation command: `node scripts/eval_s4.cjs`. Before/after kept in `evals/resu
 
 Synthetic transaction records may carry `matchMethod?: 'reference' | 'model'` and `matchScore?: number`. Missing method follows deterministic reference matching. Unknown method blocks; `model` requires a finite numeric score in [0.95, 1]. This input does not authorize retrieval and is checked only after merchant/reference/money/freshness/status/fee constraints. `sourceRecords` and `makeDraft` use allowlisted financial fields and ignore source notes. Snapshot age uses ticket `receivedAt` and allows 0–300,000 ms. Intake limits are 30 workspace tickets and 3,000 message characters; the offline 50-case evaluation is independent of these UI limits.
 
-## user_driven_v2 · D06–D08 · 9 November 2026
+## user_driven_v2 · D06–D10 · 9 November 2026
 
-From three conversations ([record](03_user_research.md)). Specified for v2; **not implemented in the prototype yet**.
+From three conversations and a prototype test ([record](03_user_research.md)). Specified for v2; **not implemented in the prototype yet**.
 
 | ID | Requirement | Acceptance check |
 |---|---|---|
 | D06 | Every context-only or handover reply tells the merchant the next step and when they will hear back. | Ambiguous (DEMO-02) and compliance (DEMO-03) replies name the next step and a follow-up time; no payment fact is added. |
 | D07 | A draft may state a typical processing time for the rail only if FLOW-POL-1 documents it, labelled "typical, not guaranteed". Never a date for this payment, never for a returned or failed payment. Pending Ops/Legal approval. | With no documented time, no timing appears; with one, the label is present and the evaluator still blocks promises. |
 | D08 | Status wording uses plain language next to the cited status (e.g. "sent to the recipient's bank, not yet confirmed as received" for sent_to_bank). | Each status maps to one approved plain phrase in EN/FR/DE; sent_to_bank never reads as received. |
+| D09 | Above the draft, show a "verified facts" summary (transaction, amount, exact status, event time, sources inspected) that the specialist confirms before insertion. | Insertion stays disabled until every listed fact is shown with its source; edits that change a listed fact re-open the checklist. |
+| D10 | Each source panel says what that record confirms (ledger: amount and booking; clearing: rail status and event time) and suggests opening the ledger first. | DEMO-01 shows both explanations; the wording never states beneficiary receipt for sent_to_bank. |
