@@ -1,4 +1,4 @@
-# FlowAssist · Payment operations workspace v0.4
+# FlowAssist · v0.4 workflow with S4 engine corrections · 9 November 2026
 
 [Public demo](https://deploy-project-product-management.vercel.app). Open `index.html` locally as an alternative, keeping `styles.css`, `data.js`, `engine.js` and `app.js` beside it. The browser runtime has no dependencies, external assets, API credentials or build framework.
 
@@ -34,3 +34,13 @@ Vercel builds from the repository root using [vercel.json](../vercel.json), copy
 ## Session 4
 
 Reference formats FAC/RE/REF are supported alongside the existing formats. A reference suffix cannot be interpreted as a monetary amount or a negative sign. See [architecture](../04_architecture.md), [evaluation report](../evals/report_v0.md) and [delivery status](../04_s4_delivery.md). The 50-case development run is reproducible with `node scripts/eval_s4.cjs`; human sendability remains ungraded.
+
+## Current engine contract
+
+`analyze(ticket, data, confirmedReference)` scopes candidates to `ticket.merchant`, requires a unique reference, checks supplied monetary values and validates source fields. Snapshot age is measured against `ticket.receivedAt`, with a maximum of 300,000 ms (five minutes), never the computer’s current clock. The visible examples therefore remain reproducible.
+
+Transaction fixtures may declare `matchMethod: "reference" | "model"`. For `"model"`, `matchScore` must be a finite number in [0.95, 1]; absent, string, out-of-range or low scores block drafting. Unknown methods also block. Omitted method retains the deterministic reference path. The runtime computes no model score; F19 supplies a synthetic input to exercise this gate. Source notes are excluded from `sourceRecords` and `makeDraft`.
+
+`evaluateDraft` screens generated and edited text. Canonical drafts can pass local rules; noncanonical wording requires manual factual review, while detected critical errors block approval. `handover` produces only a local packet with authorized source IDs and timestamps.
+
+`app.js` limits the workspace to 30 cases and intake messages to 3,000 characters. Those UI limits are separate from the 50-case offline development suite. `vercel.json` publishes only the five runtime assets; evaluation fixtures and coursework documents are not website assets.

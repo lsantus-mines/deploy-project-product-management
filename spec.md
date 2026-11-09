@@ -104,3 +104,7 @@ Commande d’évaluation : `node scripts/eval_s4.cjs`. Avant/après conservés d
 
 ### Résultat de clôture technique S4
 32 scénarios de test passent ; 50/50 états attendus concordent, 15 brouillons et zéro brouillon sur human-only. Les 50 restent de développement. F19 ne contient plus de champ de contrat non représenté ; le score est une entrée, pas une mesure calculée par un modèle. Le starter Paylio original a été exécuté : heuristique 8/20 (40 %), pas une notation humaine. Les causes pédagogiques Paylio restent des propositions de spec : compléter la section Release notes 4.12 (9 cas), revoir le routage sous seuil pour Add an admin user (2 cas) et Payslips as PDF (1 cas), puis tester sur un nouveau jeu sans régler le seuil contre ces tickets.
+
+### Runtime matching metadata (current code)
+
+Synthetic transaction records may carry `matchMethod?: 'reference' | 'model'` and `matchScore?: number`. Missing method follows deterministic reference matching. Unknown method blocks; `model` requires a finite numeric score in [0.95, 1]. This input does not authorize retrieval and is checked only after merchant/reference/money/freshness/status/fee constraints. `sourceRecords` and `makeDraft` use allowlisted financial fields and ignore source notes. Snapshot age uses ticket `receivedAt` and allows 0–300,000 ms. Intake limits are 30 workspace tickets and 3,000 message characters; the offline 50-case evaluation is independent of these UI limits.
