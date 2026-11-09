@@ -44,3 +44,31 @@ Transaction fixtures may declare `matchMethod: "reference" | "model"`. For `"mod
 `evaluateDraft` screens generated and edited text. Canonical drafts can pass local rules; noncanonical wording requires manual factual review, while detected critical errors block approval. `handover` produces only a local packet with authorized source IDs and timestamps.
 
 `app.js` limits the workspace to 30 cases and intake messages to 3,000 characters. Those UI limits are separate from the 50-case offline development suite. `vercel.json` publishes only the five runtime assets; evaluation fixtures and coursework documents are not website assets.
+
+## The four steps and their owners
+
+One member owns and explains each step (Assignment 4: four commits, four authors). Each owner fills in their own subsection in a commit signed with their own account, named after the step.
+
+### Step 1 · router: `classify` (`engine.js`) · owner: Anthony · commit `step-1-router`
+- What it decides:
+- Rung, and why the rung below fails:
+- One failure or edge case seen (report or demo):
+- Metric that would show it works:
+
+### Step 2 · routing rule: gates in `analyze` (`engine.js`) · owner: Benjamin · commit `step-2-rule`
+- What it decides:
+- Rung, and why the rung below fails:
+- One failure or edge case seen (report or demo):
+- Metric that would show it works:
+
+### Step 3 · drafter: `sourceRecords` and `makeDraft` (`engine.js`) · owner: Colin · commit `step-3-draft`
+- What it decides:
+- Rung, and why the rung below fails:
+- One failure or edge case seen (report or demo):
+- Metric that would show it works:
+
+### Step 4 · policy checker: `evaluateDraft` (`engine.js`) · owner: Lenny · commit `step-4-policy`
+- What it decides:
+- Rung, and why the rung below fails:
+- One failure or edge case seen (report or demo):
+- Metric that would show it works:
