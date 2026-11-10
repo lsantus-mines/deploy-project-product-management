@@ -10,9 +10,9 @@
 
 | Name | Git handle | Also in the Agentic Workflows team? |
 |---|---|---|
-| Lenny Santus | @lsantus-mines | no |
-| Anthony Rascle | @antotototototo18 | no |
-| Antoine Rabeau | @antorabo75 | no |
+| Lenny Santus | @lsantus-mines | yes |
+| Anthony Rascle | @antotototototo18 | yes |
+| Antoine Rabeau | @antorabo75 | yes |
 | Benjamin Caujolle | @BenjaminAHS | no |
 | Colin Sibieude | @csib-wq | no |
 
