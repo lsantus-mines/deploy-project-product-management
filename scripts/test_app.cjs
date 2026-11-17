@@ -645,3 +645,60 @@ test('model matching fails closed for absent, low, malformed or out-of-range con
   data.transactions.find(x=>x.reference==='INV-DEMO').matchMethod='unknown';
   assert.equal(E.analyze(fixture('ready'),data).draft,null);
 });
+test("step 1 router sends money, legal and cancellation requests to a person", () => {
+  const toPerson = {
+    "Please reimburse INV-1, EUR 50": "money_action",
+    "Can you credit back the EUR 50 for INV-1?": "money_action",
+    "Bitte Rückerstattung für INV-1": "money_action",
+    "Erstatten Sie bitte INV-1": "money_action",
+    "Please cancel the payment INV-1": "money_action",
+    "Reverse the transfer INV-1 please": "money_action",
+    "Annulez le virement INV-1 svp": "money_action",
+    "Stornieren Sie die Zahlung INV-1": "money_action",
+    "Solicito la devolución de INV-1": "money_action",
+    "Please waive the fee on INV-1": "money_action",
+    "We expect compensation for INV-1": "money_action",
+    "My lawyer will contact you about INV-1": "legal",
+    "Mon avocat va vous écrire au sujet de INV-1": "legal",
+    "Unser Anwalt prüft INV-1": "legal",
+    "Our account is frozen, where is INV-1?": "compliance",
+  };
+  for (const [message, intent] of Object.entries(toPerson)) {
+    assert.equal(E.classify(message), intent, message);
+    const a = analyze("ready", { message });
+    assert.equal(a.state, "human_only", message);
+    assert.equal(a.draft, null, message);
+  }
+  for (const message of [
+    "Where is INV-DEMO, EUR 1,240?",
+    "le paiement INV-DEMO de 1240 euros est bloqué, où est-il ?",
+    "Wo ist die Zahlung INV-DEMO?",
+  ])
+    assert.equal(E.classify(message), "tracing", message);
+});
+test("step 4 policy blocks added money, arrival and legal commitments in EN/FR/DE", () => {
+  const a = analyze("ready");
+  assert.equal(a.state, "draft_ready");
+  assert.equal(E.evaluateDraft(a, a.draft).passed, true);
+  for (const extra of [
+    "We will credit back the amount next week.",
+    "We will reimburse you shortly.",
+    "Your refund is on its way.",
+    "The fee has been waived.",
+    "You are entitled to compensation under PSD2.",
+    "The funds will arrive Monday.",
+    "The funds should arrive soon.",
+    "Nous vous rembourserons sous 3 jours.",
+    "Le montant sera crédité la semaine prochaine.",
+    "Wir erstatten den Betrag nächste Woche.",
+    "Die Gebühr wird erlassen.",
+  ]) {
+    const r = E.evaluateDraft(a, `${a.draft} ${extra}`);
+    assert.equal(r.critical, true, extra);
+    assert.equal(r.passed, false, extra);
+  }
+  for (const key of ["swift", "returned", "fees"]) {
+    const b = analyze(key);
+    assert.equal(E.evaluateDraft(b, b.draft).passed, true, key);
+  }
+});

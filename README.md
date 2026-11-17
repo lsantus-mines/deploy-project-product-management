@@ -42,7 +42,7 @@ One numbered file per session. Every member authors commits in at least four of 
 | `07_operations.md` | S7 | Future session deliverable; not yet present |
 | `08_launch_memo.md` | S8 | Future session deliverable; not yet present |
 | `spec.md`, `product_brief.md` | final | `spec.md` v2 present; consolidated final `product_brief.md` not yet present |
-| `/prototype`, `/evals` | from S4 | Executable local workflow, 32 tests, 50 development cases and before/after reports |
+| `/prototype`, `/evals` | from S4 | Executable local workflow, 34 tests, 50 development cases and before/after reports |
 
 Supporting S3 files: [AI Lean Canvas](03_ai_lean_canvas.md), [design details](03_design_details.md), [needs/design record](03_user_research.md), [prototype link](03_prototype_link.md) and [delivery matrix](03_s3_delivery.md). S4: [report](evals/report_v0.md), [delivery matrix](04_s4_delivery.md) and [evaluation guide](evals/README_eval_set.md). [Cross-session evidence audit](docs/DELIVERY_AUDIT.md).
 
@@ -55,7 +55,7 @@ Supporting S3 files: [AI Lean Canvas](03_ai_lean_canvas.md), [design details](03
 
 The local prototype implements the full journey: ticket creation, account context, account-scoped lookup, reference clarification, cited reply, source inspection, approval, manual handling and local handover. The engine uses rules and templates; it calls no model, banking system or Zendesk. No customer message or fund movement is executed.
 
-- **32 domain/interface tests pass.**
+- **34 domain/interface tests pass.**
 - **50/50 expected states match** on the development cases; 15 drafts, zero drafts on human-only cases and no foreign source observed.
 - The fixes cover references and amounts, plus abstention on a match declared as model-based with a missing, invalid or below-0.95 score. The score never replaces an identity or source check.
 - The original Paylio starter was run: routing 0.88, hit@3 1.00, heuristic score 8/20 = 40% against a 45% threshold. That heuristic is not a human grade.
@@ -85,7 +85,7 @@ python3 scripts/verify_s3.py
 python3 scripts/verify_s4.py
 ```
 
-The first checks artifacts, links and 32 domain/interface scenarios. The second checks the 50 cases, review grids and hashes, then reproduces the initial and current runs. To rerun only the engine:
+The first checks artifacts, links and 34 domain/interface scenarios. The second checks the 50 cases, review grids and hashes, then reproduces the initial and current runs. To rerun only the engine:
 
 ```sh
 node scripts/eval_s4.cjs

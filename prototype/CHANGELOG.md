@@ -1,5 +1,21 @@
 # FlowAssist interface changelog
 
+## v0.5 · user-test changes in the interface · 17 November 2026
+
+- D08: the payment status reads in plain language ("Sent to recipient’s bank · not yet received", "Received by the recipient", "Returned · not received") with an amber / green / red tone, in the summary chip and the timeline. The ledger code no longer appears as a green "ready" chip. Draft wording is unchanged.
+- D09: a "Verified facts" box above the suggested reply lists amount, reference, plain status, last bank event and sources checked (n of 2); it turns green once every source is inspected.
+- D10: each evidence button says what the record confirms; the ledger is marked "open first".
+- Payment summary moved directly under the merchant message (desktop and mobile).
+- Sentence-case labels instead of tracked capitals, a shield mark instead of the sparkle, "You approve" instead of the bare "L2" tag, and a 12px floor for captions.
+- Checked at 1440px and at a true 375px width (no horizontal overflow); 34 tests pass. Not a new user test: the next tests should check whether the "sent to bank" misreading is gone.
+
+## Step 1 router and policy gaps · 17 November 2026
+
+- Router (`classify`): money-action requests now cover reimburse, credit back, recredit, Rückerstattung/erstatten, Rückbuchung, devolución, cancel/reverse/annuler/stornieren a payment, fee waivers and compensation; a new `legal` route catches lawyer/avocat/Anwalt/court/lawsuit threats. All go to a person. "bloqué" (stuck) deliberately stays tracing.
+- Policy checker (`evaluateDraft`): added critical blocks for affirmative commitments added to a draft — "we will credit back/refund/reimburse", "your refund is on its way", fee waived, compensation/entitlement claims, "will arrive / next week" and their FR/DE equivalents. Negated wording in generated drafts ("credit back … is not confirmed") still passes.
+- Inbox status labels show "Legal" and "Money action".
+- Two regression tests added (34 total). Development set unchanged: 50/50 expected states, 15 drafts, 0 drafts on human-only; `results_v0.json` regenerated for the new engine hash.
+
 ## S4 engine corrections and documentation · 9 November 2026
 
 - Corrected reference extraction (FAC/RE/REF) and monetary token boundaries; reference digits and hyphens no longer become monetary amounts or negative signs.

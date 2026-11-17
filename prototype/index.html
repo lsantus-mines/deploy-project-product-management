@@ -101,7 +101,7 @@
         </div>
         <div class="inbox-heading">
           <div>
-            <p class="eyebrow">YOUR WORKSPACE</p>
+            <p class="eyebrow">Your workspace</p>
             <h1>
               Assigned inbox <span id="ticket-count" class="count">4</span>
             </h1>
@@ -179,7 +179,7 @@
           ><small>Shortcuts do not interrupt typing in an editor.</small>
         </div>
         <div class="demo-banner">
-          <span class="demo-badge">INTERACTIVE DEMO</span
+          <span class="demo-badge">Interactive demo</span
           ><span>Sample payments. All actions stay in this workspace.</span
           ><span class="demo-end">No live bank connection</span>
         </div>
@@ -191,7 +191,7 @@
         >
           <div class="section-top">
             <div>
-              <p class="eyebrow">NEW DEMO CASE</p>
+              <p class="eyebrow">New demo case</p>
               <h2 id="intake-heading">Start an investigation</h2>
             </div>
             <button id="cancel-ticket" class="quiet-button">Cancel</button>
@@ -280,7 +280,7 @@
           <div class="work-grid">
             <article class="message-card">
               <div class="section-top">
-                <span class="eyebrow">MERCHANT MESSAGE</span
+                <span class="eyebrow">Merchant message</span
                 ><span id="message-language" class="subtle-tag"></span>
               </div>
               <div class="sender">
@@ -300,15 +300,47 @@
                 Merchant scope comes from the assigned session
               </div>
             </article>
+            <section
+              id="summary-panel"
+              class="payment-card"
+              aria-label="Payment summary"
+            >
+              <div class="section-top">
+                <h3>Payment at a glance</h3>
+                <span class="subtle-tag">Source-backed</span>
+              </div>
+              <div class="payment-amount">
+                <strong id="payment-amount"></strong
+                ><span id="payment-status" class="ticket-label"></span>
+              </div>
+              <div class="payment-fields">
+                <div>
+                  <span>Transaction</span
+                  ><strong id="payment-reference"></strong>
+                </div>
+                <div>
+                  <span>Merchant reference</span
+                  ><strong id="invoice-reference"></strong>
+                </div>
+              </div>
+              <ol id="payment-timeline" class="payment-timeline"></ol>
+              <p id="snapshot-note" class="snapshot-note"></p>
+            </section>
+
 
             <aside class="copilot" aria-label="FlowAssist evidence and draft">
               <div class="copilot-heading">
-                <span class="assistant-mark">✦</span>
+                <span class="assistant-mark"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="#i-shield" /></svg
+                ></span>
                 <div>
                   <h3>Investigation assistant</h3>
                   <span>Evidence first. You stay in control.</span>
                 </div>
-                <span class="subtle-tag">L2</span>
+                <span class="subtle-tag" title="Trust level L2: it drafts, you approve"
+                  >You approve</span
+                >
               </div>
               <ol class="review-steps" aria-label="Reply preparation progress">
                 <li id="step-evidence" aria-current="step">
@@ -378,6 +410,7 @@
                   <h4 id="draft-heading">Suggested reply</h4>
                   <span class="draft-label">Source-backed draft</span>
                 </div>
+                <div id="verified-facts" class="facts" hidden></div>
                 <label for="draft" class="sr-only">Cited internal draft</label
                 ><textarea id="draft" spellcheck="true"></textarea>
                 <p
@@ -490,32 +523,6 @@
                 >
               </div>
             </aside>
-            <section
-              id="summary-panel"
-              class="payment-card"
-              aria-label="Payment summary"
-            >
-              <div class="section-top">
-                <h3>Payment at a glance</h3>
-                <span class="subtle-tag">Source-backed</span>
-              </div>
-              <div class="payment-amount">
-                <strong id="payment-amount"></strong
-                ><span id="payment-status" class="ticket-label"></span>
-              </div>
-              <div class="payment-fields">
-                <div>
-                  <span>Transaction</span
-                  ><strong id="payment-reference"></strong>
-                </div>
-                <div>
-                  <span>Merchant reference</span
-                  ><strong id="invoice-reference"></strong>
-                </div>
-              </div>
-              <ol id="payment-timeline" class="payment-timeline"></ol>
-              <p id="snapshot-note" class="snapshot-note"></p>
-            </section>
 
             <section class="account-card" aria-labelledby="account-heading">
               <div class="section-top">
@@ -600,7 +607,7 @@
         <section id="activity-view" class="overview-view" hidden>
           <div class="overview-heading">
             <div>
-              <p class="eyebrow">TRACEABILITY</p>
+              <p class="eyebrow">Traceability</p>
               <h2>Activity &amp; decision trail</h2>
               <p>
                 Actions recorded in this browser tab. No external customer
@@ -616,7 +623,7 @@
         <section id="metrics-view" class="overview-view" hidden>
           <div class="overview-heading">
             <div>
-              <p class="eyebrow">THIS WORKSPACE</p>
+              <p class="eyebrow">This workspace</p>
               <h2>Session overview</h2>
               <p>
                 Actual demo activity, not production savings or a paired

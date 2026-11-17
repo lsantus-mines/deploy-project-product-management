@@ -2052,3 +2052,145 @@ td {
     justify-content: flex-end;
   }
 }
+
+/* ── v0.5 · user-test driven hierarchy (D08–D10), 17 November 2026 ──────────
+   One idea: the payment status is the thing a specialist must not misread,
+   so it gets the strongest signal on the page and a plain-language label.   */
+:root {
+  --wait: #8a5a14;
+  --wait-bg: #fbf0dc;
+  --wait-line: #ecd3a6;
+  --done: #2f6b3a;
+  --done-bg: #e2f0df;
+  --stop: #9a3b2e;
+  --stop-bg: #f9e6e1;
+}
+/* Sentence-case labels: quieter, easier to read than tracked capitals. */
+.eyebrow,
+.demo-badge {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+}
+.demo-badge {
+  font-size: 11px;
+  font-weight: 600;
+}
+.assistant-mark {
+  background: var(--mint);
+  color: var(--green);
+}
+.assistant-mark .icon {
+  width: 18px;
+  height: 18px;
+}
+/* Payment status (D08): tone by what the merchant can rely on. */
+.payment-amount {
+  flex-wrap: wrap;
+  align-items: baseline;
+  row-gap: 8px;
+}
+.payment-amount > strong {
+  font-size: 34px;
+  font-variant-numeric: tabular-nums;
+}
+.payment-amount .ticket-label {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 999px;
+  white-space: normal;
+}
+.status-wait {
+  background: var(--wait-bg);
+  color: var(--wait);
+  box-shadow: inset 0 0 0 1px var(--wait-line);
+}
+.status-done {
+  background: var(--done-bg);
+  color: var(--done);
+}
+.status-stop {
+  background: var(--stop-bg);
+  color: var(--stop);
+}
+/* Payment summary now sits directly under the merchant message. */
+.work-grid > .payment-card {
+  grid-row: 2;
+}
+.work-grid > .account-card {
+  grid-row: 3;
+}
+/* Source guidance (D10). */
+.sources button {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.sources button strong {
+  font-weight: 600;
+}
+.source-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+.sources button.inspected .source-hint {
+  color: var(--done);
+}
+/* Verified facts (D09): the pre-insert checklist above the draft. */
+.facts {
+  margin: 10px 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--wait-line);
+  background: #fffaf1;
+  border-radius: 10px;
+}
+.facts-complete {
+  border-color: #c4d5b5;
+  background: #f4f9ef;
+}
+.facts h5 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.facts dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 13px;
+}
+.facts dt {
+  color: var(--muted);
+}
+.facts dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+/* Small grey captions were 10–11px; lift the floor for legibility. */
+.message-foot,
+.snapshot-note,
+.ticket-kicker,
+.editor-meta,
+.review-progress,
+.engine-caption,
+.citation-note {
+  font-size: 12px;
+}
+@media (max-width: 1220px) {
+  .work-grid > .payment-card,
+  .work-grid > .account-card {
+    grid-row: auto;
+  }
+}

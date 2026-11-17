@@ -27,7 +27,7 @@ Keyboard: `/` search; `J`/`K` next/previous visible ticket outside form fields; 
 - `app.js`: workflow, scoped ticket buffers, session storage, review state, audit/timing and exports.
 - `styles.css`: responsive visual system; no remote fonts or component libraries.
 
-Run `python scripts/verify_s3.py` (Python + Node.js) for artifact checks and **32 domain/interaction scenarios**. No npm installation is required. [Verification report](verification.md) states what remains unverified, including real browser rendering and live integrations.
+Run `python scripts/verify_s3.py` (Python + Node.js) for artifact checks and **34 domain/interaction scenarios**. No npm installation is required. [Verification report](verification.md) states what remains unverified, including real browser rendering and live integrations.
 
 Vercel builds from the repository root using [vercel.json](../vercel.json), copying the five runtime assets into `dist/`. Changes go to the primary repository and then [the deployment copy](DEPLOYMENT.md). [Changelog](CHANGELOG.md).
 
@@ -50,10 +50,10 @@ Transaction fixtures may declare `matchMethod: "reference" | "model"`. For `"mod
 One member owns and explains each step (Assignment 4: four commits, four authors). Each owner fills in their own subsection in a commit signed with their own account, named after the step.
 
 ### Step 1 · router: `classify` (`engine.js`) · owner: Anthony · commit `step-1-router`
-- What it decides:
-- Rung, and why the rung below fails:
-- One failure or edge case seen (report or demo):
-- Metric that would show it works:
+- What it decides: the intent of the merchant's message — `tracing`, `compliance`, `dispute`, `legal` or `money_action`. Only `tracing` may continue to drafting; every other intent goes to a person (`human_only`) with the matching Tier-2 queue. The most sensitive route wins (compliance → dispute → legal → money action).
+- Rung, and why: rung 1 (keyword rules in EN/FR/DE, plus common ES, on accent-free text). There is no labelled ticket corpus to train a rung-2 classifier, and the router's job here is a safety gate: a missed money request is worse than an unnecessary handover, so the rules fail closed. We would climb to rung 2 (TF-IDF + logistic regression with a confidence threshold) only once real labelled tickets exist and the rules miss too many legitimate tracing requests.
+- One failure or edge case seen: an audit probe on 17 November showed that "reimburse", "credit back", "Rückerstattung", "annulez le virement", "waive the fee" and "my lawyer" were all routed as `tracing`, so a ticket like "Please reimburse INV-1" could reach a draft. The lists now cover them (new `legal` route). The reverse trap appeared while fixing it: French "bloqué" means *stuck*, not a compliance hold — adding it sent case F05 to compliance, so it was removed (50/50 states kept).
+- Metric that would show it works: on the eval-set, **recall of non-tracing intents = 100 %** (no money/legal/dispute/compliance ticket reaches a draft — a floor, not a target) and the **false-handover rate** on genuine tracing tickets (what the fail-closed choice costs in specialist time). Regression: `step 1 router…` in `scripts/test_app.cjs` (15 to-person and 3 must-stay-tracing probes).
 
 ### Step 2 · routing rule: gates in `analyze` (`engine.js`) · owner: Benjamin · commit `step-2-rule`
 - What it decides:

@@ -63,21 +63,27 @@
       flagged: flagged || safe.includes("[REDACTED_SECRET]"),
     };
   }
+  // Step 1 · router (rung 1, rules). Only plain payment tracing may continue to
+  // drafting; every other intent is routed to a person. Order matters: the most
+  // sensitive route wins. Lists cover EN/FR/DE (+ common ES) on accent-free text.
+  const ROUTES = [
+    [
+      "compliance",
+      /\b(kyc|aml|compliance|fraud|fraude|betrug|sanction|sanktion)\b|freigeben|geben sie sie frei|frozen|hold.{0,20}release|release.{0,20}hold/,
+    ],
+    ["dispute", /chargeback|disput|contestation|litige|reklamation|widerspruch/],
+    [
+      "legal",
+      /\b(lawyer|attorney|solicitor|lawsuit|sue|suing|legal action|court|avocat|tribunal|mise en demeure|poursuite|anwalt|rechtsanwalt|klage|gericht|abogado|demanda)\b/,
+    ],
+    [
+      "money_action",
+      /refund|rembours|reimburs|reembols|devolu|erstatt|ruckbuch|credit.{0,12}back|recredit|release.{0,15}fund|transfer.{0,10}now|execute.{0,10}payment|\b(cancel|annul|storn|revers|recall|stop)\w*.{0,25}(payment|transfer|virement|paiement|zahlung|uberweisung|it|le|la|sie)\b|\b(waive|waiver|compensat|indemni|entschadig|geste commercial|kulanz|goodwill)\w*/,
+    ],
+  ];
   function classify(text) {
     const n = normalize(text);
-    if (
-      /\b(kyc|aml|compliance|fraud|fraude|betrug)\b|freigeben|geben sie sie frei|frozen|hold.{0,20}release|release.{0,20}hold/.test(
-        n,
-      )
-    )
-      return "compliance";
-    if (/chargeback|disput|contestation|litige/.test(n)) return "dispute";
-    if (
-      /refund|rembours|release.{0,15}fund|transfer.{0,10}now|execute.{0,10}payment/.test(
-        n,
-      )
-    )
-      return "money_action";
+    for (const [intent, pattern] of ROUTES) if (pattern.test(n)) return intent;
     return "tracing";
   }
   function sourceRecords(tx) {
@@ -207,7 +213,9 @@
           ? "Dispute specialist required"
           : intent === "compliance"
             ? "Compliance specialist required"
-            : "Financial action requires a specialist",
+            : intent === "legal"
+              ? "Legal threat requires a specialist"
+              : "Financial action requires a specialist",
         "Account context is available. No deadline, regulatory diagnosis, hold release, refund or execution advice is generated.",
         "human_only",
         intent === "dispute"
@@ -378,6 +386,15 @@
       )
     )
       issues.push("Unsupported promise or financial action.");
+    // Affirmative money, arrival or legal commitments in EN/FR/DE. Negated
+    // statements in generated drafts ("credit back ... is not confirmed") are
+    // not commitments and stay allowed.
+    if (
+      /\b(we|i)('ll| will| shall| are going to| can)\s+(credit|refund|reimburse|reverse|cancel|waive|compensate|pay|resend|release|transfer)|your (refund|reimbursement|credit)\b.{0,20}\b(is|has been|was|will be)\b.{0,10}\b(on its way|approved|processed|issued|initiated|sent)|(fee|charge)s?\b.{0,15}\b(waived|refunded|removed|cancel)|\bwaive|\b(compensation|reimbursement)\b|\bentitled to\b|(will|should)\s+(arrive|be credited|reach|land|be paid|be received)|next (week|monday|tuesday|wednesday|thursday|friday)|\bunder (psd2|the law|article)|rembourserons|recrediterons|nous (allons|pouvons|devons) (vous )?(rembourser|recrediter|annuler)|vous serez (rembourse|recredite)|indemnis|geste commercial|vous avez droit|arrivera|sera credite|devrait (arriver|etre credite)|semaine prochaine|sous \d+ jours|erstatten wir|wir (werden|erstatten|buchen)|wird (ihnen )?(erstattet|zuruckgebucht)|entschadig|anspruch auf|erlassen|nachste woche|innerhalb von \d+|wird.{0,30}(ankommen|gutgeschrieben werden|eingehen)/.test(
+        n,
+      )
+    )
+      issues.push("Unsupported promise, money action or legal claim.");
     const financial = entities(text);
     if (
       financial.amounts.some(

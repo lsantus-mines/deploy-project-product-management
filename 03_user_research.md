@@ -50,9 +50,9 @@ All three tried the hosted prototype on task DEMO-01 ("find what happened to the
 |---|---|---|---|---|
 | D06 | Every context-only or handover reply states the next step and when the merchant will hear back | P2, P3 | Brief §9, spec | Brief and spec updated; prototype unchanged |
 | D07 | A draft may state a *documented* typical processing time for the rail, labelled "typical, not guaranteed"; never a date for this payment | P1, P2 (P1 also: no promised date) | Brief §9–10, spec | Pending Ops/Legal approval; not in prototype |
-| D08 | Status wording in plain language (e.g. "sent to the recipient's bank, not yet confirmed as received") instead of ledger terms | P2 interview; test: P1 and P3 read sent_to_bank as received | Brief §9, spec | Brief and spec updated; prototype unchanged |
-| D09 | A "verified facts" summary above the draft (transaction, amount, status, event time, sources checked), as a pre-insert checklist | Test: P2 | Brief §9, spec | Brief and spec updated; prototype unchanged |
-| D10 | Source guidance: what the ledger record and the clearing record each confirm, and which to open first | Test: P3 (and P1 asking for the next step) | Brief §9, spec | Brief and spec updated; prototype unchanged |
+| D08 | Status wording in plain language (e.g. "sent to the recipient's bank, not yet confirmed as received") instead of ledger terms | P2 interview; test: P1 and P3 read sent_to_bank as received | Brief §9, spec | Brief and spec updated; prototype v0.5 (17 Nov): status chip and timeline in plain language with amber/green/red tone; draft wording not yet changed |
+| D09 | A "verified facts" summary above the draft (transaction, amount, status, event time, sources checked), as a pre-insert checklist | Test: P2 | Brief §9, spec | Brief and spec updated; prototype v0.5 (17 Nov): "Verified facts" box above the suggested reply, with sources checked n of 2 |
+| D10 | Source guidance: what the ledger record and the clearing record each confirm, and which to open first | Test: P3 (and P1 asking for the next step) | Brief §9, spec | Brief and spec updated; prototype v0.5 (17 Nov): each source says what it confirms; ledger marked "open first" |
 
 ## 1. Target users and concrete work situations
 | Profile | Situation to support | Need | Design response |

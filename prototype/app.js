@@ -33,6 +33,22 @@ const node = (tag, text = "", className = "") => {
   if (className) n.className = className;
   return n;
 };
+// D08 · plain-language payment status: what the merchant can rely on, not the
+// ledger code. "Sent to bank" was read as "received" by 2 of 3 testers.
+const STATUS = {
+  pending: { label: "Processing · not sent yet", tone: "wait" },
+  sent_to_bank: { label: "Sent to recipient’s bank · not yet received", tone: "wait" },
+  credited: { label: "Received by the recipient", tone: "done" },
+  failed: { label: "Failed · not delivered", tone: "stop" },
+  returned: { label: "Returned · not received", tone: "stop" },
+};
+const plainStatus = (status) =>
+  STATUS[status] || { label: String(status).replace(/_/g, " "), tone: "wait" };
+// D10 · what each source confirms, and which one to open first.
+const sourceGuide = (id) =>
+  id.startsWith("CLE")
+    ? ["Clearing", "Confirms the bank event and when it happened."]
+    : ["Ledger", "Confirms the amount and our recorded status. Open first."];
 const text = (value, limit = 3000) =>
   typeof value === "string" ? value.slice(0, limit) : "";
 const duration = (ms) =>
@@ -214,7 +230,11 @@ function labelFor(a, r) {
           ? "Dispute"
           : a.intent === "compliance"
             ? "Compliance"
-            : a.gate.includes("unavailable")
+            : a.intent === "legal"
+              ? "Legal"
+              : a.intent === "money_action"
+                ? "Money action"
+                : a.gate.includes("unavailable")
               ? "Restricted"
               : "Needs review",
     className: a.state === "draft_ready" ? "ready-label" : "amber-label",
@@ -340,7 +360,29 @@ function updateFinal() {
           ? qa.issues.join(" ")
           : "Your edits require a manual factual review. Confirm the final review only after checking every claim.";
 }
+function renderFacts() {
+  const box = $("verified-facts");
+  box.replaceChildren();
+  const tx = analysis.transaction;
+  box.hidden = !tx;
+  if (!tx) return;
+  box.append(node("h5", "Verified facts · check them against the draft"));
+  const list = node("dl");
+  const checked = analysis.sources.filter((s) => inspectedSources.has(s.id)).length;
+  for (const [term, value] of [
+    ["Amount", E.money(tx.amountMinor, tx.currency)],
+    ["Reference", `${tx.reference} · ${tx.id}`],
+    ["Status", plainStatus(tx.status).label],
+    ["Last bank event", E.stamp(tx.eventAt)],
+    ["Sources checked", `${checked} of ${analysis.sources.length}`],
+  ]) {
+    list.append(node("dt", term), node("dd", value));
+  }
+  box.append(list);
+  box.className = `facts${checked === analysis.sources.length ? " facts-complete" : ""}`;
+}
 function updateApproval() {
+  renderFacts();
   const qa = E.evaluateDraft(analysis, $("draft").value),
     all = allSourcesChecked(),
     open = record().outcome === "open";
@@ -381,10 +423,9 @@ function renderSources() {
   $("sources").replaceChildren();
   $("source-count").textContent = `${analysis.sources.length} records`;
   analysis.sources.forEach((s) => {
-    const b = node(
-      "button",
-      `Open ${s.id} · ${s.id.startsWith("CLE") ? "Clearing" : "Ledger"}`,
-    );
+    const [kind, hint] = sourceGuide(s.id);
+    const b = node("button");
+    b.append(node("strong", `${kind} · ${s.id}`), node("span", hint, "source-hint"));
     b.setAttribute("aria-controls", "source-detail");
     b.setAttribute("aria-expanded", "false");
     b.addEventListener("click", () => {
@@ -397,7 +438,10 @@ function renderSources() {
       );
       b.setAttribute("aria-expanded", "true");
       b.classList.add("inspected");
-      b.textContent = `✓ ${s.id} · inspected`;
+      b.replaceChildren(
+        node("strong", `✓ ${kind} · ${s.id}`),
+        node("span", "Checked", "source-hint"),
+      );
       updateApproval();
     });
     $("sources").append(b);
@@ -460,12 +504,12 @@ function renderContext() {
   $("payment-amount").textContent = E.money(tx.amountMinor, tx.currency);
   $("payment-reference").textContent = tx.id;
   $("invoice-reference").textContent = tx.reference;
-  $("payment-status").textContent = tx.status.replace(/_/g, " ");
-  $("payment-status").className = "ticket-label ready-label";
+  $("payment-status").textContent = plainStatus(tx.status).label;
+  $("payment-status").className = `ticket-label status-${plainStatus(tx.status).tone}`;
   $("payment-timeline").replaceChildren();
   const events = [
     ["Merchant match verified", `${tx.merchant} · ${tx.reference}`],
-    [tx.status.replace(/_/g, " "), `${E.stamp(tx.eventAt)} · ${tx.clearing}`],
+    [plainStatus(tx.status).label, `${E.stamp(tx.eventAt)} · ${tx.clearing}`],
   ];
   if (tx.feeMinor)
     events.push([
