@@ -1,8 +1,19 @@
 # FlowAssist interface changelog
 
+## v0.9 · features that explain themselves · 17 November 2026
+
+> Status: design hypothesis, to retest with 5 users (gate: 4 of 5 unaided). No change to the engine, the server rules or the routing.
+
+- **Clear outcome.** An approved, handed-over or waiting case shows one outcome card instead of greyed-out steps: what happened and when, the approved reply (with Copy reply) or the hand-over summary (reason, note, records attached), **Next open ticket**, and Reopen. The page scrolls to it.
+- **Visible refusals.** When an edit breaks a rule, a red notice in step 2 says what is wrong in plain words and quotes the sentence that triggers it (e.g. "We will refund you next week."), with **Put FlowAssist's reply back**. The approval box is disabled until the reply passes. The server still re-checks the same rules (HTTP 422).
+- **Blocked tickets explained.** Each stop has a plain title, the reason and the concrete next action: two payments match (both listed with reference, amount and status, so you know what to ask), reference outside this account, data too old, records disagree, compliance or dispute specialist. The engine's rule stays visible on one line.
+- **Hand-over in fewer clicks.** The reason is pre-selected from the check (labelled "suggested, change it if needed"); the person still previews and confirms ("Confirm hand-over · demo").
+- Fixes: step 3 now lights up as soon as the reply is pre-filled (the step marker lagged one step); the Next step bar names the concrete action on every ticket; opening a ticket scrolls back to the top; "Draft saved in this tab" no longer shows on closed cases.
+- 46 interface tests (3 new: outcome card and next ticket, refused edit with the quoted sentence and restore, plain-language blocked cards). Walked through all 10 demo tickets in Chrome at 1440 px; no horizontal overflow at 390 px.
+
 ## v0.8 · one guided flow in three steps · 17 November 2026
 
-> **Status: design hypothesis, not a user finding.** Unlike D08–D10, v0.7 and v0.8 were not tried by users yet. They are retested with 5 users before any pilot; gate: 4 of 5 finish a ticket without help. Automation-bias watch: a pre-filled reply can be approved without reading, so the edit rate and the 7-day reopen rate are tracked as counter-metrics.
+> **Status: design hypothesis, not a user finding.** Unlike D08–D10, v0.7 and v0.8 were not tried by users yet. They are to be retested with 5 users before any pilot; gate: 4 of 5 finish a ticket without help. Automation-bias watch: a pre-filled reply can be approved without reading, so the edit rate and the 7-day reopen rate are tracked as counter-metrics.
 
 - The workspace is rebuilt around three numbered steps in one column: **1 Check the payment** (amount, plain status, open the ledger then the clearing record) → **2 Review the reply** (one editor, pre-filled with the cited draft as soon as both records are opened, verified facts beside it) → **3 Approve & close** (one checkbox, one button). The current step is highlighted; the others are dimmed or ticked.
 - Tickets that can't be drafted show one clear card instead (why, and the reference to ask for) with the specialist handover already open.
@@ -13,7 +24,7 @@
 
 ## v0.7 · guided use · 17 November 2026
 
-> Status: design hypothesis, retested with v0.8 (see above).
+> Status: design hypothesis, to retest with 5 users together with v0.8 (see above).
 
 - A "Next step" bar under the ticket title always says what to do now (open the ledger, then the clearing record; compare with the verified facts; use the draft; final check; record) and what to do when no draft is possible (ask for a reference, hand over).
 - A five-step guided tour on first visit (inbox, merchant question, evidence, suggested reply, you decide), restartable from "Take the tour" in the top bar; Escape or "Skip tour" closes it.

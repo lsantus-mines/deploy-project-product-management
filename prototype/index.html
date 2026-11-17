@@ -251,9 +251,28 @@
               <p id="message" class="message-body"></p>
             </article>
 
+            <section id="outcome-card" class="step-card outcome-card" hidden aria-labelledby="outcome-title" tabindex="-1">
+              <div class="outcome-head">
+                <span id="outcome-icon" class="outcome-icon" aria-hidden="true">✓</span>
+                <div>
+                  <h3 id="outcome-title">Case closed</h3>
+                  <p id="outcome-detail" class="step-hint"></p>
+                </div>
+              </div>
+              <div id="outcome-body" class="outcome-body"></div>
+              <div class="outcome-actions">
+                <button id="next-ticket" class="primary-button">Next open ticket</button
+                ><button id="outcome-copy" class="secondary-button" hidden>Copy reply</button
+                ><button id="outcome-reopen" class="link-button">Reopen this case</button>
+              </div>
+            </section>
+
             <section id="blocked-card" class="step-card blocked-card" hidden aria-labelledby="blocked-heading">
               <h3 id="blocked-heading">No reply can be drafted for this ticket</h3>
-              <div id="blocked" class="warning" hidden></div>
+              <p id="blocked-why" class="blocked-why"></p>
+              <ul id="candidate-list" class="candidate-list" hidden></ul>
+              <p id="blocked-todo" class="blocked-todo"></p>
+              <p class="rule-line">Rule applied: <span id="blocked" hidden></span></p>
               <section id="reference-panel" class="reference-panel" hidden>
                 <h4>Ask the merchant for a unique reference</h4>
                 <p class="section-description">
@@ -322,6 +341,12 @@
                   <p>FlowAssist won’t insert its draft for this ticket.</p>
                   <button id="resume" class="secondary-button">Use FlowAssist’s draft again</button>
                 </div>
+                <div id="policy-alert" class="policy-alert" role="alert" hidden>
+                  <strong id="policy-alert-title">This reply can’t be approved</strong>
+                  <p id="policy-alert-text"></p>
+                  <ul id="policy-alert-quotes"></ul>
+                  <button id="restore-reply" class="secondary-button">Put FlowAssist’s reply back</button>
+                </div>
                 <p id="final-check-result" class="check-line"></p>
               </li>
               <li id="step-reply" class="step-card">
@@ -356,7 +381,7 @@
               </summary>
               <div class="handover-body">
                 <p id="handover-destination" class="section-description">Prepare context for Tier-2 payments.</p>
-                <label for="reason">Why are you handing it over?</label
+                <label for="reason">Why are you handing it over? <span id="reason-hint" class="muted"></span></label
                 ><select id="reason">
                   <option value="">Select a reason</option>
                   <option>Ambiguous transaction</option>
@@ -368,9 +393,9 @@
                   id="manual-note"
                   placeholder="What does the next specialist need to know? No credentials or personal banking data."
                 ></textarea
-                ><button id="escalate" class="secondary-button full-width">Preview the handover</button>
+                ><button id="escalate" class="primary-button full-width">Preview the handover</button>
                 <div id="packet" class="packet" tabindex="0" hidden></div>
-                <button id="record-handover" class="primary-button full-width" hidden>Hand over</button>
+                <button id="record-handover" class="primary-button full-width" hidden>Confirm hand-over · demo</button>
               </div>
             </details>
 

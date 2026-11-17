@@ -65,7 +65,7 @@ project-product-management/
 | `06_07_experiments_operations.md` | S6–S7 | To write (Assignment 6+7, 23 Nov). Inputs ready: switch, rollback, incident classes, monitoring thresholds in [spec.md](spec.md) §7 |
 | `08_launch_memo.md` | S8 | Future session deliverable; not yet present |
 | `spec.md`, `product_brief.md` | final | **`spec.md` v3: whole project S1–S7** (product, architecture, contracts, guardrails, operation, metrics, delivery, decision log); consolidated `product_brief.md` for the final push |
-| `/prototype`, `/api`, `/flowassist`, `/evals` | from S4 | Interface v0.8 (three-step flow) + FastAPI authority v0.6; 145 Python + 41 Node tests; 50 development cases, 200 held-out inputs, 30 attacks, LLM judge |
+| `/prototype`, `/api`, `/flowassist`, `/evals` | from S4 | Interface v0.9 (three-step flow, clear outcomes) + FastAPI authority v0.6; 146 Python + 46 interface tests; 50 development cases, 200 held-out inputs, 30 attacks, LLM judge |
 
 Supporting S3 files: [AI Lean Canvas](03_ai_lean_canvas.md), [design details](docs/03_design_details.md), [needs/design record](03_user_research.md), [prototype link](03_prototype_link.md) and [delivery matrix](docs/03_s3_delivery.md). S4: [report](evals/report_v0.md), [delivery matrix](docs/04_s4_delivery.md) and [evaluation guide](evals/README.md). [Cross-session evidence audit](docs/DELIVERY_AUDIT.md).
 
@@ -76,7 +76,7 @@ Supporting S3 files: [AI Lean Canvas](03_ai_lean_canvas.md), [design details](do
 
 ## Current version · 17 November 2026
 
-- **Interface v0.8** is one guided flow in three steps (check the payment, review the cited reply, approve & close), with a single human approval; this layout is a design hypothesis to retest with 5 users. Since v0.5 it also puts the user-test findings in the product: plain-language payment status (D08), a verified-facts checklist above the draft (D09) and guidance on which source to open first (D10).
+- **Interface v0.9** is one guided flow in three steps (check the payment, review the cited reply, approve & close), with a single human approval, a clear outcome card and plain-language explanations when a reply is refused or a ticket cannot be drafted; this layout is a design hypothesis to retest with 5 users. Since v0.5 it also puts the user-test findings in the product: plain-language payment status (D08), a verified-facts checklist above the draft (D09) and guidance on which source to open first (D10).
 - **Server v0.6** is the authority for every recorded action (FastAPI on Vercel). It also brings the global switch `ASSIST_MODE`, an attack set (30/30 caught), an LLM judge and local metrics.
 - **Development set:** 50/50 expected states, 15 drafts, 0 drafts on human-only cases, no foreign source. These 50 cases were examined while building, so they serve as regression, not as a held-out performance claim.
 - **LLM judge (`gpt-6-luna`):** see [evals/judge/judge_report.md](evals/judge/judge_report.md). It found a real defect the human grader missed: the reply language follows the ticket's language field, not the language the merchant wrote in.
@@ -94,7 +94,7 @@ The browser shows an instant preview; **the FastAPI server (`api/index.py`) deci
 |---|---|
 | `make install` | Python 3.12 venv + dependencies |
 | `make dev` | API + prototype on http://127.0.0.1:8000 |
-| `make ci` | lint, data sync, 144 Python + 41 Node tests, 50-case regression, 30-row attack set |
+| `make ci` | lint, data sync, 146 Python + 46 interface tests, 50-case regression, 30-row attack set |
 | `make adversarial` | OWASP-style attack set; one miss fails |
 | `make judge` | LLM-as-a-judge on the graded drafts: OpenAI `gpt-6-luna`, key in `.env` (costs API credits) |
 | `make metrics` | pre-launch metrics report from the local event file |

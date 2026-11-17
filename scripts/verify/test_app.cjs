@@ -390,9 +390,10 @@ test("complete traced payment closes only after final human review and can reope
   w.get("final-review").fire("change");
   w.get("record-reply").click();
   assert.equal(w.run("record().outcome"), "resolved");
-  assert(w.get("reopen").hidden === false);
+  assert(!w.get("outcome-card").hidden, "a closed case shows its outcome");
+  assert(w.get("steps").hidden);
   assert(w.get("use-draft").disabled);
-  w.get("reopen").click();
+  w.get("outcome-reopen").click();
   assert.equal(w.run("record().outcome"), "open");
   assert(!w.get("final-review").checked);
   assert.equal(w.run("inspectedSources.size"), 0);
@@ -418,8 +419,11 @@ test("ambiguous reference workflow: wait, reopen, validate and generate fresh re
 test("handover preview invalidates on edits, recording changes queue outcome", () => {
   const w = workspace();
   w.run("render('sensitive')");
+  assert.equal(w.get("reason").value, "Compliance / sensitive request", "reason suggested");
+  w.get("reason").value = "";
+  w.get("reason").fire("change");
   w.get("escalate").click();
-  assert(w.get("packet").hidden);
+  assert(w.get("packet").hidden, "no preview without a reason");
   w.get("reason").value = "Compliance / sensitive request";
   w.get("reason").fire("change");
   w.get("escalate").click();
@@ -815,4 +819,49 @@ test("the tour walks five steps and can be skipped", () => {
   w.get("tour-start").click();
   w.get("tour-skip").click();
   assert(w.get("tour").hidden);
+});
+
+test("a closed case shows one outcome card with the approved reply and the next ticket", () => {
+  const w = workspace();
+  insert(w);
+  w.get("final-review").checked = true;
+  w.get("final-review").fire("change");
+  w.get("record-reply").click();
+  assert(!w.get("outcome-card").hidden);
+  assert(w.get("steps").hidden);
+  assert(w.get("handover").hidden);
+  assert.match(w.get("outcome-title").textContent, /Reply approved/);
+  assert(w.get("outcome-body").textContent.includes("LED-100"));
+  assert.match(w.get("next-ticket").textContent, /DEMO-02/);
+  w.get("next-ticket").click();
+  assert.equal(w.run("current"), "ambiguous");
+  assert(w.get("outcome-card").hidden);
+});
+test("a refused edit names the problem and the sentence, and the reply can be put back", () => {
+  const w = workspace();
+  insert(w);
+  type(w, "editor", w.get("editor").value + " We will refund you next week.");
+  assert(!w.get("policy-alert").hidden);
+  assert.match(w.get("policy-alert-text").textContent, /promises/);
+  assert(w.get("policy-alert-quotes").textContent.includes("We will refund you next week."));
+  assert.match(w.get("next-step-text").textContent, /Fix the reply/);
+  assert(w.get("record-reply").disabled);
+  w.get("restore-reply").click();
+  assert.equal(w.get("editor").value, w.get("draft").value);
+  assert(w.get("policy-alert").hidden);
+});
+test("blocked tickets explain the stop in plain words and suggest the handover reason", () => {
+  const w = workspace();
+  w.run("render('ambiguous')");
+  assert.match(w.get("blocked-heading").textContent, /2 payments match/);
+  assert(!w.get("candidate-list").hidden);
+  assert(w.get("candidate-list").textContent.includes("INV-A"));
+  assert.equal(w.get("reason").value, "Ambiguous transaction");
+  w.run("render('denied')");
+  assert.match(w.get("blocked-heading").textContent, /TX-FOREIGN is not in Alpha Marketplace’s account/);
+  assert(w.get("candidate-list").hidden);
+  w.run("render('stale')");
+  assert.match(w.get("blocked-heading").textContent, /too old/);
+  w.run("render('conflict')");
+  assert.match(w.get("blocked-heading").textContent, /disagree/);
 });

@@ -13,6 +13,6 @@
 
 ## Current application
 
-- The v0.8 public demo is in `prototype/` (one guided flow in three steps): `data.js` supplies synthetic fixtures, `engine.js` holds pure domain logic, and `app.js` manages the workflow. Keep every runtime asset in the Vercel copy command.
+- The v0.9 public demo is in `prototype/` (one guided flow in three steps): `data.js` supplies synthetic fixtures, `engine.js` holds pure domain logic, and `app.js` manages the workflow. Keep every runtime asset in the Vercel copy command.
 - `scripts/verify/test_app.cjs` tests domain and interaction behavior using Node’s built-in test runner. The DOM harness is not browser/rendering evidence.
 - Preserve the distinction between local deterministic checks and the target model-based evaluator. Do not claim bank/Zendesk connections, server-side tenant security or causal time savings from the demo. See `docs/PRODUCT_COVERAGE.md`.

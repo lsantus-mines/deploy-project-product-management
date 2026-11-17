@@ -274,9 +274,9 @@ function saveTicket() {
   persist();
   const marker = $(`saved-${current}`);
   if (marker)
-    marker.hidden = !(
-      $("editor").value.trim() || $("manual-note").value.trim()
-    );
+    marker.hidden =
+      record().outcome !== "open" ||
+      !($("editor").value.trim() || $("manual-note").value.trim());
 }
 function getAnalysis(key) {
   const t = tickets.find((t) => t.key === key);
@@ -333,7 +333,7 @@ function renderInbox() {
     );
     const saved = node("span", "Draft saved in this tab", "session-marker");
     saved.id = `saved-${t.key}`;
-    saved.hidden = !(r.buffer.editor.trim() || r.buffer.note.trim());
+    saved.hidden = r.outcome !== "open" || !(r.buffer.editor.trim() || r.buffer.note.trim());
     b.append(
       top,
       node("strong", t.title),
@@ -348,6 +348,7 @@ function renderInbox() {
     b.addEventListener("click", () => {
       setView("inbox");
       render(t.key);
+      if (typeof window !== "undefined" && window.scrollTo) window.scrollTo({ top: 0 });
     });
     $("ticket-list").append(b);
     ticketButtons.push(b);
@@ -425,12 +426,163 @@ function allSourcesChecked() {
     analysis.sources.every((s) => inspectedSources.has(s.id))
   );
 }
+// Plain-language card for each route that cannot be drafted: what happened,
+// why FlowAssist stops, what the person does now, and the suggested handover
+// reason (a suggestion only: the person previews and confirms the handover).
+const REF_RE = /\b[A-Z]{2,}(?:-[A-Z0-9]+)+\b/g;
+function blockedCopy() {
+  const t = tickets.find((x) => x.key === current),
+    ref = (t.message.match(REF_RE) || [])[0] || "this reference",
+    name = analysis.account ? analysis.account.name : "this merchant",
+    c = analysis.candidates,
+    handTodo = "Hand it over below: the reason is already suggested. Add a note if useful, preview, then confirm.";
+  switch (analysis.gate) {
+    case "A unique payment reference is needed":
+      return {
+        title: c.length > 1 ? `${c.length} payments match · ask the merchant which one` : "Ask the merchant for the payment reference",
+        why: c.length > 1
+          ? `The message gives an amount but no reference, and ${c.length} payments of ${E.money(c[0].amountMinor, c[0].currency)} fit. FlowAssist never picks a payment by its amount.`
+          : "The message has no payment reference, so FlowAssist cannot tell which payment it is about.",
+        todo: "Ask the merchant for the reference, then enter it below. Or hand the case over.",
+        reason: "Ambiguous transaction",
+      };
+    case "Reference unavailable in this account":
+      return {
+        title: `${ref} is not in ${name}’s account`,
+        why: "It is not in this merchant’s account, so FlowAssist shows nothing about it: it may belong to another customer.",
+        todo: "Ask the merchant for a reference from their own payments, then enter it below. Or hand the case over.",
+        reason: "Access or evidence unavailable",
+      };
+    case "Compliance specialist required":
+      return {
+        title: "This needs a compliance specialist",
+        why: "FlowAssist never explains, releases or dates a compliance hold. Only the compliance team can answer.",
+        todo: handTodo,
+        reason: "Compliance / sensitive request",
+      };
+    case "Dispute specialist required":
+      return {
+        title: "This needs a disputes specialist",
+        why: "Chargeback deadlines and outcomes depend on the card scheme. FlowAssist never states them.",
+        todo: handTodo,
+        reason: "Compliance / sensitive request",
+      };
+    case "Source snapshot needs refreshing":
+      return {
+        title: "The payment data is too old to answer",
+        why: `The records for ${ref} were fetched more than five minutes before the request, so the status may have changed since.`,
+        todo: "Hand it over so someone checks the live status. The records are attached.",
+        reason: "Access or evidence unavailable",
+      };
+    case "Conflicting source records":
+      return {
+        title: "The two payment records disagree",
+        why: `The ledger and the clearing record give different statuses for ${ref}, so no status can be stated safely.`,
+        todo: "Hand it over with both records attached.",
+        reason: "Access or evidence unavailable",
+      };
+    default:
+      return {
+        title: analysis.state === "human_only"
+          ? `This request goes to a specialist · ${analysis.queue}`
+          : "FlowAssist needs more information before drafting",
+        why: analysis.reason,
+        todo: handTodo,
+        reason: analysis.state === "human_only" ? "Compliance / sensitive request" : "Access or evidence unavailable",
+      };
+  }
+}
+// Policy issues in words a specialist acts on.
+const ISSUE_TEXT = {
+  "Unsupported promise or financial action.": "It promises something nobody can guarantee yet (a refund, a date, a credit).",
+  "Unsupported promise, money action or legal claim.": "It promises something nobody can guarantee yet (a refund, a date, a credit) or makes a legal claim.",
+  "Amount or currency is not supported by the matched source.": "An amount or currency does not match the payment records.",
+  "Reference is not supported by the matched transaction.": "It mentions a reference that is not this payment.",
+  "Missing or invalid transaction citations.": "The record citations at the end ([LED-…; CLE-…]) are missing or wrong.",
+  "The reply upgrades the recorded payment status.": "It says the money arrived, but the records do not confirm that.",
+  "Sensitive input must be removed before reply preparation.": "It contains sensitive data such as card or bank details.",
+  "Reply is empty.": "The reply is empty.",
+};
+const friendly = (issue) => ISSUE_TEXT[issue] || issue;
+// The sentences that trigger a policy issue: each new sentence is checked
+// against FlowAssist's own (passing) reply with the same rules as the server.
+function offendingSentences(text) {
+  const base = analysis.draft || "";
+  if (!base) return [];
+  const known = new Set(E.evaluateDraft(analysis, base).issues);
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .map((x) => x.replace(/^\[[^\]]*\]\s*/, "").trim())
+    .filter((x) => x && !base.includes(x))
+    .filter((x) => {
+      const q = E.evaluateDraft(analysis, `${base} ${x}`);
+      return q.critical && q.issues.some((i) => !known.has(i));
+    });
+}
+function nextOpenTicket() {
+  const i = tickets.findIndex((t) => t.key === current),
+    order = [...tickets.slice(i + 1), ...tickets.slice(0, i)];
+  return order.find((t) => records.get(t.key).outcome === "open") || null;
+}
+function reveal(id, block = "center") {
+  const el = $(id);
+  if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block });
+  if (el && el.focus) el.focus({ preventScroll: true });
+}
+function renderOutcome() {
+  const r = record(),
+    open = r.outcome === "open",
+    body = $("outcome-body");
+  $("outcome-card").hidden = open;
+  body.replaceChildren();
+  $("outcome-copy").hidden = true;
+  if (open) return;
+  const at = r.receipt
+    ? ` at ${new Date(r.receipt.at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`
+    : "";
+  $("outcome-card").className = `step-card outcome-card outcome-${r.outcome}`;
+  if (r.outcome === "resolved") {
+    $("outcome-icon").textContent = "✓";
+    $("outcome-title").textContent = "Reply approved · case closed";
+    $("outcome-detail").textContent = `Approved by you${at} after ${duration(activeTime(current))} of active work. Send it from your support inbox: nothing was sent from here.`;
+    if (r.receipt && r.receipt.kind === "reply") {
+      body.append(node("blockquote", r.receipt.text, "outcome-quote"));
+      $("outcome-copy").hidden = false;
+    }
+  } else if (r.outcome === "escalated") {
+    const h = recordedHandover(tickets.find((t) => t.key === current), r.receipt);
+    $("outcome-icon").textContent = "→";
+    $("outcome-title").textContent = `Handed over · ${analysis.queue}`;
+    $("outcome-detail").textContent = `Handed over by you${at}. In this demo no real queue is contacted.`;
+    if (h) {
+      const dl = node("dl", "", "outcome-facts");
+      for (const [k, v] of [
+        ["Reason", h.reason],
+        ["Note", h.note || "none"],
+        ["Records attached", h.sources.map((x) => x.id).join(", ") || "none"],
+      ])
+        dl.append(node("dt", k), node("dd", v));
+      body.append(dl);
+    }
+  } else {
+    $("outcome-icon").textContent = "…";
+    $("outcome-title").textContent = "Waiting for the merchant’s reference";
+    $("outcome-detail").textContent = r.reference
+      ? `Last reference tried: ${r.reference}.`
+      : "When the merchant replies, enter the reference to find the payment.";
+  }
+  $("outcome-reopen").textContent =
+    r.outcome === "waiting" ? "The merchant replied · enter the reference" : "Reopen this case";
+  const next = nextOpenTicket();
+  $("next-ticket").disabled = !next;
+  $("next-ticket").textContent = next ? `Next open ticket · ${next.id}` : "All tickets handled";
+}
 // One sentence that always says what to do now: the main onboarding aid.
 function nextStepText() {
   const r = record(),
     editor = $("editor").value.trim();
-  if (r.outcome === "resolved") return "Done. This case is closed — pick the next ticket in your inbox.";
-  if (r.outcome === "escalated") return "Handed over to a specialist. Pick the next ticket in your inbox.";
+  if (r.outcome === "resolved") return "Done. This case is closed: click “Next open ticket” to continue.";
+  if (r.outcome === "escalated") return "Handed over to a specialist. Click “Next open ticket” to continue.";
   if (r.outcome === "waiting") return "Waiting for the merchant’s reference. Enter it in the assistant when it arrives.";
   if (serverDown) return "The assistant is unavailable: write your reply manually, then record it.";
   if (analysis.state === "human_only")
@@ -438,7 +590,7 @@ function nextStepText() {
   if (analysis.state === "context_only")
     return analysis.candidates.length > 1 || /reference/i.test(analysis.gate)
       ? "Ask the merchant for a unique payment reference, or hand the case over with the evidence."
-      : "No draft is possible here. Read the reason in the assistant, then hand the case over.";
+      : `No reply can be drafted here. ${blockedCopy().todo}`;
   if (!allSourcesChecked())
     return inspectedSources.size === 0
       ? "Step 1 · Open the ledger record, then the clearing record."
@@ -447,8 +599,11 @@ function nextStepText() {
     return manualMode || assistMode !== "on"
       ? "Step 2 · Write your reply in the box. FlowAssist won’t insert a draft here."
       : "Step 2 · Preparing the cited reply…";
+  const qa = E.evaluateDraft(analysis, $("editor").value);
+  if (qa.critical)
+    return `Step 2 · Fix the reply: ${friendly(qa.issues[0])} Or put FlowAssist’s reply back.`;
   if (!$("final-review").checked)
-    return "Step 2 · Read the reply against the verified facts, then tick “I checked the facts and the wording”.";
+    return "Step 2 · Read the reply against the verified facts, then tick “I checked the facts and the wording” in step 3.";
   return "Step 3 · Click “Approve & close · demo”. You send the reply from your support inbox; nothing is sent here.";
 }
 function updateNextStep() {
@@ -458,7 +613,8 @@ function updateFinal() {
   const qa = E.evaluateDraft(analysis, $("editor").value);
   const available =
     analysis.state === "draft_ready" && record().outcome === "open";
-  $("final-review").disabled = !available || !allSourcesChecked();
+  $("final-review").disabled = !available || !allSourcesChecked() || qa.critical;
+  if (qa.critical) $("final-review").checked = false;
   $("record-reply").disabled = !(
     available &&
     allSourcesChecked() &&
@@ -474,7 +630,17 @@ function updateFinal() {
         ? "Final reply matches the source-backed wording. Human approval is still required."
         : qa.critical
           ? qa.issues.join(" ")
-          : "Your edits require a manual factual review. Confirm the final review only after checking every claim.";
+          : "You edited the reply: check every fact against the verified facts before you approve.";
+  const blocked = available && !!$("editor").value.trim() && qa.critical;
+  $("policy-alert").hidden = !blocked;
+  $("final-check-result").hidden = blocked;
+  if (blocked) {
+    $("policy-alert-text").textContent = qa.issues.map(friendly).join(" ");
+    $("policy-alert-quotes").replaceChildren(
+      ...offendingSentences($("editor").value).map((x) => node("li", `“${x}”`)),
+    );
+    $("restore-reply").hidden = !analysis.draft || manualMode || assistMode !== "on" || serverDown;
+  }
   updateNextStep();
 }
 function renderFacts() {
@@ -720,25 +886,39 @@ function render(key) {
     resolved: "Resolved · demo reply recorded",
   }[r.outcome];
   $("priority").value = r.priority;
-  $("reopen").hidden = r.outcome === "open";
+  $("reopen").hidden = true;
   $("gate").textContent = analysis.gate;
   $("gate").className =
     analysis.state === "draft_ready" ? "safe" : "safe gate-warning";
   $("blocked").hidden = analysis.state === "draft_ready";
   $("blocked").textContent = analysis.reason;
   // Answerable tickets get the three steps; the others get one clear card.
-  $("steps").hidden = analysis.state !== "draft_ready";
-  $("blocked-card").hidden = analysis.state === "draft_ready";
-  $("blocked-heading").textContent =
-    analysis.state === "human_only"
-      ? `This request goes to a specialist · ${analysis.queue}`
-      : "FlowAssist needs more information before drafting";
+  // Closed cases get one outcome card instead.
+  const isOpen = r.outcome === "open",
+    copy = analysis.state === "draft_ready" ? null : blockedCopy();
+  $("steps").hidden = analysis.state !== "draft_ready" || !isOpen;
+  $("blocked-card").hidden = analysis.state === "draft_ready" || !isOpen;
+  $("handover").hidden = !isOpen;
+  if (copy) {
+    $("blocked-heading").textContent = copy.title;
+    $("blocked-why").textContent = copy.why;
+    $("blocked-todo").textContent = copy.todo;
+  }
+  const cands = analysis.state === "draft_ready" ? [] : analysis.candidates;
+  $("candidate-list").hidden = cands.length < 2;
+  $("candidate-list").replaceChildren(
+    ...(cands.length < 2 ? [] : cands).map((c) =>
+      node("li", `${c.reference} · ${E.money(c.amountMinor, c.currency)} · ${plainStatus(c.status).label} · ${c.id}`),
+    ),
+  );
   $("draft").value = b.draft === null ? analysis.draft || "" : b.draft;
   $("draft-panel").hidden =
     analysis.state !== "draft_ready" || manualMode || r.outcome !== "open";
   $("editor").value = b.editor;
   $("manual-note").value = b.note;
-  $("reason").value = b.reason;
+  $("reason").value = b.reason || (copy && isOpen ? copy.reason : "");
+  $("reason-hint").textContent =
+    copy && isOpen && $("reason").value === copy.reason ? "· suggested, change it if needed" : "";
   $("final-review").checked = false;
   $("manual-state").hidden = !manualMode;
   $("manual").hidden = manualMode || r.outcome !== "open";
@@ -762,6 +942,7 @@ function render(key) {
   renderSources();
   renderContext();
   renderEvents();
+  renderOutcome();
   initialized = true;
   updateEditor();
   updateApproval();
@@ -792,6 +973,7 @@ function applyDraft() {
   $("final-review").checked = false;
   hideReplacement();
   updateEditor();
+  updateApproval();
   saveTicket();
   event("Reviewed draft inserted", "No message sent.");
   track("draft_used", segment());
@@ -1022,6 +1204,7 @@ $("editor").addEventListener("input", () => {
   $("final-review").checked = false;
   hideReplacement();
   updateEditor();
+  updateApproval();
   saveTicket();
 });
 $("final-review").addEventListener("change", updateFinal);
@@ -1113,6 +1296,27 @@ $("wait-reference").addEventListener("click", () => {
     "Case marked awaiting merchant. Reopen it when the reference arrives.",
   );
 });
+$("next-ticket").addEventListener("click", () => {
+  const next = nextOpenTicket();
+  if (!next) return;
+  render(next.key);
+  if (typeof window !== "undefined" && window.scrollTo) window.scrollTo({ top: 0, behavior: "smooth" });
+});
+$("outcome-reopen").addEventListener("click", () => $("reopen").click());
+$("outcome-copy").addEventListener("click", async () => {
+  const r = record();
+  if (!r.receipt || r.receipt.kind !== "reply") return;
+  try {
+    await navigator.clipboard.writeText(r.receipt.text);
+    announce("Approved reply copied. Paste it into your support inbox.");
+  } catch (_) {
+    announce("Copy is not available here: select the reply text instead.");
+  }
+});
+$("restore-reply").addEventListener("click", () => {
+  $("draft").value = analysis.draft || "";
+  insertDraft();
+});
 $("reopen").addEventListener("click", () => {
   record().outcome = "open";
   event("Case reopened");
@@ -1174,6 +1378,7 @@ function recordHandover() {
     `${pendingPacket.queue} · ${pendingPacket.reason} · demo only`,
   );
   refresh("Specialist handover recorded. No real queue was contacted.");
+  reveal("outcome-card");
 }
 $("record-reply").addEventListener("click", () => {
   updateFinal();
@@ -1202,6 +1407,7 @@ function recordReply(verdict) {
   refresh(
     "Human-reviewed reply recorded and case resolved in the demo. No customer message was sent.",
   );
+  reveal("outcome-card");
 }
 ["inbox", "activity", "metrics"].forEach((v) => {
   $(`nav-${v}`).addEventListener("click", () => setView(v));
