@@ -1,122 +1,222 @@
-# FlowAssist specification · v2 · S3–S4
+# FlowAssist specification · v3 · whole project (S1–S7)
 
-**Updated 9 November 2026 · Source:** `03_product_brief.md` v2, desk-based design decisions D01–D05 and user-driven decisions D06–D10 (9 November conversations and prototype test). The production pipeline below is the target integration contract; application v0.4 implements a local deterministic demonstration described at the end.
+**Updated 17 November 2026.** One document that traces the product from diagnosis to operation and that a developer can build from. Each section names the course session it comes from and the file that holds the detail. **Shipped** means it exists in this repository and is tested; **target** means the production design, not yet built.
 
-## problem
-A Tier-1 specialist investigates fragmented payment records before replying. Provide a tenant-verified tracing timeline and cited editable draft in Zendesk, retain human sending, and test ≥41.2% active time saving on eligible tracing cases. Dispute/compliance tickets get a handover, not advice.
+| Session | Decision it fixes here | Detail |
+|---|---|---|
+| S1 Diagnosis | problem, user, do-nothing, trust levels, governance questions | `01_problem_statement.md`, `governance.md` S1 |
+| S2 Sizing | business case, flip point 41.2 %, hurdle, build/buy | `02_sizing.xlsx`, `02_investment_memo.md` |
+| S3 MVP design | process redesign, MoSCoW, model ladder, data audit, criterion, user research | `03_product_brief.md`, `03_user_research.md` |
+| S4 Build & decode | architecture, guardrails, eval-set, misses → spec lines | §3–§6, `04_architecture.md`, `evals/report_v0.md` |
+| S5 Metrics | metric stack, attack set, LLM judge | §8, `evals/judge/`, `docs/TRACKING_PLAN.md` |
+| S6–S7 Experiments & operation | switch, monitoring, incidents, rollback, owners, CI/CD | §7, §9, `docs/SETUP_CI.md`, `governance.md` S7 |
 
-## user_workflow
-```text
-read       : authenticated session + ticket -> verified tenant + intent       (L1 suggestions)
-retrieve   : tenant + validated entities    -> safe candidates + timestamps   (L3 internal)
-match      : safe candidates + confirmation -> unique selected transaction    (person confirmation)
-draft      : selected transaction + sources -> cited internal draft            (L2)
-check      : draft + sources + policy       -> pass or block with reason        (rules + L2 review)
-review     : passing draft + sources        -> editable inbox reply             (person only)
-send       : human inbox action            -> customer                        (person only, outside copilot)
-log        : state transitions              -> minimized audit event           (L4 metadata)
-escalate   : any state + reason             -> Tier-2 context packet            (person action; safe fallback)
+---
+
+## 1. Problem and product (S1–S2)
+
+**Problem.** Tier-1 payment-operations specialists at PayFlow B2B (scenario: 800 merchants, 12,000 tickets a month, 18 specialists) spend about 40 % of an 18-minute handling time searching ledgers and clearing logs before they can answer "where is my money?". All figures are course scenario assumptions, not company measurements.
+
+**Job, one sentence.** When a merchant asks where a payment is, FlowAssist finds the matching transaction in that merchant's own records and prepares a cited EN/FR/DE status reply for the specialist to check, edit and approve.
+
+**Never.** Send anything to a merchant on its own; move, refund or release money; write to a ledger; show a payment outside the assigned merchant; turn "sent to bank" into "received".
+
+**Do-nothing.** Manual tools and macros, about 4 % efficiency gain a year (€57,600 in the base case).
+
+**Business case.** Conditional GO. Base net value is €141,340 against a €125,000 next-best project (merchant self-serve portal), so the base case clears the hurdle. The flip point is a **41.2 % active-time saving** on eligible tracing tickets. Sensitivity to watch: at the sheet's own implied cost per ticket (€6.875 instead of €10) the base case drops below the hurdle (`02_investment_memo.md`).
+
+**Build / buy / orchestrate.** Orchestrate: our rules and data, with a rented model only where it is earned.
+
+## 2. Scope (S3)
+
+| MUST (≤ 4) | SHOULD / COULD | WON'T (≥ 5, dated 3 Nov 2026) |
+|---|---|---|
+| merchant/policy gate with handover · cited tracing draft · paired timing and grading | source-preview polish · feedback shortcut | CRM tag automation · autonomous replies · dispute deadlines · KYC/AML explanations · refunds/settlement execution |
+
+Also out: live bank or Zendesk connectors, fine-tuning, unsupported-language drafting, a customer-facing chatbot.
+
+## 3. Architecture (S4) — shipped v0.6
+
+```mermaid
+flowchart LR
+  subgraph Browser [Browser · prototype/]
+    UI[app.js · inbox, sources, draft, editor]
+    PRE[engine.js · instant preview]
+    SC[server.js · API client]
+  end
+  subgraph Vercel [Vercel · api/index.py · FastAPI]
+    API[/api/analyze · check · handover · events · config · health/]
+    ENG[flowassist/engine.py · authority]
+    FX[(flowassist/fixtures.json · server-side evidence)]
+    SW{{ASSIST_MODE switch}}
+    TEL[telemetry · traces + events, no text]
+  end
+  UI --> PRE
+  UI --> SC --> API --> ENG --> FX
+  API --> SW
+  API --> TEL --> LOG[(stdout / Vercel logs · metrics/events.jsonl locally)]
 ```
 
-## io_contracts
+**Principle.** The browser engine gives an instant preview. **The server decides every recorded action**: inserting a draft, recording a reply, recording a handover. The server reads evidence only from its own fixtures, so a client cannot inject transactions. Both engines must stay identical (`tests/test_parity.py`: 123 cases, 468 draft checks).
+
+| # | Step | Code | Rung | Pattern | Trust level | Human checkpoint ⊘ |
+|---|---|---|---|---|---|---|
+| 1 | Router: intent | `classify` (`ROUTES`) | 1 rules (EN/FR/DE/ES) | routing | L1 suggestion | abstention: money, legal, dispute, compliance → person |
+| 2 | Routing rule: scope and match | `analyze` | 1 rules | chaining with gates | L3 on the assigned merchant | abstention when ambiguous, stale or inconsistent |
+| 3 | Drafter | `source_records`, `make_draft` | 1 templates | chaining | L2 draft | inspect every source, then approve |
+| 4 | Policy checker | `evaluate_draft` | 1 rules | evaluator gate | L2 + server refusal | re-approval after any edit; final human review |
+| — | Judge (offline) | `scripts/eval/judge.py` | 3 pretrained model (OpenAI `gpt-6-luna`) | evaluator | none in the product | humans validate the judge |
+
+**Workflow, not agent.** Every path is drawn in advance and no model chooses a tool. That fits a domain where a wrong match is worse than no draft.
+
+**Why rung 1 everywhere.** Rules pass the development set (50/50 states, 0 drafts on human-only tickets, 30/30 attacks). We climb to a rung-2 router or a rung-3 drafter only when a rung-1 part fails the criterion on real labelled tickets, which do not exist in coursework.
+
+## 4. Contracts (shipped API)
+
+| Endpoint | Request | Response |
+|---|---|---|
+| `GET /api/health` | — | `{status, engine_version}` |
+| `GET /api/config` | — | `{assist_mode, assist_mode_source, engine_version, env}` |
+| `POST /api/analyze` | `{ticket, reference?}` | `{state, gate, reason, queue, intent, checks, transaction, sources[], draft, assist_mode}`; `draft = null` when the switch is `off` |
+| `POST /api/check` | `{ticket, reference?, text ≤ 4000, action: insert\|reply}` | 200 `{allowed, passed, manual_review, codes, issues}` · **422** on a critical issue · **409** when insertion is disabled by the switch |
+| `POST /api/handover` | `{ticket, reference?, reason, note}` | `{allowed, packet}` (note redacted) · 422 without a reason |
+| `POST /api/events` | `{event, properties}` | 202, or 422 for an unknown event (see §8) |
+
 ```typescript
-type Ticket = {
-  id: string; text: string; language: 'en'|'fr'|'de'|string;
-  authenticated_merchant_id: string; // server session, NEVER ticket text
-  plan: string; region: string; received_at: string; // ISO-8601 UTC
-};
-type Source = {
-  source_id: string; merchant_id: string; transaction_id: string;
-  amount_minor: number; currency: string;
-  status: 'pending'|'sent_to_bank'|'credited'|'failed'|'returned';
-  event_at: string; fetched_at: string; version: string;
-};
-type Result = {
-  state: 'draft_ready'|'context_only'|'human_only';
-  transaction_id: string|null;
-  match_score: number|null; // experimental score, not probability or access permission
-  draft: null|{text: string; citations: {source_id: string; claim: string}[]};
-  policy: 'pass'|'block'; reasons: string[];
-  context: Source[]; // authorized and masked only
-  handover: {queue: 'tier2_payments'|'tier2_compliance'|'tier2_disputes'; ticket_id: string; reason: string}|null;
-};
+type Ticket = { id: string; merchant: string /* assigned session scope, never parsed from text */;
+  language: 'EN'|'FR'|'DE'|string; message: string /* ≤ 3000 */; receivedAt: string /* ISO-8601 */; sensitiveInput?: boolean };
+type State = 'draft_ready' | 'context_only' | 'human_only';
+type CheckCode = 'no_transaction'|'empty'|'sensitive'|'promise'|'commitment'|'amount'|'reference'|'citation'|'status_upgrade'|'manual_review';
 ```
-Input validation: authenticated account and assigned-agent access required before retrieval; parameterized read-only queries; fixed schema/tools. Parse decimal monetary strings into integer minor units without floats; explicit currency and date/timezone. Extracted values are untrusted query hints. No model-generated SQL. No PAN, credentials, full IBAN or counterparty personal data to model APIs.
+Requests reject unknown fields. Amounts are integer minor units, never floats. Statuses: `pending · sent_to_bank · credited · failed · returned`. **Target:** the merchant comes from the authenticated session and `receivedAt` is stamped by the server; in the demo the client sends both.
 
-Matching: tenant equality, transaction ID, currency, amount basis and time-window constraints must pass; never join on amount alone. Net versus gross requires an explicit documented fee reconciliation. Multiple candidates → no draft; human verifies match. Model score ≥0.95 is a provisional extra gate, not sufficient evidence. Missing score fails closed if model matching is used. Unsupported intent, language, mixed sensitive intent, absent evidence, stale feed, unsafe content or invalid model schema → suppress draft.
+## 5. Guardrails (shipped)
 
-Claim checks: every amount, currency, transaction ID, status and timestamp must be traceable to cited sources of that same transaction/tenant; stale or contradictory evidence blocks. “Sent to bank” must never become “beneficiary credited”. No invented ETA, refund promise, dispute deadline, AML diagnosis or hold-release advice. Ticket/source instructions are data, not executable policy. Model critique may block but cannot override hard checks.
+| Layer | Rule | Outcome |
+|---|---|---|
+| Input | prompt injection ("ignore tenant", `system:`, admin override, reveal another merchant) | human only |
+| Input | secrets, credentials, IBAN in the message | redacted; human only |
+| Input | intent is money action, legal, dispute or compliance (EN/FR/DE/ES lists) | human only, specialist queue |
+| Input | unsupported language or currency, negative or invalid amount | human only / context only |
+| Scope | the merchant from the session; no evidence from another merchant | empty context |
+| Scope | unique reference; an amount alone never matches; amount and currency must agree | context only |
+| Scope | snapshot ≤ 5 min old; ledger and clearing agree; source schema valid; gross − fee = net | context only |
+| Scope | a model-derived match needs a score in [0.95, 1] **and** all checks above | context only |
+| Output | money, arrival or legal commitments in EN/FR/DE ("we will credit back", "nous vous rembourserons", "wir erstatten", "entitled to compensation", "will arrive Monday") | **critical: refused** |
+| Output | an amount or reference not in the sources; missing or foreign citations; "sent to bank" upgraded to "credited" | **critical: refused** |
+| Output | any other free-text edit | allowed with a mandatory manual factual review |
 
-## state_machine
-`loading → draft_ready | context_only | human_only`; “Use draft” requires `draft_ready`, `policy=pass`, inspection of every displayed source and explicit human review. Editing after review invalidates that review and requires rechecking before transfer. New ticket selection resets review and source-inspection state. In v0.4 the editor, edited suggestion, handover note/reason and manual mode restore only from the selected ticket’s own in-tab buffer; no previous ticket text is carried into an unvisited ticket. Buffers are keyed by ticket key and stored in per-tab sessionStorage with schema checks and redaction of known sensitive patterns; reload restores text/outcome but never approval or source inspection. Reset clears all saved work. Escalation is available throughout with a required reason and a packet containing only authorized evidence. Manual fallback disables draft insertion. Explicit Resume assisted review reopens drafting with inspection and approval reset; a ticket revisit preserves its manual mode. Every displayed source and handover evidence item carries its snapshot retrieval timestamp; compliance routes to `tier2_compliance`, tracing to `tier2_payments`. A failed authorization returns empty context. No outbound send/fund/ledger-write tool exists.
+Attack set: `evals/adversarial_v0.csv` (30 OWASP-style rows: LLM01, LLM02, LLM06, LLM09, legal) must stay at **0 misses**. One miss fails CI.
 
-## edge_cases
+## 6. Interface and state machine (S3–S4, shipped)
+
+- **Ticket states.** `draft_ready | context_only | human_only`. A ticket's lifecycle is `open → waiting | escalated | resolved`, and reopening resets inspection and approval.
+- **Using a draft** requires `draft_ready`, every source inspected, the review box ticked, the switch `on`, the API reachable **and** a server `check(insert)` that passes.
+- **Recording a reply** requires the final human review and a server `check(reply)` that is not critical. Any edit invalidates approval.
+- **Handover** requires a reason, a refreshed preview and a server `handover`. The packet contains only authorized sources.
+- **User-driven changes** (`03_user_research.md`):
+
+| ID | Change | Status |
+|---|---|---|
+| D08 | Plain-language status with an amber/green/red tone (no green "sent to bank") | shipped v0.5 (UI); draft wording unchanged |
+| D09 | "Verified facts" checklist above the draft | shipped v0.5 |
+| D10 | Each source says what it confirms; ledger first | shipped v0.5 |
+| D06 | Next step and follow-up time in context-only and handover replies | specified, not built |
+| D07 | Documented typical processing time, labelled "typical, not guaranteed" | pending Ops/Legal |
+
+- **Edge cases and fallbacks:**
+
 | Condition | Required outcome |
 |---|---|
-| No match / missing amount or reference | Context only; ask for missing facts; never fabricate record |
-| Two same-amount payments / uncertain identity | Context only; request unique reference; Tier-2 if unresolved |
-| Different tenant / forged merchant in body | No unauthorized data displayed or sent to model; block and security event |
-| Currency differs / FX unclear | Context only; no conversion or inferred match |
-| Net/gross differs but source explains fee | Use verified reconciliation and cite gross/fee/net; otherwise block |
-| Unsupported language | Human only; no automatic translation into an unsupported segment |
-| Dispute / KYC / suspected fraud, including mixed intent | Human only; no advice or deadline; route appropriate specialist |
-| PII / credentials in text | Mask before model/log; on failed redaction use human-only route |
-| Prompt injection in ticket or retrieved note | Ignore instruction; block unsafe draft; no scope expansion |
-| Stale/conflicting feed | Context only; timestamps + reason, no asserted current status |
-| Source cannot be opened / model/API timeout | Context only; preserve verified evidence and manual path |
+| No match, or a missing reference | context only; ask the merchant; never invent a record |
+| Two same-amount payments | context only; request a unique reference; Tier-2 if unresolved |
+| Another merchant's reference, or a forged merchant in the text | nothing shown; human only |
+| Currency differs, or FX unclear | context only; no conversion |
+| Net and gross differ, and the source explains the fee | cite gross, fee and net; otherwise block |
+| Stale or conflicting sources | context only, with timestamps |
+| API down or timeout | page fails closed to manual handling ("Outage" class) |
+| Opened from `file://` | local preview mode, labelled; server guardrails inactive |
 
-## fallbacks
-Prototype design defaults: clearing snapshot age ≤5 min at request time; retrieval timeout 2s, total pipeline timeout 10s; no silent retries after timeout. These are guesses for Ops/Engineering to validate. Null timestamps, model unavailable, malformed JSON, score <0.95 or failed claim check → `policy=block`, `draft=null`. Escalation packet: ticket ID, verified merchant, safe candidate IDs, source timestamps, block reason, agent note. Audit acceptance by the destination queue in S4; local HTML only simulates it.
+## 7. Operation (S6–S7)
 
-## done_criteria
-Use the exact criterion in brief §7: 200 frozen synthetic tracing cases, pre-labelled eligibility, ≥41.2% paired total human active time saving including failed/fallback cases, QA ≥92%, grounding precision ≥98% and zero critical exposures. Two independent graders review every output; unresolved disagreement fails pending adjudication. No production GO from this seed set, an unvalidated label or mock UI timing. Record p95 retrieval/draft latency separately from active human time.
+**Global switch ⏻.** The `ASSIST_MODE` environment variable, enforced by the server on every request:
+- `on`: drafts can be inserted after the human checks.
+- `suggest_only` (L1): drafts are visible but cannot be inserted.
+- `off`: humans only, no drafts.
+- Any other value fails safe to `suggest_only`.
 
-## out_of_scope
-CRM tag automation; autonomous merchant replies; dispute deadlines; KYC/AML explanation or release advice; refunds/settlement execution. Also no live bank connectors in S3, no model fine-tuning, unsupported-language drafting or customer chatbot.
+On Vercel, change the variable and redeploy (about 1 minute). Who can press it: the Head of Payment Ops by day, the on-call engineer at night.
 
-## eval_set
-`evals/eval_set_v0.csv`: 50 synthetic development cases (15 proposed eligible), expanded from the original 20 S3 seeds; human labelling and independent grading pending. Reference policies and fixtures: `evals/reference_policy.md`. Separate S3 surface examples from evaluation; never tune against the frozen benchmark. The 50-case A4 development run is recorded in `evals/report_v0.md`. A separate frozen 200-case tracing benchmark is required before the final timing gate. Exact grading and eligibility denominator: `evals/README_eval_set.md`.
+**Rollback plan (6 fields).**
+- **Trigger:** any draft on a human-only ticket; a reply refused as critical that was still sent; a red production smoke test.
+- **Who decides:** the Head of Payment Ops (day) or the on-call engineer (night).
+- **Action:** `ASSIST_MODE=suggest_only`, then `off`; or revert the commit on `main`.
+- **Time:** under 15 minutes.
+- **What people see:** the banner states the mode, and agents continue manually.
+- **Last tested:** to be filled at the first production test (`docs/SETUP_CI.md` §3).
 
-## s3_demo_delivery
-The S3 surface is buildless HTML/JavaScript. For Vercel, the repository-root configuration copies `prototype/index.html`, `prototype/app.js`, `prototype/data.js`, `prototype/engine.js` and `prototype/styles.css` into `dist/`, served at `/`, without API credentials or a backend. The primary source is `BenjaminAHS/project-product-management`; Vercel’s source copy is `lsantus-mines/deploy-project-product-management`. Synchronization after primary `main` pushes uses a snapshot commit, preserving destination history and excluding destination-owned workflow definitions. The automatic workflow uses `DEPLOY_REPO_TOKEN`; a push-triggered run for primary `e33deb3` was verified successful. Historical production evidence: the static demo was Ready at https://deploy-project-product-management.vercel.app on 3 November; anonymous HTTP access and all five v0.4 assets were verified byte-identical on 3 November 2026. Rendered browser checks remain unperformed. Hosting does not implement the pipeline above. The S4 snapshot `034267c` was subsequently pushed and its publication copy `8a8a2cf` verified identical on 9 November; updated HTTP delivery was verified on 9 November (five assets, anonymous HTTP 200, matching local files). Release steps and evidence: [deployment handover](prototype/DEPLOYMENT.md).
+**Incident classes.**
 
-## s3_interface_v0_3
-Search/filtering changes only inbox visibility, not merchant scope. Keyboard next/previous follows visible tickets; ordinary typing never triggers navigation. Alt+Enter uses the same insertion guard as the button. Inserting into a nonempty, different editor requires explicit confirmation; confirmation rechecks the approval gate. Editor copy is a user action with a selection fallback if clipboard access fails. Handover note/reason changes invalidate previews. Reset clears all ticket buffers, source/approval state and filters. The local UI does not implement live authorization, freshness checks or model grounding.
-
-## application_v0_4_runtime
-`data.js` supplies public synthetic accounts, history, policy and transactions. `engine.js` exports pure extraction, scope/match/freshness/schema/policy checks, grounded EN/FR/DE templates, draft screening and handover packet creation. Analysis runs on the fixture request clock, not today’s live bank data. Numeric amounts use integer minor units. An amount alone never authorizes a match; user-confirmed references still pass scope/currency/amount checks. A generated suggestion passes deterministic evaluation before display; it is not an LLM/model score. Free text not certifiable by rules requires explicit manual factual review, while detected critical edits remain blocked.
-
-Lifecycle: `open → waiting | escalated | resolved`; reopen returns to `open` with review/inspection reset. A resolved outcome requires inspected sources, a non-critical final reply and explicit final human review. The action records a demo receipt; it does not send. Handover requires an up-to-date preview and explicit recording; reason/note edits invalidate it. Account history is scoped separately from transaction evidence and is never used to invent payment facts.
-
-The tab-local journal and receipt exports are not immutable or authenticated. Visible-tab timings stop on pause, hidden tab, other views, intake/export interruption and terminal/waiting states; they are a workflow timing aid, not validated AHT or causal savings. Session restoration never restores approval. `node --test scripts/test_app.cjs` exercises current domain/UI behavior. Live APIs, shared identity/storage, LLM generation/evaluation and agent-level A/B remain unimplemented target integrations.
-
-## Session 4 · spec v2 — changes of 9 November 2026
-
-This section replaces the outdated S3 counts: 50 cases, 15 of them proposed eligible; all 50 are now development cases after the fixes. The production contract in the sections above does not become a shipped feature merely because it was evaluated.
-
-| ID | Miss → v2 requirement | Status and validation |
+| Class | Signal | Action |
 |---|---|---|
-| S4-M01 | A hyphen inside a reference is never a negative sign. A reference's digits never become an amount before EUR/USD. Genuinely negative amounts stay blocked. | Fixed in `entities` and `analyze`; dedicated regression and F01/F13/F14/F20/F21–F26/F49. Cases consumed for development. |
-| S4-M02 | Also extract FAC-, RE- and REF-, without giving the reference any access power; keep account filtering and amount/currency constraints. | Fixed; F02/F03 and dedicated regression. |
-| S4-M03 | Once a connector/model exists, explicitly represent the score and untrusted notes; missing score or <0.95 → abstention, notes never executed. | **Fixed**: `matchMethod=model` requires a finite numeric score in [0.95, 1]; unknown provenance blocked. `sourceRecords` and `makeDraft` ignore untrusted notes. F19 encodes the score and note from its original scenario; its label is unchanged. No real model is called. Tests cover missing, invalid and boundary scores, and a high score with a foreign account. |
+| Caught | `check_failed` (refused insertion or reply) | count it; add a spec line if it repeats |
+| Sent wrong | a reopened ticket after a reply | apology, fix the knowledge base or rule, add a spec line |
+| Harmful | a draft on a human-only ticket, or another merchant's data | roll back now, incident report, involve the DPO |
+| Outage | `api_unavailable`, 5xx in the traces | the page fails closed to manual handling |
 
-Evaluation command: `node scripts/eval_s4.cjs`. Before/after kept in `evals/results_baseline_v0.json` and `evals/results_v0.json`. Two graders still have to judge the replies; state agreement ≠ sendability, grounding precision or time saving. Any fix made after reading a case turns that case into development data: a new independent set is required before any performance claim.
+**Drift to watch.**
+- Data drift: a new rail or reference format changes the share of tickets routed to a person.
+- Concept drift: a policy change, so re-label the golden set.
+- Knowledge drift: fixture age.
+- Model drift: the judge model changes, so pin it and re-run the agreement.
 
-### S4 technical close-out
-32 test scenarios pass; 50/50 expected states match, 15 drafts and zero drafts on human-only. All 50 remain development cases. F19 no longer contains an unrepresented contract field; the score is an input, not a measurement computed by a model. The original Paylio starter was run: heuristic 8/20 (40%), not a human grade. The Paylio teaching causes remain spec proposals: complete the Release notes 4.12 section (9 cases), review below-threshold routing for Add an admin user (2 cases) and Payslips as PDF (1 case), then test on a new set without tuning the threshold against these tickets.
+## 8. Metrics and evaluation (S5)
 
-### Runtime matching metadata (current code)
-
-Synthetic transaction records may carry `matchMethod?: 'reference' | 'model'` and `matchScore?: number`. Missing method follows deterministic reference matching. Unknown method blocks; `model` requires a finite numeric score in [0.95, 1]. This input does not authorize retrieval and is checked only after merchant/reference/money/freshness/status/fee constraints. `sourceRecords` and `makeDraft` use allowlisted financial fields and ignore source notes. Snapshot age uses ticket `receivedAt` and allows 0–300,000 ms. Intake limits are 30 workspace tickets and 3,000 message characters; the offline 50-case evaluation is independent of these UI limits.
-
-## user_driven_v2 · D06–D10 · 9 November 2026
-
-From three conversations and a prototype test ([record](03_user_research.md)). Specified for v2; **not implemented in the prototype yet**.
-
-| ID | Requirement | Acceptance check |
+| Level | What we measure | Source |
 |---|---|---|
-| D06 | Every context-only or handover reply tells the merchant the next step and when they will hear back. | Ambiguous (DEMO-02) and compliance (DEMO-03) replies name the next step and a follow-up time; no payment fact is added. |
-| D07 | A draft may state a typical processing time for the rail only if FLOW-POL-1 documents it, labelled "typical, not guaranteed". Never a date for this payment, never for a returned or failed payment. Pending Ops/Legal approval. | With no documented time, no timing appears; with one, the label is present and the evaluator still blocks promises. |
-| D08 | Status wording uses plain language next to the cited status (e.g. "sent to the recipient's bank, not yet confirmed as received" for sent_to_bank). | Each status maps to one approved plain phrase in EN/FR/DE; sent_to_bank never reads as received. |
-| D09 | Above the draft, show a "verified facts" summary (transaction, amount, exact status, event time, sources inspected) that the specialist confirms before insertion. | Insertion stays disabled until every listed fact is shown with its source; edits that change a listed fact re-open the checklist. |
-| D10 | Each source panel says what that record confirms (ledger: amount and booking; clearing: rail status and event time) and suggests opening the ledger first. | DEMO-01 shows both explanations; the wording never states beneficiary receipt for sent_to_bank. |
+| 1 Model / rules | parity JS = Python; router decisions on probes | `make test-py` |
+| 2 AI system | 50/50 expected states; 15 drafts; 0 on human-only | `make eval` |
+| 3 Guardrails | 30/30 attacks; refusals by code; 0 foreign sources | `make adversarial`, events |
+| 4 Product | funnel ticket → sources → draft used → reply; edit rate; handling time p50/p95 by language and plan | `make metrics` |
+| 5 Business | active-time saving vs the 41.2 % flip point; QA ≥ 92 % | target: paired timing protocol (S6) |
+
+- **Eval sets.**
+  - `evals/eval_set_v0.csv`: 50 development cases, consumed by fixes, so used for regression only.
+  - `evals/eval_set_v1.csv`: 200 held-out inputs, labelling in progress.
+  - `evals/adversarial_v0.csv`: 30 attack rows.
+- **Judge.** `evals/judge/rubric.md` (v1.1) was written before grading, and `judge_prompt.txt` is a copy of it. `scripts/eval/judge.py` (OpenAI `gpt-6-luna`; Claude optional) gives 11/15 human–judge agreement and catches 41/41 known-bad variants, with 0 over-accepted. The remaining 4 disagreements are a real defect: the reply language differs from the merchant's language (S5-M01). A second blind human grader is still required for human–human agreement.
+- **Local metrics.** The page posts allowlisted events (`ticket_opened`, `source_inspected`, `draft_used`, `reply_recorded`, `handover_recorded`, `manual_mode_toggled`, `api_unavailable`) and the server adds `guardrail_blocked` and `check_failed`.
+  - Unknown keys and long text are dropped, and no ticket text is stored.
+  - `make dev` writes events and traces to `metrics/events.jsonl` (git-ignored).
+  - `make metrics` writes `metrics/report.md`.
+  - Event list and thresholds: `docs/TRACKING_PLAN.md`.
+
+## 9. Delivery (shipped)
+
+| Stage | Gate |
+|---|---|
+| Laptop | `make ci`: ruff, data sync, 145 Python tests, 41 Node tests, 50-case regression, attack set |
+| Pull request | GitHub Actions `ci.yml` (same as `make ci`); branch protection requires it |
+| `main` → production | `sync-deploy.yml` runs only after green CI, deploys that commit to the Vercel copy, then smoke-tests production until the new `engine_version` answers |
+| Judge | manual workflow `judge.yml` or `make judge` (key in `.env`, never committed) |
+
+**Hosting.** Static `dist/` and the Python function `api/index.py` share one Vercel project (rewrite `/api/* → /api/index`). Environment: `ASSIST_MODE`, `FLOWASSIST_ENV`. Setup guide: `docs/SETUP_CI.md`.
+
+## 10. Decision log
+
+| ID | Decision | Date |
+|---|---|---|
+| S4-M01 · M02 · M03 | references are never amounts; FAC/RE/REF accepted; a model score is an input checked in [0.95, 1], never authorization | 9 Nov |
+| step-1-router | money, legal and cancellation intents go to a person; "bloqué" (stuck) stays tracing (F05) | 17 Nov |
+| policy v2 | affirmative money, arrival and legal commitments are critical in EN/FR/DE | 17 Nov |
+| v0.5 | D08–D10 in the interface; payment summary first | 17 Nov |
+| v0.6 | server authority, global switch, attack set, judge, local metrics, CI/CD | 17 Nov |
+| judge v1.1 | guideline fixed once after reading disagreements: 11/15 human–judge agreement, 41/41 known-bad escalated, 0 over-accepted | 17 Nov |
+| S5-M01 (open) | the reply language must match the language the merchant wrote in (judge found EN messages answered in FR/DE: F22, F23, F25, F26) | 17 Nov |
+
+## 11. Known limits and next steps
+- All data is synthetic, and the 50 v0 cases are development data. The first real performance number must come from `eval_set_v1` (held out, labelled by people).
+- No grader 2 yet, so there is no human–human agreement.
+- S5-M01 is open: the reply language follows the ticket field, not the merchant's message.
+- The business criterion (41.2 % saving) needs the paired timing protocol of `06_07_experiments_operations.md` (to write).
+- **Target, not built:** authenticated merchant scope, server-stamped request time, live ledger/clearing connectors, D06–D07, a rung-2 router once labelled tickets exist.

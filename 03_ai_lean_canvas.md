@@ -16,9 +16,9 @@
 
 | AI block | Our answer | Source |
 |---|---|---|
-| 10. Data | 20 self-contained synthetic cases; no real customer data; future rights and coverage pending DPO/Ops audit | governance S3 |
-| 11. Model | Rules for permissions and money/status checks; pretrained extraction; hybrid grounded drafting/critique; no fine-tuning | 03 §5 |
-| 12. Evaluation | 20 proposed seed labels awaiting human review → 50 for A4 → frozen 200 tracing benchmark; two independent graders and paired timing | evals/ |
+| 10. Data | Synthetic only: 50 development cases, 200 held-out inputs (`eval_set_v1`), 30 attack rows; server-side fixtures; no real customer data; rights and coverage pending DPO/Ops audit | governance S3, evals/ |
+| 11. Model | Shipped: rung-1 rules and templates for all four steps (they pass the development set); LLM only as an offline judge (`gpt-6-luna`). Target: climb to rung 2/3 only when real labelled tickets show a rung-1 part failing | spec.md §3 |
+| 12. Evaluation | 50 development cases (regression) → 200 held-out (`eval_set_v1`, labelling) · 30-row attack set in CI · LLM judge with guideline v1.1 · grader 2 + paired timing still to do | spec.md §8 |
 | 13. Human loop | L1 suggestions, L3 internal retrieval, L2 drafts, person-only approval/send; one-click handover; L4 metadata logging only | 03 §2 |
 | 14. Risks/governance | Never send, move funds, disclose another tenant or invent settlement certainty; critical violation disables drafting; Ops owns stop | governance S3 |
 

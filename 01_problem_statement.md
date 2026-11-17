@@ -1,5 +1,7 @@
 # 01 — Problem statement
 
+> **Read with [spec.md](spec.md) v3 (17 Nov 2026):** figures here are course scenario assumptions, not measurements; the "Grounding Evaluator ≥ 0.95" and L4 retrieval described in S1 were replaced in S3–S4 by deterministic rules, a server authority and person-only sending (see governance S3).
+
 **Team:** PayFlow AI Product Team (Lenny Santus, Anthony Rascle, Antoine Rabeau, Benjamin Caujolle & Colin Sibieude) · **Agent:** P2 — Agent-assist copilot for a fintech (B2B payments) · **Last updated:** 16 October 2026
 
 > Every number says where it comes from: **measured**, **analogy** (a comparable, with its source) or **guess** (and how you will test it).

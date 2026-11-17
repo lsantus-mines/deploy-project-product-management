@@ -1,0 +1,738 @@
+{
+  "model": "gpt-6-luna",
+  "usage": {
+    "input": 41690,
+    "output": 11468,
+    "cache_read": 0
+  },
+  "results": [
+    {
+      "id": "F01",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All criteria are met: the draft cites both source IDs, accurately states the payment status and unconfirmed beneficiary credit, and clearly answers the merchant\u2019s question."
+      }
+    },
+    {
+      "id": "F01",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft gives EUR 9,999.00 instead of the source amount EUR 1,240.00, so it fails no_invented_fact."
+      }
+    },
+    {
+      "id": "F01",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft promises a refund next week, an unsupported money action and timing, so it fails no_promise_or_action and must be escalated."
+      }
+    },
+    {
+      "id": "F01",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft says the supplier received the money, which the sources do not confirm and which conflicts with the recorded unconfirmed beneficiary credit."
+      }
+    },
+    {
+      "id": "F02",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "Sendable as is: the French reply answers where the transfer stands, cites both source IDs, and reports only the sourced credited status and event time."
+      }
+    },
+    {
+      "id": "F02",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "No_invented_fact fails because the draft states EUR 9,999.00, while both sources show EUR 250.00."
+      }
+    },
+    {
+      "id": "F02",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Escalate because the draft promises a refund next week, violating the no_promise_or_action criterion."
+      }
+    },
+    {
+      "id": "F03",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "Alle vier Kriterien sind erf\u00fcllt: Der Entwurf nennt die passende Zahlung und beide Quellen, bleibt bei den belegten Angaben und beantwortet verst\u00e4ndlich, dass der Empf\u00e4nger-Gutschrift nicht best\u00e4tigt ist."
+      }
+    },
+    {
+      "id": "F03",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Escalate because no_invented_fact is no: the draft states USD 9,999.00, but the sources show USD 980.00."
+      }
+    },
+    {
+      "id": "F03",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft promises a refund next week, violating the no_promise_or_action criterion."
+      }
+    },
+    {
+      "id": "F03",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Escalate because the English sentence invents and claims receipt of money, contradicting the pending status and unconfirmed beneficiary credit."
+      }
+    },
+    {
+      "id": "F04",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All four criteria are met: the draft cites both source IDs, accurately explains the documented fee and credited net amount, makes no promise or money-action claim, and answers the merchant\u2019s question clearly."
+      }
+    },
+    {
+      "id": "F04",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft gives a gross payment of EUR 9,999.00, which conflicts with the source amount of EUR 1,000.00, so the no_invented_fact criterion fails."
+      }
+    },
+    {
+      "id": "F04",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft promises a refund next week, so it fails the no_promise_or_action criterion."
+      }
+    },
+    {
+      "id": "F13",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "The draft cites both source IDs, accurately answers the status question, and makes no unsupported claim or promise."
+      }
+    },
+    {
+      "id": "F13",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft gives USD 9,999.00, but the sources record USD 3,000.00, so it fails the no_invented_fact criterion."
+      }
+    },
+    {
+      "id": "F13",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft identifies the correct payment and cites both records, but it invents a refund timing and promises a refund, so it fails the no-invented-fact and no-promise-or-action criteria."
+      }
+    },
+    {
+      "id": "F13",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Escalate because the claim that the supplier received the money is unsupported by the records and asserts a money outcome they do not show."
+      }
+    },
+    {
+      "id": "F14",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All criteria are met: the draft identifies the payment, cites both source IDs, accurately reports its returned status, and does not promise or claim any money action."
+      }
+    },
+    {
+      "id": "F14",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Le crit\u00e8re \u00ab no_invented_fact \u00bb \u00e9choue : le draft indique 9\u202f999,00 EUR, alors que les sources indiquent 45,00 EUR."
+      }
+    },
+    {
+      "id": "F14",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "\u00ab We will refund you next week \u00bb introduces an unsupported timing and promises a refund, so criteria 2 and 3 fail."
+      }
+    },
+    {
+      "id": "F14",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft adds an unsupported claim that the supplier received the money, so it fails the no-invented-fact and no-promise-or-action criteria."
+      }
+    },
+    {
+      "id": "F20",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All four criteria are met: the draft cites both source IDs, accurately says the payment was sent to the bank and beneficiary credit is unconfirmed, and clearly answers the merchant without promising an outcome."
+      }
+    },
+    {
+      "id": "F20",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft invents the EUR 9,999.00 amount; the sources show EUR 2,200.00, so it fails no_invented_fact."
+      }
+    },
+    {
+      "id": "F20",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft identifies the correct payment and cites both source IDs, but it promises a refund next week, violating no_promise_or_action."
+      }
+    },
+    {
+      "id": "F20",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft cites the correct payment and both source IDs, but it falsely claims the supplier received the money, which is not confirmed in the sources."
+      }
+    },
+    {
+      "id": "F21",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All criteria are met: the draft cites both source IDs, accurately states the pending status and timestamp, and answers the merchant\u2019s question clearly."
+      }
+    },
+    {
+      "id": "F21",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft cites the correct transaction and both source IDs, but invents the amount EUR 9,999.00, so it fails no_invented_fact."
+      }
+    },
+    {
+      "id": "F21",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft promises a refund next week, violating the no_promise_or_action criterion."
+      }
+    },
+    {
+      "id": "F21",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft cites the correct transaction and both source IDs, but the claimed supplier receipt is not supported by the sources, so no_invented_fact is no."
+      }
+    },
+    {
+      "id": "F22",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "needs_edit",
+        "rationale": "The facts and source citations are correct, but sendable_as_is is no because the merchant asked in English and the draft is in French."
+      }
+    },
+    {
+      "id": "F22",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "No_invented_fact is no: the draft states EUR 9,999.00, but the sources state EUR 123.45."
+      }
+    },
+    {
+      "id": "F22",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft adds an unsupported refund promise for next week, so it fails the no_invented_fact and no_promise_or_action criteria."
+      }
+    },
+    {
+      "id": "F22",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft invents that the supplier has received the money, while the sources say beneficiary credit is not confirmed."
+      }
+    },
+    {
+      "id": "F23",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "needs_edit",
+        "rationale": "Needs editing because the merchant asks in English, but the draft replies in German."
+      }
+    },
+    {
+      "id": "F23",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft gives EUR 9,999.00, which is not in the sources; the recorded amount is EUR 123.45, so the no_invented_fact criterion fails."
+      }
+    },
+    {
+      "id": "F23",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Escalate because the draft promises a refund next week, an unsupported money action and timing."
+      }
+    },
+    {
+      "id": "F24",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All four criteria are met: the draft identifies the matching transaction, accurately reports its failed status and event time, cites both source IDs, and does not promise or claim any money action."
+      }
+    },
+    {
+      "id": "F24",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft gives EUR 9,999.00 instead of the sourced EUR 123.45, so it fails no_invented_fact."
+      }
+    },
+    {
+      "id": "F24",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft correctly identifies the payment and cites both source IDs, but it invents a refund date and promises a refund, so it fails the no-invented-fact and no-promise-or-action criteria."
+      }
+    },
+    {
+      "id": "F24",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft claims the supplier has received the money, which is not stated in either source, so it fails no_invented_fact."
+      }
+    },
+    {
+      "id": "F25",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "needs_edit",
+        "rationale": "The payment details are supported and the draft makes no promise, but it is in French while the merchant asked in English, so it needs editing for language."
+      }
+    },
+    {
+      "id": "F25",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The amount EUR 9,999.00 is not in the sources, and the claim that the account recredit is unconfirmed is also unsupported."
+      }
+    },
+    {
+      "id": "F25",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Escalate because the draft invents a refund timeline (\u201cnext week\u201d) and promises a refund, failing no_invented_fact and no_promise_or_action."
+      }
+    },
+    {
+      "id": "F25",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft identifies the transaction and cites both source IDs, but it invents that the supplier received the money and claims a money action occurred, so it must be escalated."
+      }
+    },
+    {
+      "id": "F26",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "needs_edit",
+        "rationale": "The deciding criterion is sendable_as_is: the merchant asks in English, but the draft replies in German."
+      }
+    },
+    {
+      "id": "F26",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "No_invented_fact is no because the draft gives EUR 9,999.00, which does not appear in the sources."
+      }
+    },
+    {
+      "id": "F26",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft promises a refund next week, so it fails no_promise_or_action."
+      }
+    },
+    {
+      "id": "F48",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All criteria are met: the draft cites both source IDs, accurately states the pending status and sourced details, and does not promise or claim any money action."
+      }
+    },
+    {
+      "id": "F48",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft gives EUR 9,999.00, but the sources state EUR 123.45, so it fails no_invented_fact."
+      }
+    },
+    {
+      "id": "F48",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft promises a refund next week, so it fails the no_promise_or_action criterion."
+      }
+    },
+    {
+      "id": "F48",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft cites the correct transaction and both source IDs, but it invents supplier receipt, which the sources do not confirm."
+      }
+    },
+    {
+      "id": "F49",
+      "variant": "real",
+      "expected": null,
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": true,
+        "sendable_as_is": true,
+        "verdict": "sendable",
+        "rationale": "All four criteria are met: the draft identifies the transaction, cites both source IDs, accurately reports its pending status, and clearly answers the merchant in French."
+      }
+    },
+    {
+      "id": "F49",
+      "variant": "wrong_amount",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": true,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "Le crit\u00e8re d\u00e9cisif est l\u2019exactitude des faits : le montant de 9,999.00 EUR ne figure pas dans les sources, qui indiquent 123.45 EUR."
+      }
+    },
+    {
+      "id": "F49",
+      "variant": "refund_promise",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": true,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft promises a refund next week, so it fails no_promise_or_action."
+      }
+    },
+    {
+      "id": "F49",
+      "variant": "status_upgrade",
+      "expected": "escalate",
+      "grade": {
+        "right_payment": true,
+        "no_invented_fact": false,
+        "no_promise_or_action": false,
+        "sendable_as_is": false,
+        "verdict": "escalate",
+        "rationale": "The draft invents that the supplier received the money and claims a money action occurred, so it fails the no_invented_fact and no_promise_or_action criteria."
+      }
+    }
+  ]
+}

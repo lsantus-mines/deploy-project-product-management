@@ -19,3 +19,10 @@ node_modules/
 # Vercel deployment output and local project metadata
 dist/
 .vercel/
+
+# Python tooling caches
+.pytest_cache/
+.ruff_cache/
+
+# Local metrics (demo events and generated reports stay on the machine)
+metrics/

@@ -1,6 +1,6 @@
 # FlowAssist v0.4 + S4 fixes — coverage of the P2 journey
 
-The reference statement is **P2 · Agent-assist copilot for a fintech (B2B payments)** in `course/project_proposals.docx`. v0.4 runs the business journey in a self-contained demo. It does not claim to replace real payment systems.
+The reference statement is **P2 · Agent-assist copilot for a fintech (B2B payments)** in `reference/course/project_proposals.docx`. v0.4 runs the business journey in a self-contained demo. It does not claim to replace real payment systems.
 
 | Problem step | Usable function in the application | Explicit limit |
 |---|---|---|
@@ -38,4 +38,8 @@ Customer-facing autonomy and actions on funds remain excluded. The three MUST an
 
 ## S4 update · 9 November 2026
 
-The v0.4 journey is unchanged. The engine fixes concern references/amounts and checking a supplied confidence for a match declared as model-based. The 32 tests pass and the 50 development cases produce the expected states (15 drafts). No real model computes that confidence. The [S4 report](../evals/report_v0.md) separates these checks from human quality and time savings; the [publication record](../prototype/DEPLOYMENT.md) separates Git synchronization from HTTP verification.
+The v0.4 journey is unchanged. The engine fixes concern references/amounts and checking a supplied confidence for a match declared as model-based. The 32 tests pass and the 50 development cases produce the expected states (15 drafts). No real model computes that confidence. The [S4 report](../evals/report_v0.md) separates these checks from human quality and time savings; the [publication record](DEPLOYMENT.md) separates Git synchronization from HTTP verification.
+
+## v0.5–v0.6 update · 17 November 2026
+
+The journey is unchanged for the specialist, with three additions from the user test: plain-language status, a verified-facts checklist and source guidance (D08–D10). Recorded actions now pass a server check (FastAPI), so the browser can no longer bypass the rules; the global switch can reduce the assistant to suggestions or turn it off. Still excluded: customer-facing autonomy, actions on funds, live bank/Zendesk connectors. Full specification: [spec.md](../spec.md) v3.

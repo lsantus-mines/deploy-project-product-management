@@ -1,0 +1,3 @@
+# Runtime for the FlowAssist API (Vercel Python function).
+fastapi==0.163.1
+pydantic==2.14.3

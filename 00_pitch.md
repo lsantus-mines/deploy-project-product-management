@@ -1,5 +1,7 @@
 # 00 — Pitch: FlowAssist (Agent-Assist Copilot for B2B Payments)
 
+> **Superseded where it conflicts (17 Nov 2026):** the trust levels, the dual-LLM evaluator and the model choices below are the original S1 proposal. The shipped design is in [spec.md](spec.md) v3: rules with a server authority, person-only sending, no model in the product path.
+
 > Project proposal P2 (B2B payments fintech) adapted for PayFlow B2B. Committed before Session 3. Customer-support copilot for enterprise merchants.
 
 **The company:**  

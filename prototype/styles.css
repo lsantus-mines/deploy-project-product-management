@@ -2194,3 +2194,22 @@ td {
     grid-row: auto;
   }
 }
+
+/* Assistant switch state (global override switch, S7). */
+.assist-mode {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.mode-on {
+  color: var(--done);
+}
+.mode-suggest_only,
+.mode-local {
+  color: var(--wait);
+  background: var(--wait-bg);
+}
+.mode-off {
+  color: var(--stop);
+  background: var(--stop-bg);
+}

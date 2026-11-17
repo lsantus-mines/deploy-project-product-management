@@ -1,0 +1,21 @@
+[project]
+name = "flowassist"
+version = "0.6.0"
+description = "FlowAssist server: payment-tracing copilot guardrails (course project)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+extend-exclude = ["paylio-copilot-demo", "Assignments", "course", "S3_templates", "S4_templates", "evals/*.js"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["E402", "B", "UP", "I"]

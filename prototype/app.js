@@ -54,6 +54,76 @@ const text = (value, limit = 3000) =>
 const duration = (ms) =>
   `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
 const record = () => records.get(current);
+// Server authority (api/index.py). Absent (file:// or the test harness) means
+// local preview: the browser engine alone, shown as such in the banner.
+const S =
+  typeof FlowServer !== "undefined" && FlowServer.enabled ? FlowServer : null;
+let assistMode = "on",
+  serverDown = false;
+const track = (name, props = {}) => S && S.track(name, props);
+function ticketPayload() {
+  const t = tickets.find((x) => x.key === current);
+  return {
+    ticket: {
+      id: t.id,
+      merchant: t.merchant,
+      language: t.language,
+      message: t.message,
+      receivedAt: t.receivedAt,
+      sensitiveInput: !!t.sensitiveInput,
+    },
+    reference: record().reference || "",
+  };
+}
+function segment() {
+  const t = tickets.find((x) => x.key === current);
+  return {
+    language: t.language,
+    plan: analysis && analysis.account ? analysis.account.plan : null,
+    rail: analysis && analysis.transaction ? analysis.transaction.rail : null,
+    state: analysis ? analysis.state : null,
+    gate: analysis ? analysis.gate : null,
+    intent: analysis ? analysis.intent : null,
+    assist_mode: assistMode,
+  };
+}
+function setAssistMode(mode) {
+  assistMode = ["on", "suggest_only", "off"].includes(mode) ? mode : "suggest_only";
+  $("assist-mode").textContent = {
+    on: "Assistant on · you approve every reply",
+    suggest_only: "Assistant in suggest-only mode · drafts cannot be inserted",
+    off: "Assistant paused by operations · handle tickets manually",
+  }[assistMode];
+  $("assist-mode").className = `assist-mode demo-end mode-${assistMode}`;
+}
+function markServerDown(endpoint) {
+  if (serverDown) return;
+  serverDown = true;
+  track("api_unavailable", { endpoint });
+  $("assist-mode").textContent =
+    "Assistant server unavailable · continue manually";
+  $("assist-mode").className = "assist-mode demo-end mode-off";
+  refresh("Assistant server unavailable. Continue manually; nothing was recorded.");
+}
+// Every recorded action passes the server guardrail first.
+function serverGate(kind, body, onAllowed) {
+  if (!S) return onAllowed(null);
+  if (serverDown) {
+    announce("Assistant server unavailable. Continue manually.");
+    return;
+  }
+  const call = kind === "handover" ? S.handover : S.check;
+  call(body)
+    .then(({ status, data }) => {
+      if (status === 200 && data.allowed !== false) return onAllowed(data);
+      const issues = (data.issues || []).join(" ") || `Refused by the server (${status}).`;
+      event("Server guardrail refused", issues);
+      announce(`Not recorded. ${issues}`);
+      if (data.assist_mode) setAssistMode(data.assist_mode);
+      updateApproval();
+    })
+    .catch(() => markServerDown(kind));
+}
 function announce(message) {
   $("status").textContent = message;
 }
@@ -390,6 +460,8 @@ function updateApproval() {
     analysis.state === "draft_ready" &&
     open &&
     !manualMode &&
+    assistMode === "on" &&
+    !serverDown &&
     all &&
     $("review").checked &&
     qa.passed
@@ -402,6 +474,8 @@ function updateApproval() {
     : "draft-check-result check-fail";
   $("review-progress").textContent = manualMode
     ? "Assisted insertion paused."
+    : serverDown || assistMode !== "on"
+      ? "Assisted insertion disabled by the assistant switch. Reply manually."
     : !all
       ? `${inspectedSources.size}/${analysis.sources.length} source records inspected.`
       : !$("review").checked
@@ -429,7 +503,10 @@ function renderSources() {
     b.setAttribute("aria-controls", "source-detail");
     b.setAttribute("aria-expanded", "false");
     b.addEventListener("click", () => {
-      if (!inspectedSources.has(s.id)) event("Source inspected", s.id);
+      if (!inspectedSources.has(s.id)) {
+        event("Source inspected", s.id);
+        track("source_inspected", { ...segment(), source_kind: kind.toLowerCase(), order: inspectedSources.size + 1 });
+      }
       inspectedSources.add(s.id);
       $("source-detail").hidden = false;
       $("source-detail").textContent = `${s.id}\n\n${s.text}`;
@@ -573,6 +650,7 @@ function render(key) {
     r = record(),
     b = r.buffer;
   manualMode = b.manual;
+  track("ticket_opened", segment());
   document.title = `${t.id} · FlowAssist`;
   $("ticket-meta").textContent = `${t.id} · ${t.language}`;
   $("ticket-title").textContent = t.title;
@@ -652,12 +730,16 @@ function refresh(message) {
 function insertDraft() {
   updateApproval();
   if ($("use-draft").disabled) return;
+  serverGate("insert", { ...ticketPayload(), text: $("draft").value, action: "insert" }, applyDraft);
+}
+function applyDraft() {
   $("editor").value = $("draft").value;
   $("final-review").checked = false;
   hideReplacement();
   updateEditor();
   saveTicket();
   event("Reviewed draft inserted", "No message sent.");
+  track("draft_used", segment());
   announce(
     "Reviewed draft placed in your editor. Verify the final reply before recording completion.",
   );
@@ -918,6 +1000,7 @@ $("manual").addEventListener("click", () => {
   manualMode = true;
   $("review").checked = false;
   event("Manual handling selected");
+  track("manual_mode_toggled", { ...segment(), to: "manual" });
   refresh(
     "Manual handling active. Check every final claim before recording a reply.",
   );
@@ -1024,6 +1107,14 @@ $("escalate").addEventListener("click", () => {
 });
 $("record-handover").addEventListener("click", () => {
   if (!pendingPacket) return;
+  serverGate(
+    "handover",
+    { ...ticketPayload(), reason: pendingPacket.reason, note: $("manual-note").value },
+    recordHandover,
+  );
+});
+function recordHandover() {
+  track("handover_recorded", { ...segment(), queue: pendingPacket.queue, reason: pendingPacket.reason });
   record().outcome = "escalated";
   record().receipt = {
     kind: "handover",
@@ -1035,11 +1126,21 @@ $("record-handover").addEventListener("click", () => {
     `${pendingPacket.queue} · ${pendingPacket.reason} · demo only`,
   );
   refresh("Specialist handover recorded. No real queue was contacted.");
-});
+}
 $("record-reply").addEventListener("click", () => {
   updateFinal();
   if ($("record-reply").disabled) return;
+  serverGate("reply", { ...ticketPayload(), text: $("editor").value, action: "reply" }, recordReply);
+});
+function recordReply(verdict) {
   flushClock();
+  track("reply_recorded", {
+    ...segment(),
+    handling_ms: activeTime(current),
+    sources_checked: inspectedSources.size,
+    edited: $("editor").value !== $("draft").value,
+    manual_review: !!(verdict && verdict.manual_review),
+  });
   record().receipt = {
     kind: "reply",
     at: new Date().toISOString(),
@@ -1053,7 +1154,7 @@ $("record-reply").addEventListener("click", () => {
   refresh(
     "Human-reviewed reply recorded and case resolved in the demo. No customer message was sent.",
   );
-});
+}
 ["inbox", "activity", "metrics"].forEach((v) => {
   $(`nav-${v}`).addEventListener("click", () => setView(v));
   $(`mobile-${v}`).addEventListener("click", () => setView(v));
@@ -1266,3 +1367,14 @@ setInterval(() => {
 renderInbox();
 render(tickets.some((t) => t.key === "ready") ? "ready" : tickets[0].key);
 setView("inbox");
+if (S)
+  S.config()
+    .then((c) => {
+      setAssistMode(c.assist_mode);
+      refresh();
+    })
+    .catch(() => markServerDown("config"));
+else {
+  $("assist-mode").textContent = "Local preview · server guardrails not active";
+  $("assist-mode").className = "assist-mode demo-end mode-local";
+}

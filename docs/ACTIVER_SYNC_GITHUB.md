@@ -75,4 +75,4 @@ Ensuite, chaque push sur `main` du dépôt principal déclenche automatiquement 
 
 Au renouvellement, crée un nouveau jeton avec les mêmes droits, remplace la valeur de `DEPLOY_REPO_TOKEN`, puis relance le workflow pour vérifier.
 
-Références : [création des jetons GitHub](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens), [secrets GitHub Actions](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets). Le [guide de déploiement](../prototype/DEPLOYMENT.md) détaille les paramètres Vercel et les contrôles de publication.
+Références : [création des jetons GitHub](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens), [secrets GitHub Actions](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets). Le [guide de déploiement](DEPLOYMENT.md) détaille les paramètres Vercel et les contrôles de publication.

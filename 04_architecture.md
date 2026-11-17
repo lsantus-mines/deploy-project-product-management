@@ -46,16 +46,23 @@ A workflow: every step and branch is written in advance, and no model chooses a 
 - Operational owner of the button: the specialist using the tab. **Accountable owner of the switch: Antoine Rabeau (@antorabo75)**, named on 9 November 2026: owns its scope, its test schedule and the decision to stop assisted drafting for all tickets; in a pilot this role passes to PayFlow Ops.
 - Action: switch the ticket to manual mode; assisted insertion is disabled. Resuming is explicit and resets inspection/approval.
 - Scope: one ticket in one tab. No global server stop.
-- Tested on 9 November 2026 by the automated run `python3 scripts/verify_s3.py`, scenario "manual fallback and resume require a fresh inspection". Not a user test or a visual browser check.
+- Tested on 9 November 2026 by the automated run `python3 scripts/verify/verify_s3.py`, scenario "manual fallback and resume require a fresh inspection". Not a user test or a visual browser check.
 
 ## 7. Data
 - Demo: `prototype/data.js`, entirely fictional public payments/accounts; no training.
-- Evaluation: `evals/eval_set_v0.csv`, 50 AI-proposed labels; executable fixtures in `evals/fixtures_v0.json`. Reviewer 1 (Antoine, 9 Nov) approved all 50 in `label_review.csv`; a second label reviewer is optional (A3 requires labels by hand, not two reviewers).
+- Evaluation: `evals/eval_set_v0.csv`, 50 AI-proposed labels; executable fixtures in `evals/v0/fixtures_v0.json`. Reviewer 1 (Antoine, 9 Nov) approved all 50 in `label_review.csv`; a second label reviewer is optional (A3 requires labels by hand, not two reviewers).
 - F01–F20 were already exposed during development; F21–F50 were labelled before the first run. After analysis and fixes, all 50 are now development cases. They are no longer a held-out set and must be replaced for an independent measurement.
-- Before/after results: `evals/results_baseline_v0.json` and `evals/results_v0.json`, with SHA-256 hashes of the engine and fixtures. Data entered in the app stays in the tab's sessionStorage. See [governance](governance.md#session-4--checkpoints-and-evaluation).
+- Before/after results: `evals/v0/results_baseline_v0.json` and `evals/v0/results_v0.json`, with SHA-256 hashes of the engine and fixtures. Data entered in the app stays in the tab's sessionStorage. See [governance](governance.md#session-4--checkpoints-and-evaluation).
 
 ## 8. Eval result v0
 **Acceptability: grader 1 judged 15/15 drafts sendable without editing; grader 2 pending; business criterion not demonstrated.** The FlowAssist criterion is ≥41.2% active-time saving on 200 eligible cases, QA ≥92%, detection precision ≥98% and zero critical exposures. It is not Paylio's 45% threshold. On the development set: 50/50 matching states, 15/50 automatic drafts; no human quality judgement. See the [report](evals/report_v0.md).
+
+## 8b. Server authority, global switch and trace (v0.6, 17 November 2026)
+- **Where the rules are enforced:** `api/index.py` (FastAPI on Vercel) runs `flowassist/engine.py` on its own fixtures. The browser engine is a preview; insertion, final reply and handover are refused by the server (HTTP 422 with reason codes) when a guardrail fails. API down → the page fails closed to manual handling (incident class "Outage").
+- **Guardrail layers:** input (injection, secrets/IBAN, money/legal/dispute/compliance routing), scope (merchant from the assigned session, unique reference, amount/currency, freshness, source schema), output (money/arrival/legal commitments, invented amounts or references, citations, status upgrade).
+- **Global override switch ⏻:** env `ASSIST_MODE` = `on` / `suggest_only` (L1: drafts visible, not insertable) / `off` (humans only), read by the server on every request; any other value → `suggest_only`. Owner: a role (Head of Payment Ops; on-call engineer at night), see governance S7.
+- **Trace and metrics, local:** one JSON line per request and per product event (allowlisted, no ticket text) in the Vercel logs, and in `metrics/events.jsonl` with `make dev`; `make metrics` builds the report ([tracking plan](docs/TRACKING_PLAN.md)).
+- **Release path:** PR → CI (`make ci`: tests, parity, regression, attack set) → merge → deploy only after green CI → production smoke test. Rollback: revert on `main`, or set `ASSIST_MODE=off` and redeploy.
 
 ## 9. What you would build next
 Have the labels validated and the outputs graded independently by two people.
