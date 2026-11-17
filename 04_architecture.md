@@ -15,8 +15,8 @@ flowchart TD
   D -->|unique identity, valid and fresh sources| E[4 evaluateDraft: claim check]
   D -->|ambiguity or no evidence| H
   E -->|block| H
-  E -->|pass| F[⊘ Inspect every source and approve the draft]
-  F --> G[Editor: ⊘ re-approval after any edit]
+  E -->|pass| F[Design gate: open every source → cited draft pre-filled]
+  F --> G[⊘ Human approval in step 3: re-ticked after any edit]
   G --> I[⊘ Record a local reply or resolve]
   H --> J[⊘ Reason, preview and record the local handover]
   S[⏻ Operator: manual mode for the ticket] --> H
@@ -28,8 +28,8 @@ There is no customer sending, fund movement or real handover. `sourceRecords`, `
 |---|---|---|---|---|---|---|
 | 1 | `classify` | 1 rules, no ML | routing | L1 suggestion | abstention on sensitive intent | Output state; no independent router measurement |
 | 2 | `analyze`: language, account, scope, reference, freshness | 1 rules | routing / chaining | L3 local synthetic read | abstention | 50/50 expected states after the fix, development set |
-| 3 | Extraction, `sourceRecords`, `makeDraft` | 1 rules and templates, no pretrained model | chaining | L2 draft | inspection and approval | 15/50 drafts; 0 foreign sources observed |
-| 4 | `evaluateDraft` and editor validation | 1 rules | chaining | L2 with human decision | approval, then re-approval after edit | 0 drafts on cases labelled human-only; free-text rewording not certified |
+| 3 | Extraction, `sourceRecords`, `makeDraft` | 1 rules and templates, no pretrained model | chaining | L2 draft | design gate: every source opened before the draft is pre-filled | 15/50 drafts; 0 foreign sources observed |
+| 4 | `evaluateDraft` and editor validation | 1 rules | chaining | L2 with human decision | **the one human approval (step 3)**, unticked by any edit; server re-check | 0 drafts on cases labelled human-only; free-text rewording not certified |
 
 L1–L4 are the project's autonomy levels, not a safety certification. The teaching starter uses rungs 2/1/3/1; our implementation is explicitly 1/1/1/1. No model computes a score; F19 supplies a synthetic input score to test abstention.
 

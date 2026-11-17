@@ -1,5 +1,25 @@
 # FlowAssist interface changelog
 
+## v0.8 · one guided flow in three steps · 17 November 2026
+
+> **Status: design hypothesis, not a user finding.** Unlike D08–D10, v0.7 and v0.8 were not tried by users yet. They are retested with 5 users before any pilot; gate: 4 of 5 finish a ticket without help. Automation-bias watch: a pre-filled reply can be approved without reading, so the edit rate and the 7-day reopen rate are tracked as counter-metrics.
+
+- The workspace is rebuilt around three numbered steps in one column: **1 Check the payment** (amount, plain status, open the ledger then the clearing record) → **2 Review the reply** (one editor, pre-filled with the cited draft as soon as both records are opened, verified facts beside it) → **3 Approve & close** (one checkbox, one button). The current step is highlighted; the others are dimmed or ticked.
+- Tickets that can't be drafted show one clear card instead (why, and the reference to ask for) with the specialist handover already open.
+- One editor and **one human approval** instead of two of each. The cited draft is pre-filled after step 1 through the same server-checked insertion; pre-filling is not an approval. The former "I checked the transaction, sources and wording" box is removed rather than ticked by the system: the only human checkpoint for a reply is step 3 ("I checked the facts and the wording" + Approve & close · demo).
+- Demo mode: opening the app with `?demo` (e.g. at the oral) never auto-opens the tour.
+- Secondary features leave the main screen: a **More** menu (new test ticket, tour, keyboard shortcuts, reset) and a folded **Details** panel (account, timeline, why this result, previous tickets, policy, activity, timing, priority, export). The icon rail is replaced by Tickets / Activity / Session tabs.
+- 43 interface tests (3 new: the three-step flow, the blocked-ticket card, writing your own reply). Checked at 1440 px and 375 px (no horizontal overflow). No change to the server or the guardrails.
+
+## v0.7 · guided use · 17 November 2026
+
+> Status: design hypothesis, retested with v0.8 (see above).
+
+- A "Next step" bar under the ticket title always says what to do now (open the ledger, then the clearing record; compare with the verified facts; use the draft; final check; record) and what to do when no draft is possible (ask for a reference, hand over).
+- A five-step guided tour on first visit (inbox, merchant question, evidence, suggested reply, you decide), restartable from "Take the tour" in the top bar; Escape or "Skip tour" closes it.
+- Progressive disclosure: the suggested reply stays dimmed until both sources are opened; the reply box now sits right under the payment summary.
+- Clearer labels: "Your reply to the merchant", "Record reply & close". 41 interface tests (2 new).
+
 ## v0.6 · server authority, global switch, CI · 17 November 2026
 
 - FastAPI server (`api/index.py`, `flowassist/engine.py`) enforces the rules on insertion, final reply and handover; the browser engine stays as the instant preview. Parity test: identical results on 123 cases and 468 draft checks.

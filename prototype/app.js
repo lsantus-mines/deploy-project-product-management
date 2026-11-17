@@ -396,17 +396,63 @@ function updateEditor() {
   $("editor-count").textContent =
     `${$("editor").value.length.toLocaleString("en")} characters`;
   $("editor-state").textContent = $("editor").value.trim()
-    ? "Draft · not sent"
-    : "Not prepared";
+    ? "Ready to review"
+    : "Waiting for step 1";
   $("copy-reply").disabled =
     !$("editor").value.trim() || E.sanitizeInput($("editor").value).flagged;
   updateFinal();
+}
+// Step 1 → step 2: once both records are opened, the cited draft goes into the
+// reply editor through the same server-checked insertion. Pre-filling is not an
+// approval: the only human checkpoint for a reply is step 3 ("I checked the
+// facts and the wording" + Approve & close), ticked by the specialist.
+function maybePrefill() {
+  if (
+    analysis.state === "draft_ready" &&
+    record().outcome === "open" &&
+    allSourcesChecked() &&
+    !$("editor").value.trim() &&
+    !manualMode &&
+    assistMode === "on" &&
+    !serverDown
+  ) {
+    insertDraft();
+  }
 }
 function allSourcesChecked() {
   return (
     analysis.sources.length > 0 &&
     analysis.sources.every((s) => inspectedSources.has(s.id))
   );
+}
+// One sentence that always says what to do now: the main onboarding aid.
+function nextStepText() {
+  const r = record(),
+    editor = $("editor").value.trim();
+  if (r.outcome === "resolved") return "Done. This case is closed — pick the next ticket in your inbox.";
+  if (r.outcome === "escalated") return "Handed over to a specialist. Pick the next ticket in your inbox.";
+  if (r.outcome === "waiting") return "Waiting for the merchant’s reference. Enter it in the assistant when it arrives.";
+  if (serverDown) return "The assistant is unavailable: write your reply manually, then record it.";
+  if (analysis.state === "human_only")
+    return "Hand this ticket to a specialist: choose a reason below, preview, then hand over.";
+  if (analysis.state === "context_only")
+    return analysis.candidates.length > 1 || /reference/i.test(analysis.gate)
+      ? "Ask the merchant for a unique payment reference, or hand the case over with the evidence."
+      : "No draft is possible here. Read the reason in the assistant, then hand the case over.";
+  if (!allSourcesChecked())
+    return inspectedSources.size === 0
+      ? "Step 1 · Open the ledger record, then the clearing record."
+      : "Step 1 · Now open the clearing record.";
+  if (!editor)
+    return manualMode || assistMode !== "on"
+      ? "Step 2 · Write your reply in the box. FlowAssist won’t insert a draft here."
+      : "Step 2 · Preparing the cited reply…";
+  if (!$("final-review").checked)
+    return "Step 2 · Read the reply against the verified facts, then tick “I checked the facts and the wording”.";
+  return "Step 3 · Click “Approve & close · demo”. You send the reply from your support inbox; nothing is sent here.";
+}
+function updateNextStep() {
+  $("next-step-text").textContent = nextStepText();
 }
 function updateFinal() {
   const qa = E.evaluateDraft(analysis, $("editor").value);
@@ -429,6 +475,7 @@ function updateFinal() {
         : qa.critical
           ? qa.issues.join(" ")
           : "Your edits require a manual factual review. Confirm the final review only after checking every claim.";
+  updateNextStep();
 }
 function renderFacts() {
   const box = $("verified-facts");
@@ -463,7 +510,6 @@ function updateApproval() {
     assistMode === "on" &&
     !serverDown &&
     all &&
-    $("review").checked &&
     qa.passed
   );
   $("draft-check-result").textContent = qa.passed
@@ -478,14 +524,13 @@ function updateApproval() {
       ? "Assisted insertion disabled by the assistant switch. Reply manually."
     : !all
       ? `${inspectedSources.size}/${analysis.sources.length} source records inspected.`
-      : !$("review").checked
-        ? "Check the reply and confirm review."
-        : "Ready to place in your editor. Nothing is sent.";
+      : "Ready to place in your editor. Nothing is sent.";
   const phase = !all
     ? "step-evidence"
-    : !$("review").checked
+    : !$("editor").value.trim()
       ? "step-review"
       : "step-reply";
+  $("draft-panel").classList.toggle("locked", analysis.state === "draft_ready" && !all);
   const order = ["step-evidence", "step-review", "step-reply"];
   order.forEach((id, i) => {
     $(id).setAttribute("aria-current", id === phase ? "step" : "false");
@@ -495,7 +540,7 @@ function updateApproval() {
 }
 function renderSources() {
   $("sources").replaceChildren();
-  $("source-count").textContent = `${analysis.sources.length} records`;
+  $("source-count").textContent = `0 of ${analysis.sources.length} opened`;
   analysis.sources.forEach((s) => {
     const [kind, hint] = sourceGuide(s.id);
     const b = node("button");
@@ -519,7 +564,9 @@ function renderSources() {
         node("strong", `✓ ${kind} · ${s.id}`),
         node("span", "Checked", "source-hint"),
       );
+      $("source-count").textContent = `${inspectedSources.size} of ${analysis.sources.length} opened`;
       updateApproval();
+      maybePrefill();
     });
     $("sources").append(b);
   });
@@ -679,17 +726,25 @@ function render(key) {
     analysis.state === "draft_ready" ? "safe" : "safe gate-warning";
   $("blocked").hidden = analysis.state === "draft_ready";
   $("blocked").textContent = analysis.reason;
+  // Answerable tickets get the three steps; the others get one clear card.
+  $("steps").hidden = analysis.state !== "draft_ready";
+  $("blocked-card").hidden = analysis.state === "draft_ready";
+  $("blocked-heading").textContent =
+    analysis.state === "human_only"
+      ? `This request goes to a specialist · ${analysis.queue}`
+      : "FlowAssist needs more information before drafting";
   $("draft").value = b.draft === null ? analysis.draft || "" : b.draft;
   $("draft-panel").hidden =
     analysis.state !== "draft_ready" || manualMode || r.outcome !== "open";
   $("editor").value = b.editor;
   $("manual-note").value = b.note;
   $("reason").value = b.reason;
-  $("review").checked = false;
   $("final-review").checked = false;
   $("manual-state").hidden = !manualMode;
   $("manual").hidden = manualMode || r.outcome !== "open";
   $("handover").open = analysis.state !== "draft_ready";
+  $("handover-title").textContent =
+    analysis.state === "draft_ready" ? "Not sure? Hand over to a specialist" : "Hand over to a specialist";
   $("handover-destination").textContent =
     `Prepare context for ${analysis.queue}. No real queue is contacted.`;
   $("packet").hidden = true;
@@ -952,19 +1007,13 @@ tickets.forEach((t) => {
   }),
 );
 $("search").addEventListener("input", filterTickets);
-$("review").addEventListener("change", () => {
-  hideReplacement();
-  updateApproval();
-});
 $("draft").addEventListener("input", () => {
-  $("review").checked = false;
   hideReplacement();
   updateApproval();
   saveTicket();
 });
 $("restore-draft").addEventListener("click", () => {
   $("draft").value = analysis.draft || "";
-  $("review").checked = false;
   updateApproval();
   saveTicket();
   announce("Original source-backed wording restored. Review again.");
@@ -998,7 +1047,6 @@ $("copy-reply").addEventListener("click", async () => {
 });
 $("manual").addEventListener("click", () => {
   manualMode = true;
-  $("review").checked = false;
   event("Manual handling selected");
   track("manual_mode_toggled", { ...segment(), to: "manual" });
   refresh(
@@ -1295,6 +1343,44 @@ $("reset").addEventListener("click", () => {
   persist();
   announce("Demo reset. All local work, custom cases and receipts cleared.");
 });
+// Guided tour: five steps, shown once per browser, restartable from the top bar.
+const TOUR = [
+  ["ticket-list", "Your inbox", "Tickets assigned to you. Green “Reply ready” means FlowAssist found the payment; amber means a specialist or more information is needed."],
+  ["message", "The merchant’s question", "Start by reading what the merchant asks. The merchant’s account comes from your session, never from the message."],
+  ["step-evidence", "1 · Check the payment", "Open the ledger record, then the clearing record. The coloured status is what the merchant can rely on: “sent to bank” is not “received”."],
+  ["step-review", "2 · Review the reply", "FlowAssist then fills in a reply where every fact is cited and listed under Verified facts. Edit it freely, or write your own."],
+  ["step-reply", "3 · You decide", "Tick the check and approve. FlowAssist never sends anything. Unsure? Hand the ticket to a specialist instead."],
+];
+let tourStep = -1;
+function showTour(i) {
+  (document.querySelectorAll ? Array.from(document.querySelectorAll(".tour-target")) : []).forEach((el) =>
+    el.classList.remove("tour-target"),
+  );
+  tourStep = i;
+  if (i < 0 || i >= TOUR.length) {
+    $("tour").hidden = true;
+    try {
+      localStorage.setItem("flowassist.tour.v1", "done");
+    } catch (_) {}
+    return;
+  }
+  const [target, title, body] = TOUR[i];
+  setView("inbox");
+  $("tour").hidden = false;
+  $("tour-progress").textContent = `Step ${i + 1} of ${TOUR.length}`;
+  $("tour-title").textContent = title;
+  $("tour-body").textContent = body;
+  $("tour-back").disabled = i === 0;
+  $("tour-next").textContent = i === TOUR.length - 1 ? "Start working" : "Next";
+  const el = $(target);
+  const card = el && el.closest ? el.closest(".message-card, .step-card, .ticket-list") || el : el;
+  if (card && card.classList) card.classList.add("tour-target");
+  if (card && card.scrollIntoView) card.scrollIntoView({ block: "center", behavior: "smooth" });
+}
+$("tour-start").addEventListener("click", () => showTour(0));
+$("tour-next").addEventListener("click", () => showTour(tourStep + 1));
+$("tour-back").addEventListener("click", () => showTour(Math.max(0, tourStep - 1)));
+$("tour-skip").addEventListener("click", () => showTour(-1));
 function toggleShortcuts(open) {
   $("shortcut-panel").hidden = !open;
   $("shortcuts").setAttribute("aria-expanded", String(open));
@@ -1307,6 +1393,7 @@ document.addEventListener("keydown", (e) => {
     ["INPUT", "TEXTAREA", "SELECT"].includes(e.target && e.target.tagName) ||
     (e.target && e.target.isContentEditable);
   if (e.key === "Escape") {
+    if (!$("tour").hidden) showTour(-1);
     toggleShortcuts(false);
     hideReplacement();
     $("new-ticket-panel").hidden = true;
@@ -1378,3 +1465,13 @@ else {
   $("assist-mode").textContent = "Local preview · server guardrails not active";
   $("assist-mode").className = "assist-mode demo-end mode-local";
 }
+// Auto-open once per browser, except in demo mode (…/?demo), e.g. at the oral.
+try {
+  const demoMode = typeof location !== "undefined" && /[?&]demo\b/.test(location.search);
+  if (!demoMode && typeof localStorage !== "undefined" && !localStorage.getItem("flowassist.tour.v1"))
+    setTimeout(() => showTour(0), 600);
+} catch (_) {}
+// Close the More menu once an item is chosen (delegated: items keep their own handlers).
+$("more-menu").addEventListener("click", (e) => {
+  if (e.target && e.target.closest && e.target.closest(".menu-item")) $("more-menu").open = false;
+});

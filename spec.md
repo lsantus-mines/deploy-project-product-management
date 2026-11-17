@@ -111,8 +111,9 @@ Attack set: `evals/adversarial_v0.csv` (30 OWASP-style rows: LLM01, LLM02, LLM06
 ## 6. Interface and state machine (S3–S4, shipped)
 
 - **Ticket states.** `draft_ready | context_only | human_only`. A ticket's lifecycle is `open → waiting | escalated | resolved`, and reopening resets inspection and approval.
-- **Using a draft** requires `draft_ready`, every source inspected, the review box ticked, the switch `on`, the API reachable **and** a server `check(insert)` that passes.
-- **Recording a reply** requires the final human review and a server `check(reply)` that is not critical. Any edit invalidates approval.
+- **Pre-filling the reply** (v0.8) happens once every source is inspected, with the switch `on`, the API reachable **and** a server `check(insert)` that passes. It is not an approval and is never recorded as one.
+- **Recording a reply** requires **the only human checkpoint for a reply**: the specialist ticks "I checked the facts and the wording" (step 3), then a server `check(reply)` that is not critical. Any edit unticks it.
+- **Automation bias:** a pre-filled reply can be approved without reading; the edit rate (`edited` on `reply_recorded`) and the 7-day reopen rate are its counter-metrics (§8).
 - **Handover** requires a reason, a refreshed preview and a server `handover`. The packet contains only authorized sources.
 - **User-driven changes** (`03_user_research.md`):
 

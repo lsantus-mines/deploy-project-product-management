@@ -58,43 +58,7 @@
       </symbol>
     </svg>
     <div class="app-shell">
-      <aside class="brand-rail" aria-label="Workspace">
-        <a
-          class="brand-mark"
-          href="#workspace"
-          aria-label="FlowAssist workspace"
-          >f<span>.</span></a
-        >
-        <div class="rail-rule"></div>
-        <button
-          id="nav-inbox"
-          class="rail-active rail-button"
-          aria-label="Ticket workspace"
-          aria-pressed="true"
-        >
-          <svg class="icon" aria-hidden="true"><use href="#i-inbox" /></svg>
-        </button>
-        <button
-          id="nav-activity"
-          class="rail-button"
-          aria-label="Activity and audit trail"
-          aria-pressed="false"
-        >
-          <svg class="icon" aria-hidden="true"><use href="#i-file" /></svg>
-        </button>
-        <button
-          id="nav-metrics"
-          class="rail-button"
-          aria-label="Session metrics"
-          aria-pressed="false"
-        >
-          <svg class="icon" aria-hidden="true"><use href="#i-check" /></svg>
-        </button>
-        <div class="rail-bottom">
-          <span class="rail-label">PAYFLOW</span
-          ><span class="avatar" title="Karim · Tier-1 specialist">KA</span>
-        </div>
-      </aside>
+
 
       <aside class="inbox" aria-label="Assigned ticket inbox">
         <div class="inbox-brand">
@@ -152,22 +116,24 @@
             <strong id="view-label">Assigned inbox</strong>
           </div>
           <div class="header-actions">
-            <button id="new-ticket" class="secondary-button">
-              + New ticket</button
-            ><button
-              id="shortcuts"
-              class="icon-button"
-              aria-label="Keyboard shortcuts"
-              aria-expanded="false"
-              aria-controls="shortcut-panel"
-            >
-              <svg class="icon" aria-hidden="true">
-                <use href="#i-key" />
-              </svg></button
-            ><button id="reset" class="quiet-button">Reset demo</button
-            ><span class="operator"
-              ><span class="avatar small-avatar">KA</span> Karim</span
-            >
+            <button id="nav-inbox" class="nav-tab rail-active" aria-pressed="true">Tickets</button
+            ><button id="nav-activity" class="nav-tab" aria-pressed="false">Activity</button
+            ><button id="nav-metrics" class="nav-tab" aria-pressed="false">Session</button>
+            <details id="more-menu" class="more-menu">
+              <summary>More</summary>
+              <div class="menu-list">
+                <button id="new-ticket" class="menu-item">New test ticket</button
+                ><button id="tour-start" class="menu-item">Take the tour</button
+                ><button
+                  id="shortcuts"
+                  class="menu-item"
+                  aria-expanded="false"
+                  aria-controls="shortcut-panel"
+                >Keyboard shortcuts</button
+                ><button id="reset" class="menu-item">Reset demo</button>
+              </div>
+            </details>
+            <span class="operator"><span class="avatar small-avatar">KA</span> Karim</span>
           </div>
         </header>
         <div id="shortcut-panel" class="shortcut-panel" hidden>
@@ -263,346 +229,210 @@
               <p id="merchant" class="merchant-line"></p>
             </div>
             <div class="ticket-controls">
-              <span id="work-clock" class="subtle-tag">0:00 active</span
-              ><button id="pause-timer" class="quiet-button">
-                Pause timing</button
-              ><label class="sr-only" for="priority">Ticket priority</label
-              ><select id="priority" aria-label="Ticket priority">
-                <option>Normal</option>
-                <option>High</option></select
+              <div id="gate" class="safe"></div
               ><button id="reopen" class="secondary-button" hidden>
-                Reopen case</button
-              ><span class="assignee"
-                ><span class="avatar small-avatar">KA</span
-                ><span>Owner<strong>Karim · Tier 1</strong></span></span
-              >
+                Reopen case
+              </button>
             </div>
           </div>
-          <div class="work-grid">
+          <div id="next-step" class="next-step" role="status" aria-live="polite">
+            <span class="next-label">Next step</span>
+            <p id="next-step-text">Open a ticket to start.</p>
+          </div>
+          <div class="flow-col">
             <article class="message-card">
-              <div class="section-top">
-                <span class="eyebrow">Merchant message</span
-                ><span id="message-language" class="subtle-tag"></span>
-              </div>
               <div class="sender">
-                <span id="sender-avatar" class="merchant-avatar large-avatar"
-                  >A</span
-                >
+                <span id="sender-avatar" class="merchant-avatar large-avatar">A</span>
                 <div>
                   <strong id="sender-name">Alpha finance team</strong
-                  ><span>Merchant support request</span>
+                  ><span>asks <span id="message-language" class="subtle-tag"></span></span>
                 </div>
               </div>
               <p id="message" class="message-body"></p>
-              <div class="message-foot">
-                <svg class="icon" aria-hidden="true">
-                  <use href="#i-shield" />
-                </svg>
-                Merchant scope comes from the assigned session
-              </div>
             </article>
-            <section
-              id="summary-panel"
-              class="payment-card"
-              aria-label="Payment summary"
-            >
-              <div class="section-top">
-                <h3>Payment at a glance</h3>
-                <span class="subtle-tag">Source-backed</span>
-              </div>
-              <div class="payment-amount">
-                <strong id="payment-amount"></strong
-                ><span id="payment-status" class="ticket-label"></span>
-              </div>
-              <div class="payment-fields">
-                <div>
-                  <span>Transaction</span
-                  ><strong id="payment-reference"></strong>
-                </div>
-                <div>
-                  <span>Merchant reference</span
-                  ><strong id="invoice-reference"></strong>
-                </div>
-              </div>
-              <ol id="payment-timeline" class="payment-timeline"></ol>
-              <p id="snapshot-note" class="snapshot-note"></p>
-            </section>
 
-
-            <aside class="copilot" aria-label="FlowAssist evidence and draft">
-              <div class="copilot-heading">
-                <span class="assistant-mark"
-                  ><svg class="icon" aria-hidden="true">
-                    <use href="#i-shield" /></svg
-                ></span>
-                <div>
-                  <h3>Investigation assistant</h3>
-                  <span>Evidence first. You stay in control.</span>
-                </div>
-                <span class="subtle-tag" title="Trust level L2: it drafts, you approve"
-                  >You approve</span
-                >
-              </div>
-              <ol class="review-steps" aria-label="Reply preparation progress">
-                <li id="step-evidence" aria-current="step">
-                  <span>1</span> Check sources
-                </li>
-                <li id="step-review"><span>2</span> Review</li>
-                <li id="step-reply"><span>3</span> Prepare reply</li>
-              </ol>
-              <div id="gate" class="safe"></div>
-              <p class="engine-caption">Rules-based checks · demo data</p>
-              <details id="check-details" class="check-details">
-                <summary>Why this result?</summary>
-                <div id="analysis-checks"></div>
-              </details>
+            <section id="blocked-card" class="step-card blocked-card" hidden aria-labelledby="blocked-heading">
+              <h3 id="blocked-heading">No reply can be drafted for this ticket</h3>
               <div id="blocked" class="warning" hidden></div>
               <section id="reference-panel" class="reference-panel" hidden>
-                <h4>Confirm the merchant’s reference</h4>
+                <h4>Ask the merchant for a unique reference</h4>
                 <p class="section-description">
-                  Use the unique reference supplied by the merchant. Never
-                  select a payment by amount alone.
+                  Enter the reference the merchant gave you. A payment is never
+                  chosen by its amount alone.
                 </p>
-                <label for="confirmed-reference" class="sr-only"
-                  >Merchant-confirmed reference</label
-                ><input
-                  id="confirmed-reference"
-                  placeholder="e.g. INV-A"
-                  maxlength="60"
-                /><label class="review-label"
+                <label for="confirmed-reference" class="sr-only">Merchant-confirmed reference</label
+                ><input id="confirmed-reference" placeholder="e.g. INV-A" maxlength="60" /><label
+                  class="review-label"
                   ><input id="reference-confirmed" type="checkbox" /><span
-                    >The merchant supplied this reference.</span
+                    >The merchant gave me this reference.</span
                   ></label
                 >
                 <div class="toolbar">
-                  <button id="resolve-reference" class="secondary-button">
-                    Verify reference</button
-                  ><button id="wait-reference" class="quiet-button">
-                    Await merchant
-                  </button>
+                  <button id="resolve-reference" class="primary-button">Find the payment</button
+                  ><button id="wait-reference" class="quiet-button">Wait for the merchant</button>
                 </div>
               </section>
-              <section
-                class="evidence-section"
-                aria-labelledby="evidence-heading"
-              >
-                <div class="section-top">
-                  <h4 id="evidence-heading">Supporting evidence</h4>
-                  <span id="source-count" class="muted"></span>
+            </section>
+
+            <ol id="steps" class="steps" aria-label="Three steps to answer">
+              <li id="step-evidence" class="step-card" aria-current="step">
+                <div class="step-head">
+                  <span class="step-num">1</span>
+                  <div>
+                    <h3>Check the payment</h3>
+                    <p class="step-hint">Open both records: what the merchant can rely on is the status.</p>
+                  </div>
+                  <span id="source-count" class="step-badge"></span>
                 </div>
-                <p class="section-description">
-                  Open each record to check the facts.
-                </p>
+                <section id="summary-panel" class="payment-card" aria-label="Payment summary">
+                  <div class="payment-amount">
+                    <strong id="payment-amount"></strong
+                    ><span id="payment-status" class="ticket-label"></span>
+                  </div>
+                  <div class="payment-fields">
+                    <div><span>Transaction</span><strong id="payment-reference"></strong></div>
+                    <div><span>Merchant reference</span><strong id="invoice-reference"></strong></div>
+                  </div>
+                </section>
                 <div id="sources" class="sources"></div>
-                <div
-                  id="source-detail"
-                  class="source-detail"
-                  tabindex="0"
-                  aria-label="Selected source record"
-                  hidden
-                ></div>
-              </section>
-              <section
-                id="draft-panel"
-                class="draft-card"
-                aria-labelledby="draft-heading"
-              >
-                <div class="section-top">
-                  <h4 id="draft-heading">Suggested reply</h4>
-                  <span class="draft-label">Source-backed draft</span>
+                <div id="source-detail" class="source-detail" tabindex="0" aria-label="Selected source record" hidden></div>
+              </li>
+              <li id="step-review" class="step-card">
+                <div class="step-head">
+                  <span class="step-num">2</span>
+                  <div>
+                    <h3>Review the reply</h3>
+                    <p class="step-hint">FlowAssist pre-fills a cited reply. Edit it freely, or write your own.</p>
+                  </div>
+                  <span id="editor-state" class="step-badge">Not prepared</span>
                 </div>
                 <div id="verified-facts" class="facts" hidden></div>
-                <label for="draft" class="sr-only">Cited internal draft</label
-                ><textarea id="draft" spellcheck="true"></textarea>
-                <p
-                  id="draft-check-result"
-                  class="draft-check-result"
-                  role="status"
-                ></p>
-                <button id="restore-draft" class="quiet-button">
-                  Restore source-backed wording
-                </button>
-                <div class="citation-note">
-                  <svg class="icon" aria-hidden="true">
-                    <use href="#i-file" />
-                  </svg>
-                  Citations stay attached to the suggested reply.
+                <label for="editor" class="sr-only">Your reply to the merchant</label
+                ><textarea
+                  id="editor"
+                  placeholder="Open both records in step 1 and the cited reply appears here. You can also write your own."
+                  spellcheck="true"
+                ></textarea>
+                <div class="editor-meta">
+                  <span id="editor-count">0 characters</span
+                  ><button id="manual" class="link-button">Write my own reply instead</button>
                 </div>
-                <label class="review-label"
-                  ><input id="review" type="checkbox" /><span
-                    >I checked the transaction, sources and wording.</span
-                  ></label
-                ><button class="primary-button" id="use-draft" disabled>
-                  Use draft in editor
-                  <svg class="icon" aria-hidden="true">
-                    <use href="#i-arrow" />
-                  </svg>
-                </button>
-                <p
-                  id="review-progress"
-                  class="review-progress"
-                  role="status"
-                ></p>
-                <div id="replace-confirm" class="replace-confirm" hidden>
-                  <p>
-                    Your editor already contains a reply. Replace it with this
-                    suggestion?
-                  </p>
+                <div id="manual-state" class="manual-state" hidden>
+                  <strong>You’re writing this reply yourself.</strong>
+                  <p>FlowAssist won’t insert its draft for this ticket.</p>
+                  <button id="resume" class="secondary-button">Use FlowAssist’s draft again</button>
+                </div>
+                <p id="final-check-result" class="check-line"></p>
+              </li>
+              <li id="step-reply" class="step-card">
+                <div class="step-head">
+                  <span class="step-num">3</span>
                   <div>
-                    <button id="cancel-replace" class="secondary-button">
-                      Keep my reply</button
-                    ><button id="confirm-replace" class="secondary-button">
-                      Replace reply
-                    </button>
+                    <h3>Approve &amp; close</h3>
+                    <p class="step-hint">You send the reply from your support inbox. FlowAssist never sends anything.</p>
                   </div>
                 </div>
-              </section>
-              <div id="manual-state" class="manual-state" hidden>
-                <strong>You’re handling this manually.</strong>
-                <p>
-                  Write in the reply editor. The assistant’s insertion is paused
-                  for this ticket.
-                </p>
-                <button id="resume" class="secondary-button">
-                  Resume assisted review
-                </button>
-              </div>
-              <details id="handover" class="handover">
-                <summary>
-                  <span
-                    ><svg class="icon" aria-hidden="true">
-                      <use href="#i-arrow" />
-                    </svg>
-                    Hand over to a specialist</span
-                  ><span class="summary-plus" aria-hidden="true">+</span>
-                </summary>
-                <div class="handover-body">
-                  <p id="handover-destination" class="section-description">
-                    Prepare context for Tier-2 payments.
-                  </p>
-                  <label for="reason">Handover reason</label
-                  ><select id="reason">
-                    <option value="">Select a reason</option>
-                    <option>Ambiguous transaction</option>
-                    <option>Compliance / sensitive request</option>
-                    <option>Access or evidence unavailable</option>
-                    <option>Other — see agent note</option></select
-                  ><label for="manual-note"
-                    >Agent note
-                    <span class="muted"
-                      >· optional, required for Other</span
-                    ></label
-                  ><textarea
-                    id="manual-note"
-                    placeholder="What does the next specialist need to know? No credentials or personal banking data."
-                  ></textarea
-                  ><button id="escalate" class="secondary-button full-width">
-                    Prepare handover
-                    <svg class="icon" aria-hidden="true">
-                      <use href="#i-arrow" />
-                    </svg>
-                  </button>
-                  <div id="packet" class="packet" tabindex="0" hidden></div>
-                  <button
-                    id="record-handover"
-                    class="secondary-button full-width"
-                    hidden
-                  >
-                    Record specialist handover · demo
-                  </button>
-                </div>
-              </details>
-              <button id="manual" class="manual-button">
-                Continue manually <span aria-hidden="true">↗</span>
-              </button>
-              <div class="trust-note">
-                <svg class="icon" aria-hidden="true">
-                  <use href="#i-shield" /></svg
-                ><span
-                  >Read-only evidence. Human approval.<br />No messages sent or
-                  money moved.</span
-                >
-              </div>
-            </aside>
-
-            <section class="account-card" aria-labelledby="account-heading">
-              <div class="section-top">
-                <h3 id="account-heading">Account &amp; prior context</h3>
-                <span class="subtle-tag">Assigned merchant only</span>
-              </div>
-              <div id="account-context" class="account-context"></div>
-              <details>
-                <summary>Relevant previous tickets</summary>
-                <div id="past-tickets"></div>
-              </details>
-              <details>
-                <summary>Policy reference</summary>
-                <div id="policy-context"></div>
-              </details>
-            </section>
-            <section class="reply-card" aria-labelledby="reply-heading">
-              <div class="section-top">
-                <h3 id="reply-heading">Your reply</h3>
-                <span id="editor-state" class="subtle-tag">Not prepared</span>
-              </div>
-              <p class="section-description">
-                Review the cited suggestion, or write your own response.
-              </p>
-              <label for="editor" class="sr-only">Your reply</label
-              ><textarea
-                id="editor"
-                placeholder="Your reviewed reply will appear here. You can also write a response manually."
-                spellcheck="true"
-              ></textarea>
-              <div class="editor-meta">
-                <span id="editor-count">0 characters</span
-                ><span>Saved in this tab only</span>
-              </div>
-              <div class="reply-actions">
-                <button id="copy-reply" class="secondary-button" disabled>
-                  <svg class="icon" aria-hidden="true">
-                    <use href="#i-copy" />
-                  </svg>
-                  Copy reply</button
-                ><span class="send-note"
-                  >Sending stays in your support inbox.</span
-                >
-              </div>
-              <div class="final-review">
-                <label class="review-label"
+                <label class="review-label approve-check"
                   ><input id="final-review" type="checkbox" /><span
-                    >I verified this final reply, its evidence and intended
-                    recipient.</span
+                    >I checked the facts and the wording.</span
                   ></label
                 >
-                <p id="final-check-result" class="section-description"></p>
-                <button id="record-reply" class="primary-button" disabled>
-                  Record human reply &amp; close · demo
-                  <svg class="icon" aria-hidden="true">
-                    <use href="#i-check" />
-                  </svg></button
-                ><small
-                  >No message is sent. This records completion in the
-                  demo.</small
-                >
+                <div class="approve-actions">
+                  <button id="record-reply" class="primary-button" disabled>
+                    Approve &amp; close · demo
+                    <svg class="icon" aria-hidden="true"><use href="#i-check" /></svg></button
+                  ><button id="copy-reply" class="secondary-button" disabled>
+                    <svg class="icon" aria-hidden="true"><use href="#i-copy" /></svg>
+                    Copy reply
+                  </button>
+                </div>
+              </li>
+            </ol>
+
+            <details id="handover" class="handover step-card">
+              <summary>
+                <span id="handover-title">Not sure? Hand over to a specialist</span
+                ><span class="summary-plus" aria-hidden="true">+</span>
+              </summary>
+              <div class="handover-body">
+                <p id="handover-destination" class="section-description">Prepare context for Tier-2 payments.</p>
+                <label for="reason">Why are you handing it over?</label
+                ><select id="reason">
+                  <option value="">Select a reason</option>
+                  <option>Ambiguous transaction</option>
+                  <option>Compliance / sensitive request</option>
+                  <option>Access or evidence unavailable</option>
+                  <option>Other — see agent note</option></select
+                ><label for="manual-note">Note for the specialist <span class="muted">· optional, required for Other</span></label
+                ><textarea
+                  id="manual-note"
+                  placeholder="What does the next specialist need to know? No credentials or personal banking data."
+                ></textarea
+                ><button id="escalate" class="secondary-button full-width">Preview the handover</button>
+                <div id="packet" class="packet" tabindex="0" hidden></div>
+                <button id="record-handover" class="primary-button full-width" hidden>Hand over</button>
               </div>
-            </section>
-            <section class="case-history">
-              <div class="section-top">
-                <h3>Case activity</h3>
-                <button id="export-case" class="quiet-button">
-                  Export receipt
-                </button>
+            </details>
+
+            <details class="more-details">
+              <summary>Details · account, timeline, policy, activity</summary>
+              <div class="details-grid">
+                <section aria-labelledby="account-heading">
+                  <h4 id="account-heading">Account</h4>
+                  <div id="account-context" class="account-context"></div>
+                  <h4>Payment timeline</h4>
+                  <ol id="payment-timeline" class="payment-timeline"></ol>
+                  <p id="snapshot-note" class="snapshot-note"></p>
+                </section>
+                <section>
+                  <h4>Why this result</h4>
+                  <details id="check-details" class="check-details" open>
+                    <summary>Checks run by FlowAssist</summary>
+                    <div id="analysis-checks"></div>
+                  </details>
+                  <p class="engine-caption">Rules-based checks · demo data</p>
+                  <h4>Previous tickets</h4>
+                  <div id="past-tickets"></div>
+                  <h4>Policy</h4>
+                  <div id="policy-context"></div>
+                </section>
+                <section class="case-history">
+                  <div class="section-top">
+                    <h4>Activity</h4>
+                    <button id="export-case" class="quiet-button">Export receipt</button>
+                  </div>
+                  <div id="case-events"></div>
+                  <div class="timing-row">
+                    <span id="work-clock" class="subtle-tag">0:00 active</span
+                    ><button id="pause-timer" class="quiet-button">Pause timing</button
+                    ><label class="sr-only" for="priority">Ticket priority</label
+                    ><select id="priority" aria-label="Ticket priority">
+                      <option>Normal</option>
+                      <option>High</option>
+                    </select>
+                  </div>
+                </section>
               </div>
-              <div id="case-events"></div>
-            </section>
-            <div
-              id="status"
-              class="status"
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-            ></div>
+            </details>
+
+            <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
+
+            <!-- Driven by the logic, not shown: the cited draft and its review state.
+                 The draft is inserted into the reply editor automatically once both
+                 records are opened (step 1 → step 2). -->
+            <div class="legacy" hidden>
+              <section id="draft-panel" class="draft-card">
+                <textarea id="draft" aria-label="Cited draft"></textarea>
+                <p id="draft-check-result" class="draft-check-result" role="status"></p>
+                <button id="restore-draft" class="quiet-button">Restore source-backed wording</button>
+                <button class="primary-button" id="use-draft" disabled>Use draft in editor</button>
+                <p id="review-progress" class="review-progress" role="status"></p>
+                <div id="replace-confirm" class="replace-confirm" hidden>
+                  <button id="cancel-replace" class="secondary-button">Keep my reply</button
+                  ><button id="confirm-replace" class="secondary-button">Replace reply</button>
+                </div>
+              </section>
+            </div>
           </div>
         </section>
         <section id="activity-view" class="overview-view" hidden>
@@ -685,5 +515,15 @@
         </section>
       </main>
     </div>
-  </body>
+      <div id="tour" class="tour" role="dialog" aria-labelledby="tour-title" hidden>
+      <p id="tour-progress" class="tour-progress"></p>
+      <h3 id="tour-title"></h3>
+      <p id="tour-body"></p>
+      <div class="tour-actions">
+        <button id="tour-skip" class="quiet-button">Skip tour</button
+        ><button id="tour-back" class="secondary-button">Back</button
+        ><button id="tour-next" class="primary-button">Next</button>
+      </div>
+    </div>
+</body>
 </html>

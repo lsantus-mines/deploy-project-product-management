@@ -95,15 +95,16 @@ The engine filters public fixtures by assigned merchant, requires a unique refer
 | Checkpoint ⊘ | Kind | Owner and effect |
 |---|---|---|
 | Sensitive intent, unknown language, missing/ambiguous/stale or inconsistent evidence | Abstention | The engine blocks; the specialist decides on the investigation |
-| Payment sources | Approval | The specialist inspects every source, then approves the draft |
-| Insertion and editing | Approval | Any edit invalidates the approval; factual check and final approval required |
-| Reply / resolution | Approval | The specialist records a local action only; no customer sending |
+| Payment sources | Design gate | Every source must be opened before anything is drafted into the reply (v0.8: the cited draft is then pre-filled; pre-filling is not an approval) |
+| Reply / resolution | **Approval — the one human checkpoint for a reply** | The specialist ticks "I checked the facts and the wording" and clicks Approve & close · demo; any edit unticks it; the server re-checks the text; local record only, no customer sending |
 | Handover | Approval | Reason required, refreshed preview, explicit recording; no real queue contacted |
 | Evaluation before a pilot | Exhaustive review | Two independent people; label reviewer and grader 1: Antoine Rabeau (9 Nov); grader 2 pending; a second label reviewer is optional (A3 requires labels by hand, not two reviewers); all 50 labels and outputs reviewed; not mere sampling |
 
 **⏻ Owner and scope:** each specialist can switch their ticket to manual mode in their tab. Assisted insertion is then disabled; resuming resets inspection and approval. The automated scenario "manual fallback and resume require a fresh inspection" passed on 9 November 2026; this is not a test attested by Ops. No global stop exists yet. **Accountable owner of the switch: Antoine Rabeau (@antorabo75)**, named on 9 November 2026; he owns the scope, reruns the switch test after every engine change, and must build and test a global server-side stop before any pilot, when ownership passes to PayFlow Ops.
 
 **Storage and access:** `evals/eval_set_v0.csv`, `fixtures_v0.json`, the JSON results and the CSV grids are versioned in the repository: visible to anyone with access to the repository and potentially to its publication copy. No customer data may enter them. App drafts and notes live in the tab's sessionStorage, with an in-memory fallback; this is neither secure storage nor an immutable journal. Known secret patterns are masked, with no general guarantee of personal-data detection.
+
+**Single human approval (17 Nov 2026, PR #3 review).** The earlier draft-review checkbox was removed rather than ticked by the system: a checkpoint is set by the design and validated by a person. Automation-bias watch: edit rate and 7-day reopen rate are counter-metrics for `05_metrics.md`.
 
 **Evaluation integrity:** labels for F21–F50 were AI-proposed before the run; the F01–F20 seed was already exposed. After review and fixes, all 50 became development cases. Do not reuse this set for an independent claim. Human graders must fill in `label_review.csv` and `grader_reviews.csv` themselves; no identity, approval or timing is invented. F19 is fixed: a model score of 0.94 forces abstention; source notes play no part in generation. No real model is evaluated. Code and fixture hashes are in the results. See `evals/report_v0.md`.
 

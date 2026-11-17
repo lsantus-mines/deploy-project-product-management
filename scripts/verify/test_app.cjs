@@ -298,36 +298,35 @@ function workspace(initialStorage, server) {
     events: documentEvents,
   };
 }
+// Opening both records is step 1; the cited draft is then pre-filled
+// automatically (not an approval: the human checkpoint is final-review).
 function review(w) {
   w.get("sources").children.forEach((b) => b.click());
-  w.get("review").checked = true;
-  w.get("review").fire("change");
 }
 function insert(w) {
   review(w);
-  w.get("use-draft").click();
+  if (!w.get("editor").value) w.get("use-draft").click();
 }
 function type(w, id, value) {
   w.get(id).value = value;
   w.get(id).fire("input");
 }
 
-test("workspace initial safety, source review and insertion", () => {
+test("workspace initial safety, source inspection and automatic pre-fill", () => {
   const w = workspace();
   assert(w.get("use-draft").disabled);
-  w.get("review").checked = true;
-  w.get("review").fire("change");
   w.get("sources").children[0].click();
   assert(w.get("use-draft").disabled);
+  assert.equal(w.get("editor").value, "");
   w.get("sources").children[1].click();
-  assert(!w.get("use-draft").disabled);
-  w.get("use-draft").click();
   assert(
     w.get("editor").value.includes("Beneficiary credit is not yet confirmed"),
   );
+  // Pre-filling never approves: the specialist's final check is still required.
+  assert(!w.get("final-review").checked);
   assert(w.get("record-reply").disabled);
 });
-test("unsafe edited suggestion is blocked and restore requires approval again", () => {
+test("unsafe edited suggestion is blocked and the human approval stays required", () => {
   const w = workspace();
   review(w);
   type(
@@ -335,12 +334,11 @@ test("unsafe edited suggestion is blocked and restore requires approval again", 
     "draft",
     w.get("draft").value.replace("EUR 1,240.00", "EUR 9,999.00"),
   );
-  w.get("review").checked = true;
-  w.get("review").fire("change");
   assert(w.get("use-draft").disabled);
   w.get("restore-draft").click();
-  assert(!w.get("review").checked);
-  assert(w.get("use-draft").disabled);
+  assert(!w.get("use-draft").disabled);
+  assert(!w.get("final-review").checked);
+  assert(w.get("record-reply").disabled);
 });
 test("reply replacement is explicit and final approval resets on edit", () => {
   const w = workspace();
@@ -370,7 +368,6 @@ test("ticket and merchant buffers never share source approval or text", () => {
   w.run("render('ready')");
   assert.equal(w.get("editor").value, "Alpha only");
   assert.equal(w.run("inspectedSources.size"), 0);
-  assert(!w.get("review").checked);
   assert(w.get("use-draft").disabled);
 });
 test("manual fallback and resume require a fresh inspection", () => {
@@ -720,9 +717,6 @@ function fakeServer({ mode = "on", check = { status: 200, data: { allowed: true,
 }
 function reviewAndInsert(w) {
   w.get("sources").children.forEach((b) => b.click());
-  w.get("review").checked = true;
-  w.get("review").fire("change");
-  w.get("use-draft").click();
 }
 test("server refusal keeps the case open and records why", async () => {
   const server = fakeServer({ check: { status: 422, data: { allowed: false, issues: ["Unsupported promise, money action or legal claim."] } } });
@@ -754,9 +748,8 @@ test("suggest-only mode from the global switch disables insertion", async () => 
   const w = workspace(undefined, fakeServer({ mode: "suggest_only" }));
   await settle();
   w.get("sources").children.forEach((b) => b.click());
-  w.get("review").checked = true;
-  w.get("review").fire("change");
   assert(w.get("use-draft").disabled);
+  assert.equal(w.get("editor").value, "", "no pre-fill when insertion is disabled");
   assert(w.get("assist-mode").textContent.includes("suggest-only"));
 });
 test("server outage fails closed to manual handling", async () => {
@@ -764,11 +757,62 @@ test("server outage fails closed to manual handling", async () => {
   await settle();
   assert(w.get("assist-mode").textContent.includes("unavailable"));
   w.get("sources").children.forEach((b) => b.click());
-  w.get("review").checked = true;
-  w.get("review").fire("change");
   assert(w.get("use-draft").disabled);
+  assert.equal(w.get("editor").value, "", "no pre-fill when insertion is disabled");
 });
 test("without a server the page says it is a local preview", () => {
   const w = workspace();
   assert(w.get("assist-mode").textContent.includes("Local preview"));
+});
+test("three steps: open both records, the cited reply appears, the person approves", () => {
+  const w = workspace();
+  const next = () => w.get("next-step-text").textContent;
+  assert(!w.get("steps").hidden);
+  assert(w.get("blocked-card").hidden);
+  assert.match(next(), /Step 1 · Open the ledger record, then the clearing record/);
+  assert.equal(w.get("editor").value, "");
+  w.get("sources").children[0].click();
+  assert.match(next(), /Step 1 · Now open the clearing record/);
+  assert.equal(w.get("editor").value, "", "no reply before both records are opened");
+  w.get("sources").children[1].click();
+  assert.equal(w.get("editor").value, w.get("draft").value, "cited reply pre-filled after step 1");
+  assert.match(w.get("source-count").textContent, /2 of 2 opened/);
+  assert.match(next(), /Step 2 · Read the reply/);
+  assert(w.get("record-reply").disabled, "approval still required");
+  w.get("final-review").checked = true;
+  w.get("final-review").fire("change");
+  assert.match(next(), /Step 3 · Click “Approve & close · demo”/);
+  w.get("record-reply").click();
+  assert.equal(w.run("record().outcome"), "resolved");
+  assert.match(next(), /Done/);
+});
+test("a ticket that can't be drafted shows one clear card with the handover open", () => {
+  const w = workspace();
+  w.run('render("dispute")');
+  assert(w.get("steps").hidden);
+  assert(!w.get("blocked-card").hidden);
+  assert(w.get("handover").open);
+  assert.match(w.get("blocked-heading").textContent, /specialist/);
+  assert.match(w.get("next-step-text").textContent, /Hand this ticket to a specialist/);
+});
+test("writing your own reply stops the automatic pre-fill", () => {
+  const w = workspace();
+  w.get("manual").click();
+  w.get("sources").children.forEach((b) => b.click());
+  assert.equal(w.get("editor").value, "");
+  assert.match(w.get("next-step-text").textContent, /Write your reply/);
+});
+test("the tour walks five steps and can be skipped", () => {
+  const w = workspace();
+  assert(w.get("tour").hidden);
+  w.get("tour-start").click();
+  assert(!w.get("tour").hidden);
+  assert.equal(w.get("tour-progress").textContent, "Step 1 of 5");
+  for (let i = 0; i < 4; i++) w.get("tour-next").click();
+  assert.equal(w.get("tour-next").textContent, "Start working");
+  w.get("tour-next").click();
+  assert(w.get("tour").hidden);
+  w.get("tour-start").click();
+  w.get("tour-skip").click();
+  assert(w.get("tour").hidden);
 });
