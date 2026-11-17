@@ -3,6 +3,23 @@ name = "flowassist"
 version = "0.6.0"
 description = "FlowAssist server: payment-tracing copilot guardrails (course project)"
 requires-python = ">=3.12"
+# Runtime dependencies of the API. Vercel's Python build (uv) reads this file
+# before requirements.txt, so they must be listed here; keep both in sync.
+dependencies = [
+    "fastapi==0.163.1",
+    "pydantic==2.14.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.2.0",
+    "httpx==0.28.1",
+    "ruff==0.17.5",
+    "uvicorn==0.54.0",
+    "anthropic==2.9.0",
+    "openai==3.52.0",
+    "python-dotenv==1.2.4",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
