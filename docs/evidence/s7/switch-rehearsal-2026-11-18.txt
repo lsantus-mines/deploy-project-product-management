@@ -1,0 +1,11 @@
+FlowAssist switch rehearsal · 2026-11-18 19:24 CET · commit cba1334
+Local uvicorn restart per mode stands in for the Vercel redeploy. Synthetic ticket 'ready'.
+
+mode set       restart→healthy  /api/config               analyze: draft?   insert draft
+on                       0.3 s  on (env)                  yes                        200
+suggest_only             0.3 s  suggest_only (env)        yes                        409
+off                      0.3 s  off (env)                 no (withheld)              409
+on                       0.3 s  on (env)                  yes                        200
+
+Reading: in suggest_only and off the server refuses draft insertion (409); in off it also withholds the draft.
+Scope: local machine, one operator, synthetic data. NOT a staging/production rehearsal with the two switch holders.

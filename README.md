@@ -56,14 +56,14 @@ project-product-management/
 |---|---|---|
 | `00_pitch.md` | before S3 — only if you bring your own idea | Present: optional adaptation of supplied P2, not a separate custom proposal |
 | `01_problem_statement.md` | S1–S2 — Assignment 1 | Documented: quantified scenario, causes, AI choice, hypotheses and baseline |
-| `governance.md` | created for Assignment 1, one line added every session | Updated through S7 draft: data audit, checkpoints, global switch, release approval, trace keeper |
+| `governance.md` | created for Assignment 1, one line added every session | Updated through S7: data audit, checkpoints, global switch, release approval, trace keeper |
 | `02_sizing.xlsx` | S2 — Assignment 2 | Editable three-scenario model; financial limitations explained in the memo |
 | `02_investment_memo.md` | S2 — Assignment 2 | Updated: conditional GO, named alternative and 41.2% flip threshold |
 | `03_product_brief.md` | S3 | Brief v2 present; supporting process/design record and archived v1 |
 | `04_architecture.md` | S4 | Implemented workflow, components, checkpoints, fallbacks; §8b server authority, switch and release path (v0.6) |
-| `05_metrics.md` | S5 | Draft present (Assignment 5, 22 Nov). Held-out labels and 30-case judge validation pending. Inputs: [tracking plan](docs/TRACKING_PLAN.md), attack set, [judge report](evals/judge/judge_report.md), `make metrics` |
-| `06_07_experiments_operations.md` | S6–S7 | Protocol and operations plan present (23 Nov). Production rollback rehearsal pending. Inputs: switch, rollback, incident classes, monitoring thresholds in [spec.md](spec.md) §7 |
-| `08_launch_memo.md` | S8 | Launch memo present. Hold live rollout while validation is pending. |
+| `05_metrics.md` | S5 | Reworked 18 Nov: five-level stack, stop criterion, hierarchy by segment with harm threshold, three business metrics with expected effects, evaluation plan. Pending (people): 100 labels, second grader, human–human agreement |
+| `06_07_experiments_operations.md` | S6–S7 | Reworked 18 Nov: hypotheses, A/B on specialist-days, sample size (~6,800 tickets, 7 weeks), ship/iterate/kill rule, four-layer monitoring, incident classes, 6-field rollback (local test 18 Nov; staging test pending), five owners |
+| `08_launch_memo.md` | S8 | Reworked 18 Nov: NO-GO live, GO to prepare a pilot; evidence table, gated launch plan with signers, risks, ask, who did what |
 | `spec.md`, `product_brief.md` | final | **`spec.md` v3: whole project S1–S8** (product, architecture, contracts, guardrails, operation, metrics, delivery, decision log); consolidated `product_brief.md` present, final tag pending |
 | `/prototype`, `/api`, `/flowassist`, `/evals` | from S4 | Interface v0.9 (three-step flow, clear outcomes) + FastAPI authority v0.6; 146 Python + 46 interface tests; 50 development cases, 200 held-out inputs, 30 attacks, LLM judge |
 

@@ -155,7 +155,7 @@ On Vercel, change the variable and redeploy (about 1 minute). Who can press it: 
 - **Action:** `ASSIST_MODE=suggest_only`, then `off`; or revert the commit on `main`.
 - **Time:** under 15 minutes.
 - **What people see:** the banner states the mode, and agents continue manually.
-- **Last tested:** 18 Nov 2026 locally (on → off → on). Production rehearsal pending (`docs/SETUP_CI.md` §3).
+- **Last tested:** 18 Nov 2026 locally, `scripts/verify/rehearse_switch.py` (on → suggest_only → off → on; [evidence](docs/evidence/s7/switch-rehearsal-2026-11-18.txt)). Staging rehearsal with both switch holders pending (`docs/SETUP_CI.md` §3).
 
 **Incident classes.**
 
