@@ -108,16 +108,17 @@ The engine filters public fixtures by assigned merchant, requires a unique refer
 
 **Evaluation integrity:** labels for F21–F50 were AI-proposed before the run; the F01–F20 seed was already exposed. After review and fixes, all 50 became development cases. Do not reuse this set for an independent claim. Human graders must fill in `label_review.csv` and `grader_reviews.csv` themselves; no identity, approval or timing is invented. F19 is fixed: a model score of 0.94 forces abstention; source notes play no part in generation. No real model is evaluated. Code and fixture hashes are in the results. See `evals/report_v0.md`.
 
-## Session 5 — counter-metrics and the segments we report (to come)
-*Primary metric (AHT), counter-metrics (QA score, 7-day reopen rate, agent override rate), and protected reporting segments.*
+## Session 5 — counter-metrics and release gate
+- Report active time, seven-day reopens and manual handovers by language, plan and rail. Proposed tolerances are +2 and +5 percentage points against the concurrent manual arm.
+- A single critical escape blocks rollout. Head of Payment Operations owns the stop decision. See [metrics](05_metrics.md).
 
-## Session 6 — protected segments and the harm threshold that stops an experiment (to come)
-*A/B trial experiment guardrails, enterprise merchant protection, and safety thresholds for experiment termination.*
+## Session 6 — experiment authorisation and stop rule
+- Head of Payment Operations signs any real-ticket experiment after DPO review. A single critical escape stops assistance. Hold expansion in any segment with unresolved harm or sparse evidence. See [protocol](06_07_experiments_operations.md).
 
 ## Session 7 — accountable owner, rollback authority, incident path (draft, 17 November 2026)
-- **Global switch ⏻:** env `ASSIST_MODE` (`on` / `suggest_only` / `off`) on Vercel, enforced by the server; changing it requires a redeploy (~1 min). **Who can press it:** Head of Payment Operations (day) and the on-call engineer (night), never only the person who wrote the code. Fail-safe: any other value → `suggest_only`. **Last tested:** _to fill on the first production test (see docs/SETUP_CI.md §3)_.
+- **Global switch ⏻:** env `ASSIST_MODE` (`on` / `suggest_only` / `off`) on Vercel, enforced by the server; changing it requires a redeploy (~1 min). **Who can press it:** Head of Payment Operations (day) and the on-call engineer (night), never only the person who wrote the code. Fail-safe: any other value → `suggest_only`. **Last tested:** 18 Nov 2026, local FastAPI on → off → on rehearsal passed. Production test pending (see docs/SETUP_CI.md §3).
 - **Release approval:** a PR merges only with green CI (tests, JS/Python parity, 50-case regression, attack set with zero misses); deployment runs only after CI on `main`, followed by a production smoke test.
-- **Trace keeper:** traces and product events stay with us: Vercel runtime logs in production, `metrics/events.jsonl` on the operator's machine locally (git-ignored); no third-party analytics, no ticket, draft or note text. Retention to confirm with the DPO.
+- **Trace keeper:** traces and product events stay with us: Vercel runtime logs in production, `metrics/events.jsonl` on the operator's machine locally (git-ignored); no third-party analytics, no ticket, draft or note text. Engineering owns trace access and deletion. Proposed pilot retention is 30 days, pending DPO approval.
 - **Who signs an experiment on real users:** Head of Payment Operations signs, DPO reads (S6); no A/B assignment is coded before that signature.
 
 *Rollback triggers, operational on-call rotation, kill-switch authority, and incident post-mortem playbooks.*

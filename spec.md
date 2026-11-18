@@ -1,6 +1,6 @@
-# FlowAssist specification · v3 · whole project (S1–S7)
+# FlowAssist specification · v3 · whole project (S1–S8)
 
-**Updated 17 November 2026.** One document that traces the product from diagnosis to operation and that a developer can build from. Each section names the course session it comes from and the file that holds the detail. **Shipped** means it exists in this repository and is tested; **target** means the production design, not yet built.
+**Updated 18 November 2026.** One document that traces the product from diagnosis to operation and that a developer can build from. Each section names the course session it comes from and the file that holds the detail. **Shipped** means it exists in this repository and is tested; **target** means the production design, not yet built.
 
 | Session | Decision it fixes here | Detail |
 |---|---|---|
@@ -8,8 +8,9 @@
 | S2 Sizing | business case, flip point 41.2 %, hurdle, build/buy | `02_sizing.xlsx`, `02_investment_memo.md` |
 | S3 MVP design | process redesign, MoSCoW, model ladder, data audit, criterion, user research | `03_product_brief.md`, `03_user_research.md` |
 | S4 Build & decode | architecture, guardrails, eval-set, misses → spec lines | §3–§6, `04_architecture.md`, `evals/report_v0.md` |
-| S5 Metrics | metric stack, attack set, LLM judge | §8, `evals/judge/`, `docs/TRACKING_PLAN.md` |
-| S6–S7 Experiments & operation | switch, monitoring, incidents, rollback, owners, CI/CD | §7, §9, `docs/SETUP_CI.md`, `governance.md` S7 |
+| S5 Metrics | metric stack, attack set, LLM judge | §8, `05_metrics.md`, `evals/judge/`, `docs/TRACKING_PLAN.md` |
+| S6–S7 Experiments & operation | switch, monitoring, incidents, rollback, owners, CI/CD | §7, §9, `06_07_experiments_operations.md`, `governance.md` S7 |
+| S8 Launch | hold live rollout, qualify a pilot before expansion | `08_launch_memo.md`, `product_brief.md` |
 
 ---
 
@@ -154,7 +155,7 @@ On Vercel, change the variable and redeploy (about 1 minute). Who can press it: 
 - **Action:** `ASSIST_MODE=suggest_only`, then `off`; or revert the commit on `main`.
 - **Time:** under 15 minutes.
 - **What people see:** the banner states the mode, and agents continue manually.
-- **Last tested:** to be filled at the first production test (`docs/SETUP_CI.md` §3).
+- **Last tested:** 18 Nov 2026 locally (on → off → on). Production rehearsal pending (`docs/SETUP_CI.md` §3).
 
 **Incident classes.**
 
@@ -219,5 +220,5 @@ On Vercel, change the variable and redeploy (about 1 minute). Who can press it: 
 - All data is synthetic, and the 50 v0 cases are development data. The first real performance number must come from `eval_set_v1` (held out, labelled by people).
 - No grader 2 yet, so there is no human–human agreement.
 - S5-M01 is open: the reply language follows the ticket field, not the merchant's message.
-- The business criterion (41.2 % saving) needs the paired timing protocol of `06_07_experiments_operations.md` (to write).
+- The business criterion (41.2 % saving) needs the paired timing protocol of `06_07_experiments_operations.md`.
 - **Target, not built:** authenticated merchant scope, server-stamped request time, live ledger/clearing connectors, D06–D07, a rung-2 router once labelled tickets exist.

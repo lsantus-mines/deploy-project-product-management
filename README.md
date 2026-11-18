@@ -30,7 +30,7 @@
 project-product-management/
 ├── README.md · spec.md · governance.md     start here: overview, full spec, governance log
 ├── 00_pitch.md … 04_architecture.md        graded deliverables, course template names
-│   (02_sizing.xlsx, 03_*.md; 05/06_07/08 to come)
+│   (02_sizing.xlsx, 03_*.md, 05/06_07/08)
 ├── Makefile · pyproject.toml · requirements*.txt · vercel.json · .env.example · AGENTS.md
 │
 ├── prototype/      browser app (HTML/CSS/JS): preview engine, interface, API client
@@ -61,10 +61,10 @@ project-product-management/
 | `02_investment_memo.md` | S2 — Assignment 2 | Updated: conditional GO, named alternative and 41.2% flip threshold |
 | `03_product_brief.md` | S3 | Brief v2 present; supporting process/design record and archived v1 |
 | `04_architecture.md` | S4 | Implemented workflow, components, checkpoints, fallbacks; §8b server authority, switch and release path (v0.6) |
-| `05_metrics.md` | S5 | To write (Assignment 5, 22 Nov). Inputs ready: [tracking plan](docs/TRACKING_PLAN.md), attack set, [judge report](evals/judge/judge_report.md), `make metrics` |
-| `06_07_experiments_operations.md` | S6–S7 | To write (Assignment 6+7, 23 Nov). Inputs ready: switch, rollback, incident classes, monitoring thresholds in [spec.md](spec.md) §7 |
-| `08_launch_memo.md` | S8 | Future session deliverable; not yet present |
-| `spec.md`, `product_brief.md` | final | **`spec.md` v3: whole project S1–S7** (product, architecture, contracts, guardrails, operation, metrics, delivery, decision log); consolidated `product_brief.md` for the final push |
+| `05_metrics.md` | S5 | Draft present (Assignment 5, 22 Nov). Held-out labels and 30-case judge validation pending. Inputs: [tracking plan](docs/TRACKING_PLAN.md), attack set, [judge report](evals/judge/judge_report.md), `make metrics` |
+| `06_07_experiments_operations.md` | S6–S7 | Protocol and operations plan present (23 Nov). Production rollback rehearsal pending. Inputs: switch, rollback, incident classes, monitoring thresholds in [spec.md](spec.md) §7 |
+| `08_launch_memo.md` | S8 | Launch memo present. Hold live rollout while validation is pending. |
+| `spec.md`, `product_brief.md` | final | **`spec.md` v3: whole project S1–S8** (product, architecture, contracts, guardrails, operation, metrics, delivery, decision log); consolidated `product_brief.md` present, final tag pending |
 | `/prototype`, `/api`, `/flowassist`, `/evals` | from S4 | Interface v0.9 (three-step flow, clear outcomes) + FastAPI authority v0.6; 146 Python + 46 interface tests; 50 development cases, 200 held-out inputs, 30 attacks, LLM judge |
 
 Supporting S3 files: [AI Lean Canvas](03_ai_lean_canvas.md), [design details](docs/03_design_details.md), [needs/design record](03_user_research.md), [prototype link](03_prototype_link.md) and [delivery matrix](docs/03_s3_delivery.md). S4: [report](evals/report_v0.md), [delivery matrix](docs/04_s4_delivery.md) and [evaluation guide](evals/README.md). [Cross-session evidence audit](docs/DELIVERY_AUDIT.md).
